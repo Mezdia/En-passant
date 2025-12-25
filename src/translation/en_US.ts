@@ -191,6 +191,7 @@ export const en_US = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "Add a comment to the first position that is not in the reference database.",
     "Board.Analysis.Analyze": "Analyze",
+    "Board.Analysis.ManageEngines": "Manage Engines",
     "Board.Analysis.Advantage": "Advantage",
     "Board.Analysis.Accuracy": "Accuracy",
     "Board.Analysis.EnableWDL":

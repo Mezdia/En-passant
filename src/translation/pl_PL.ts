@@ -180,6 +180,7 @@ export const pl_PL = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "Dodaj komentarz do pierwszej pozycji, która nie znajduje się w bazie odniesienia.",
     "Board.Analysis.Analyze": "Analizuj",
+    "Board.Analysis.ManageEngines": "Zarządzaj silnikami",
     "Board.Analysis.Advantage": "Przewaga",
     "Board.Analysis.Accuracy": "Dokładność",
     "Board.Database.Local": "Lokalna",

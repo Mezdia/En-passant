@@ -180,6 +180,7 @@ export const be_BY = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "Дадаць каментарый да першай пазіцыі, якой няма ў базе дадзеных.",
     "Board.Analysis.Analyze": "Аналізаваць",
+    "Board.Analysis.ManageEngines": "Кіраванне рухавікамі",
     "Board.Analysis.Advantage": "Перавага",
     "Board.Analysis.Accuracy": "Дакладнасць",
     "Board.Database.Local": "Лакальна",

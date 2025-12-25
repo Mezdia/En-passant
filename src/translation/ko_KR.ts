@@ -190,6 +190,7 @@ export const ko_KR = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "참조 데이터베이스에 없는 첫 번째 포지션에 주석을 추가합니다.",
     "Board.Analysis.Analyze": "분석",
+    "Board.Analysis.ManageEngines": "엔진 관리",
     "Board.Analysis.Advantage": "유리",
     "Board.Analysis.Accuracy": "정확도",
     "Board.Analysis.EnableWDL":

@@ -190,6 +190,7 @@ export const fa_IR = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "یک نظر به اولین موقعیتی که در پایگاه داده مرجع نیست اضافه کنید.",
     "Board.Analysis.Analyze": "تحلیل",
+    "Board.Analysis.ManageEngines": "تنظیمات انجین",
     "Board.Analysis.Advantage": "برتری",
     "Board.Analysis.Accuracy": "دقت",
     "Board.Analysis.EnableWDL":

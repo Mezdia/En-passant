@@ -181,6 +181,7 @@ export const es_ES = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "Agregar un comentario a la primera posición que no esté en la base de datos de referencia.",
     "Board.Analysis.Analyze": "Analizar",
+    "Board.Analysis.ManageEngines": "Administrar motores",
     "Board.Analysis.Advantage": "Ventaja",
     "Board.Analysis.Accuracy": "Precisión",
     "Board.Database.Local": "Local",

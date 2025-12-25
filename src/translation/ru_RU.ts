@@ -191,6 +191,7 @@ export const ru_RU = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "Добавить комментарий в первой позиции, которая отсутствует в базе данных.",
     "Board.Analysis.Analyze": "Анализировать",
+    "Board.Analysis.ManageEngines": "Управление движками",
     "Board.Analysis.Advantage": "Преимущество",
     "Board.Analysis.Accuracy": "Точность",
     "Board.Analysis.EnableWDL":

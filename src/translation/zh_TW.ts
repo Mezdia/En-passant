@@ -175,6 +175,7 @@ export const zh_TW = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "為第一個不在參考資料庫中的著手新增註解。",
     "Board.Analysis.Analyze": "分析",
+    "Board.Analysis.ManageEngines": "管理引擎",
     "Board.Analysis.Advantage": "優勢",
     "Board.Analysis.Accuracy": "準確度",
     "Board.Database.Local": "本地",

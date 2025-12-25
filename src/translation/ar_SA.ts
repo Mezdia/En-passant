@@ -191,6 +191,7 @@ export const ar_SA = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "إضافة تعليق إلى الموقف الأول الذي ليس في قاعدة البيانات المرجعية.",
     "Board.Analysis.Analyze": "تحليل",
+    "Board.Analysis.ManageEngines": "إدارة المحركات",
     "Board.Analysis.Advantage": "الميزة",
     "Board.Analysis.Accuracy": "الدقة",
     "Board.Analysis.EnableWDL":

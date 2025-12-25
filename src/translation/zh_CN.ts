@@ -176,6 +176,7 @@ export const zh_CN = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "在不在参考数据库中的第一个着法上添加注释",
     "Board.Analysis.Analyze": "分析",
+    "Board.Analysis.ManageEngines": "管理引擎",
     "Board.Analysis.Advantage": "优势",
     "Board.Analysis.Accuracy": "精度",
     "Board.Database.Local": "本地",

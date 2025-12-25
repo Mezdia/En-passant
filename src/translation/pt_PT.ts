@@ -180,6 +180,7 @@ export const pt_PT = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "Adicionar comentário na primeira posição que não está na base de dados.",
     "Board.Analysis.Analyze": "Analisar",
+    "Board.Analysis.ManageEngines": "Gerenciar motores",
     "Board.Analysis.Advantage": "Vantagem",
     "Board.Analysis.Accuracy": "Precisão",
     "Board.Database.Local": "Local",

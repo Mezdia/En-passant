@@ -181,6 +181,7 @@ export const tr_TR = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "Referans veritabanında bulunmayan ilk pozisyona not ekler.",
     "Board.Analysis.Analyze": "Analiz",
+    "Board.Analysis.ManageEngines": "Motorları Yönet",
     "Board.Analysis.Advantage": "Avantaj",
     "Board.Analysis.Accuracy": "Doğruluk",
     "Board.Database.Local": "Lokal",

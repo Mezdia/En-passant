@@ -192,6 +192,7 @@ export const fr_FR = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "Ajoute un commentaire au premier coup qui n'est pas dans la base de données de référence.",
     "Board.Analysis.Analyze": "Analyser",
+    "Board.Analysis.ManageEngines": "Gérer les moteurs",
     "Board.Analysis.Advantage": "Avantage",
     "Board.Analysis.Accuracy": "Précision",
     "Board.Database.Local": "Local",

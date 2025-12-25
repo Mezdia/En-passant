@@ -181,6 +181,7 @@ export const nb_NO = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "Legger til en kommentar for den første stillingen som ikke er i referansedatabasen.",
     "Board.Analysis.Analyze": "Analyser",
+    "Board.Analysis.ManageEngines": "Administrer motorer",
     "Board.Analysis.Advantage": "Fordel",
     "Board.Analysis.Accuracy": "Presisjon",
     "Board.Database.Local": "Lokal",

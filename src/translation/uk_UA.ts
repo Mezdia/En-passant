@@ -180,6 +180,7 @@ export const uk_UA = {
     "Board.Analysis.AnnotateNovelties.Desc":
       "Додати коментар до першої позиції, якої немає в базі даних.",
     "Board.Analysis.Analyze": "Аналізувати",
+    "Board.Analysis.ManageEngines": "Керування двигунами",
     "Board.Analysis.Advantage": "Перевага",
     "Board.Analysis.Accuracy": "Точність",
     "Board.Database.Local": "Локально",
