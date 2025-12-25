@@ -165,9 +165,9 @@ export default function Page() {
                 className={classes.item}
               >
                 <div>
-                  <Text>Move notation</Text>
+                  <Text>{t("Settings.Board.MoveNotation")}</Text>
                   <Text size="xs" c="dimmed">
-                    Choose how to display pieces in notation
+                    {t("Settings.Board.MoveNotation.Desc")}
                   </Text>
                 </div>
                 <Select
@@ -189,16 +189,16 @@ export default function Page() {
                 className={classes.item}
               >
                 <div>
-                  <Text>Ways to Move Pieces</Text>
+                  <Text>{t("Settings.Board.WaysToMovePieces")}</Text>
                   <Text size="xs" c="dimmed">
-                    Move pieces by dragging, clicking, or both
+                    {t("Settings.Board.WaysToMovePieces.Desc")}
                   </Text>
                 </div>
                 <Select
                   data={[
-                    { label: "Drag", value: "drag" },
-                    { label: "Click", value: "select" },
-                    { label: "Both", value: "both" },
+                    { label: t("Settings.Board.Drag"), value: "drag" },
+                    { label: t("Settings.Board.Click"), value: "select" },
+                    { label: t("Settings.Board.Both"), value: "both" },
                   ]}
                   allowDeselect={false}
                   value={moveMethod}
@@ -661,29 +661,29 @@ export default function Page() {
             <Tabs.Panel value="keybinds">
               <Group>
                 <Text size="lg" fw={500} className={classes.title}>
-                  Keybinds
+                  {t("Settings.Keybinds")}
                 </Text>
-                <Tooltip label="Reset">
+                <Tooltip label={t("Common.Reset")}>
                   <ActionIcon onClick={() => setKeyMap(RESET)}>
                     <IconReload size="1rem" />
                   </ActionIcon>
                 </Tooltip>
               </Group>
               <Text size="xs" c="dimmed" mt={3} mb="lg">
-                Customize keyboard shortcuts
+                {t("Settings.Keybinds.Desc")}
               </Text>
               <Table>
                 <Table.Thead>
                   <Table.Tr>
-                    <Table.Th>Description</Table.Th>
-                    <Table.Th>Key</Table.Th>
+                    <Table.Th>{t("Settings.Keybinds.Description")}</Table.Th>
+                    <Table.Th>{t("Settings.Keybinds.Key")}</Table.Th>
                   </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
                   {Object.entries(keyMap).map(([action, keybind]) => {
                     return (
                       <Table.Tr key={keybind.name}>
-                        <Table.Td>{keybind.name}</Table.Td>
+                        <Table.Td>{t(keybind.name)}</Table.Td>
                         <Table.Td>
                           <KeybindInput action={action} keybind={keybind} />
                         </Table.Td>

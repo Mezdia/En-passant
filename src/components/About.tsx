@@ -1,4 +1,4 @@
-import { Anchor, Modal, Text } from "@mantine/core";
+import { Anchor, Modal, Text, Group, Stack } from "@mantine/core";
 import { isTauri } from "@tauri-apps/api/core";
 import { useEffect, useState } from "react";
 
@@ -23,7 +23,7 @@ function AboutModal({
         try {
           const { getVersion, getTauriVersion } = await import("@tauri-apps/api/app");
           const { version: OSVersion, arch, type } = await import("@tauri-apps/plugin-os");
-          
+
           const os = await type();
           const version = await getVersion();
           const tauri = await getTauriVersion();
@@ -58,23 +58,56 @@ function AboutModal({
       centered
       opened={opened}
       onClose={() => setOpened(false)}
-      title="En Croissant"
+      title="About En Croissant"
+      size="md"
     >
-      <Text>Version: {info?.version}</Text>
-      <Text>Tauri version: {info?.tauri}</Text>
-      <Text>
-        OS: {info?.os} {info?.architecture} {info?.osVersion}
-      </Text>
+      <Stack gap="md">
+        <Group>
+          <Text fw="bold">Version:</Text>
+          <Text>{info?.version}</Text>
+        </Group>
+        <Group>
+          <Text fw="bold">Tauri Version:</Text>
+          <Text>{info?.tauri}</Text>
+        </Group>
+        <Group>
+          <Text fw="bold">Operating System:</Text>
+          <Text>{info?.os} {info?.architecture} {info?.osVersion}</Text>
+        </Group>
 
-      <br />
+        <Text fw="bold" size="lg">Credits</Text>
+        <Text>Made by Mezd</Text>
+        <Text>All rights belong to Mezdia</Text>
 
-      <Anchor
-        href="https://www.encroissant.org"
-        target="_blank"
-        rel="noreferrer"
-      >
-        www.encroissant.org
-      </Anchor>
+        <Text fw="bold">GitHub Profile:</Text>
+        <Anchor
+          href="https://github.com/Mezdia"
+          target="_blank"
+          rel="noreferrer"
+        >
+          https://github.com/Mezdia
+        </Anchor>
+
+        <Text fw="bold">Project Repository:</Text>
+        <Anchor
+          href="https://github.com/Mezdia/en-croissant"
+          target="_blank"
+          rel="noreferrer"
+        >
+          https://github.com/Mezdia/en-croissant
+        </Anchor>
+
+        <Text fw="bold">Website:</Text>
+        <Anchor
+          href="https://www.encroissant.ir"
+          target="_blank"
+          rel="noreferrer"
+        >
+          https://www.encroissant.ir
+        </Anchor>
+
+        <Text size="sm" c="dimmed">Copyright © 2025 Mezdia. All rights reserved.</Text>
+      </Stack>
     </Modal>
   );
 }

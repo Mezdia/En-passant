@@ -354,6 +354,16 @@ export const be_BY = {
     "Settings.Directories.Files.Desc":
       "Тут захоўваюцца гульнявыя файлы на старонцы файлаў",
 
+    "Settings.Board.MoveNotation": "Азначэнне ходу",
+    "Settings.Board.MoveNotation.Desc": "Выберыце, як адлюстроўваць фігуры ў азначэнні",
+    "Settings.Board.WaysToMovePieces": "Спосабы перамяшчэння фігур",
+    "Settings.Board.WaysToMovePieces.Desc": "Перамяшчайце фігуры перацягваннем, націскам або абодвума",
+    "Settings.Board.Drag": "Перацягванне",
+    "Settings.Board.Click": "Націск",
+    "Settings.Board.Both": "Абодва",
+
+    "Sound.Standard": "Стандартны",
+
     "PgnInput.Comments": "Каментарыі",
     "PgnInput.Glyphs": "Сімвалы",
     "PgnInput.Variations": "Варыяцыі",

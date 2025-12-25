@@ -10,22 +10,12 @@ import {
   useCombobox,
 } from "@mantine/core";
 import { useAtom } from "jotai";
+import { useTranslation } from "react-i18next";
 
 type Item = {
   label: string;
   value: string;
 };
-
-const soundCollections: Item[] = [
-  { label: "Futuristic", value: "futuristic" },
-  { label: "Lisp", value: "lisp" },
-  { label: "NES", value: "nes" },
-  { label: "Piano", value: "piano" },
-  { label: "Robot", value: "robot" },
-  { label: "SFX", value: "sfx" },
-  { label: "Standard", value: "standard" },
-  { label: "WoodLand", value: "woodland" },
-];
 
 function SelectOption({ label }: { label: string }) {
   return (
@@ -38,11 +28,23 @@ function SelectOption({ label }: { label: string }) {
 }
 
 export default function SoundSelect() {
+  const { t } = useTranslation();
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
 
   const [soundCollection, setSoundCollection] = useAtom(soundCollectionAtom);
+
+  const soundCollections: Item[] = [
+    { label: "Futuristic", value: "futuristic" },
+    { label: "Lisp", value: "lisp" },
+    { label: "NES", value: "nes" },
+    { label: "Piano", value: "piano" },
+    { label: "Robot", value: "robot" },
+    { label: "SFX", value: "sfx" },
+    { label: t("Sound.Standard"), value: "standard" },
+    { label: "WoodLand", value: "woodland" },
+  ];
 
   const options = soundCollections.map((item) => (
     <Combobox.Option value={item.value} key={item.value}>

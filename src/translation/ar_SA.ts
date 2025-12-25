@@ -397,6 +397,16 @@ export const ar_SA = {
     "Settings.Directories.Files.Desc":
       "هذا هو المكان الذي يتم فيه حفظ ألعابك في صفحة الملفات",
 
+    "Settings.Board.MoveNotation": "رمز الحركة",
+    "Settings.Board.MoveNotation.Desc": "اختر كيفية عرض القطع في الرمز",
+    "Settings.Board.WaysToMovePieces": "طرق تحريك القطع",
+    "Settings.Board.WaysToMovePieces.Desc": "حرك القطع بسحبها أو النقر عليها أو كليهما",
+    "Settings.Board.Drag": "سحب",
+    "Settings.Board.Click": "نقر",
+    "Settings.Board.Both": "كليهما",
+
+    "Sound.Standard": "قياسي",
+
     "PgnInput.Comments": "التعليقات",
     "PgnInput.Glyphs": "الرموز",
     "PgnInput.Variations": "التباينات",
