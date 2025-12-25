@@ -707,13 +707,12 @@ function addAnalysis(
       const curScore = analysis[i].best[0].score;
       const color = cur.halfMoves % 2 === 1 ? "white" : "black";
       const annotation = getAnnotation(
-        prevprevScore?.value || null,
-        prevScore?.value || null,
-        curScore.value,
-        color,
         prevMoves,
-        analysis[i].is_sacrifice,
+        curScore.value,
+        prevScore?.value || null,
+        color,
         cur.san || "",
+        analysis[i].is_sacrifice,
       );
       if (annotation) {
         cur.annotations = [...new Set([...cur.annotations, annotation])];

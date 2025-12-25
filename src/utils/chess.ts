@@ -576,6 +576,10 @@ export function getGameStats(root: TreeNode) {
     "!!": 0,
     "!": 0,
     "!?": 0,
+    "⭐": 0,
+    "✓": 0,
+    "○": 0,
+    "✖": 0,
   };
 
   const blackAnnotations = {
@@ -585,6 +589,10 @@ export function getGameStats(root: TreeNode) {
     "!!": 0,
     "!": 0,
     "!?": 0,
+    "⭐": 0,
+    "✓": 0,
+    "○": 0,
+    "✖": 0,
   };
 
   if (root.children.length === 0) {
@@ -630,8 +638,8 @@ export function getGameStats(root: TreeNode) {
   }
   const whiteCPL = mean(cplosses.white);
   const blackCPL = mean(cplosses.black);
-  const whiteAccuracy = harmonicMean(accuracies.white);
-  const blackAccuracy = harmonicMean(accuracies.black);
+  const whiteAccuracy = mean(accuracies.white);
+  const blackAccuracy = mean(accuracies.black);
 
   return {
     whiteCPL,

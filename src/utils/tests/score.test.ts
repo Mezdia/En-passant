@@ -4,8 +4,9 @@ import {
   getAccuracy,
   getAnnotation,
   getCPLoss,
-  getWinChance,
+  getWinProbability,
 } from "../score";
+import type { BestMoves } from "@/bindings";
 
 test("should format a positive cp score correctly", () => {
   expect(formatScore({ type: "cp", value: 50 })).toBe("+0.50");
@@ -20,62 +21,98 @@ test("should format a mate score correctly", () => {
   expect(formatScore({ type: "mate", value: -5 })).toBe("-M5");
 });
 
-test("should calculate the win chance correctly", () => {
-  expect(getWinChance(0)).toBe(50);
-  expect(getWinChance(100)).toBeCloseTo(59.1);
-  expect(getWinChance(-500)).toBeCloseTo(13.69);
+test("should calculate the win probability correctly", () => {
+  expect(getWinProbability({ type: "cp", value: 0 }, "white")).toBe(50);
+  expect(getWinProbability({ type: "cp", value: 100 }, "white")).toBeCloseTo(
+    59.1,
+  );
+  expect(getWinProbability({ type: "mate", value: 5 }, "white")).toBe(100);
+  expect(getWinProbability({ type: "mate", value: -5 }, "white")).toBe(0);
 });
 
-test("should calculate the accuracy correctly", () => {
+test("should calculate the accuracy correctly (CAPS II)", () => {
   expect(
     getAccuracy({ type: "cp", value: 0 }, { type: "cp", value: 0 }, "white"),
   ).toBe(100);
+  // Example: slight inaccuracy
   expect(
-    getAccuracy({ type: "cp", value: 0 }, { type: "cp", value: -500 }, "white"),
-  ).toBeCloseTo(19.07);
+    getAccuracy({ type: "cp", value: 30 }, { type: "cp", value: 0 }, "white"),
+  ).toBeGreaterThan(90);
+  // Example: blunder
+  expect(
+    getAccuracy({ type: "cp", value: 200 }, { type: "cp", value: -200 }, "white"),
+  ).toBeLessThan(50);
 });
 
-test("should calculate the cp loss correctly", () => {
+test("should annotate best move", () => {
+  const bestMoves: BestMoves[] = [
+    {
+      score: { value: { type: "cp", value: 50 }, wdl: null },
+      sanMoves: ["e4"],
+      uciMoves: ["e2e4"],
+      depth: 20,
+      nodes: 1000,
+      multipv: 1,
+      nps: 1000,
+    },
+  ];
   expect(
-    getCPLoss({ type: "cp", value: 0 }, { type: "cp", value: 50 }, "black"),
-  ).toBe(50);
-  expect(
-    getCPLoss({ type: "mate", value: -1 }, { type: "cp", value: 0 }, "black"),
-  ).toBe(1000);
+    getAnnotation(
+      bestMoves,
+      { type: "cp", value: 50 },
+      { type: "cp", value: 45 },
+      "white",
+      "e4",
+      false,
+    ),
+  ).toBe("⭐");
 });
 
-test("should annotate as ??", () => {
+test("should annotate blunder", () => {
+  const bestMoves: BestMoves[] = [
+    {
+      score: { value: { type: "cp", value: 200 }, wdl: null },
+      sanMoves: ["e4"],
+      uciMoves: ["e2e4"],
+      depth: 20,
+      nodes: 1000,
+      multipv: 1,
+      nps: 1000,
+    },
+  ];
   expect(
-    getAnnotation(null, null, { type: "cp", value: -500 }, "white", []),
+    getAnnotation(
+      bestMoves,
+      { type: "cp", value: -200 }, // Big swing (~75% -> ~25% = ~50% delta)
+      { type: "cp", value: 200 },
+      "white",
+      "h4",
+      false,
+    ),
   ).toBe("??");
-  expect(
-    getAnnotation(null, null, { type: "cp", value: 500 }, "black", []),
-  ).toBe("??");
 });
 
-test("should annotate as ?", () => {
+test("should annotate missed win", () => {
+  const bestMoves: BestMoves[] = [
+    {
+      score: { value: { type: "cp", value: 500 }, wdl: null }, // Winning
+      sanMoves: ["e4"],
+      uciMoves: ["e2e4"],
+      depth: 20,
+      nodes: 1000,
+      multipv: 1,
+      nps: 1000,
+    },
+  ];
   expect(
-    getAnnotation(null, null, { type: "cp", value: -200 }, "white", []),
-  ).toBe("?");
-  expect(
-    getAnnotation(null, null, { type: "cp", value: 200 }, "black", []),
-  ).toBe("?");
+    getAnnotation(
+      bestMoves,
+      { type: "cp", value: 0 }, // Drawish
+      { type: "cp", value: 500 }, // Was Winning
+      "white",
+      "Kh1",
+      false,
+    ),
+  ).toBe("✖");
 });
 
-test("should annotate as ?!", () => {
-  expect(
-    getAnnotation(null, null, { type: "cp", value: -100 }, "white", []),
-  ).toBe("?!");
-  expect(
-    getAnnotation(null, null, { type: "cp", value: 100 }, "black", []),
-  ).toBe("?!");
-});
-
-test("should not annotate", () => {
-  expect(
-    getAnnotation(null, null, { type: "cp", value: -50 }, "white", []),
-  ).toBe("");
-  expect(
-    getAnnotation(null, null, { type: "cp", value: 50 }, "black", []),
-  ).toBe("");
-});

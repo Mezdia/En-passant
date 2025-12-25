@@ -38,21 +38,48 @@ export default function NewTabHome({ id }: { id: string }) {
       icon: <IconDice size={60} />,
       title: t("Home.Card.Chess960.Title"),
       description: t("Home.Card.Chess960.Desc"),
-      label: t("Home.Card.Chess960.Button"),
-      onClick: () => {
-        const fen = generateChess960Fen();
-        const tree = defaultTree(fen);
-        tree.headers.variant = "Chess960";
-        sessionStorage.setItem(id, JSON.stringify({ version: 0, state: tree }));
+      buttons: [
+        {
+          label: t("Home.Card.Chess960.Random"),
+          onClick: () => {
+            const fen = generateChess960Fen();
+            const tree = defaultTree(fen);
+            tree.headers.variant = "Chess960";
+            sessionStorage.setItem(
+              id,
+              JSON.stringify({ version: 0, state: tree }),
+            );
 
-        setTabs((prev: Tab[]) => {
-          const tab = prev.find((t) => t.value === id);
-          if (!tab) return prev;
-          tab.name = t("Home.Card.Chess960.Title");
-          tab.type = "play";
-          return [...prev];
-        });
-      },
+            setTabs((prev: Tab[]) => {
+              const tab = prev.find((t) => t.value === id);
+              if (!tab) return prev;
+              tab.name = t("Home.Card.Chess960.Title");
+              tab.type = "play";
+              return [...prev];
+            });
+          },
+        },
+        {
+          label: t("Home.Card.Chess960.Custom"),
+          onClick: () => {
+            const fen = generateChess960Fen();
+            const tree = defaultTree(fen);
+            tree.headers.variant = "Chess960";
+            sessionStorage.setItem(
+              id,
+              JSON.stringify({ version: 0, state: tree }),
+            );
+
+            setTabs((prev: Tab[]) => {
+              const tab = prev.find((t) => t.value === id);
+              if (!tab) return prev;
+              tab.name = t("Home.Card.Chess960.Title");
+              tab.type = "analysis";
+              return [...prev];
+            });
+          },
+        },
+      ],
     },
     {
       icon: <Chessboard size={60} />,
@@ -112,15 +139,32 @@ export default function NewTabHome({ id }: { id: string }) {
                 </Text>
               </Box>
 
-              <Button
-                variant="light"
-                fullWidth
-                mt="md"
-                radius="md"
-                onClick={card.onClick}
-              >
-                {card.label}
-              </Button>
+              {card.buttons ? (
+                <SimpleGrid cols={2} w="100%">
+                  {card.buttons.map((btn) => (
+                    <Button
+                      key={btn.label}
+                      variant="light"
+                      fullWidth
+                      mt="md"
+                      radius="md"
+                      onClick={btn.onClick}
+                    >
+                      {btn.label}
+                    </Button>
+                  ))}
+                </SimpleGrid>
+              ) : (
+                <Button
+                  variant="light"
+                  fullWidth
+                  mt="md"
+                  radius="md"
+                  onClick={card.onClick}
+                >
+                  {card.label}
+                </Button>
+              )}
             </Stack>
           </Card>
         ))}

@@ -62,15 +62,15 @@ export function getAccuracy(
   next: ScoreValue,
   color: Color,
 ): number {
-  const { prevCP, nextCP } = normalizeScores(prev, next, color);
-  return minMax(
-    103.1668 *
-      Math.exp(-0.04354 * (getWinChance(prevCP) - getWinChance(nextCP))) -
-      3.1669 +
-      1,
-    0,
-    100,
-  );
+  // CAPS II like exponential decay
+  // We use best move vs played move comparison ideally, but here we approximate with prev vs next evaluation
+  // Ideally this should take the best move score vs played move score.
+  // Given the function signature, we reuse the diff.
+  const prevProb = getWinProbability(prev, color);
+  const nextProb = getWinProbability(next, color);
+  const delta = Math.max(0, (prevProb - nextProb) / 100);
+
+  return 100 * Math.exp(-2 * delta);
 }
 
 export function getCPLoss(
@@ -83,56 +83,117 @@ export function getCPLoss(
   return Math.max(0, prevCP - nextCP);
 }
 
-export function getAnnotation(
-  prevprev: ScoreValue | null,
-  prev: ScoreValue | null,
-  next: ScoreValue,
+
+export type MoveClassification =
+  | "book"
+  | "brilliant"
+  | "great"
+  | "best"
+  | "excellent"
+  | "good"
+  | "inaccuracy"
+  | "mistake"
+  | "blunder"
+  | "miss";
+
+export const CLASSIFICATION_MAP: Record<MoveClassification, Annotation> = {
+  brilliant: "!!",
+  great: "!",
+  best: "⭐",
+  excellent: "✓",
+  good: "○",
+  inaccuracy: "?!",
+  mistake: "?",
+  blunder: "??",
+  miss: "✖",
+  book: "",
+};
+
+export function getWinProbability(score: ScoreValue, color: Color): number {
+  if (score.type === "mate") {
+    const mateValue = color === "black" ? -score.value : score.value;
+    return mateValue > 0 ? 100 : 0;
+  }
+  const cp = Math.max(-1000, Math.min(1000, normalizeScore(score, color)));
+  return 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * cp)) - 1);
+}
+
+export function getExpectedPointsLoss(
+  bestMoveScore: ScoreValue,
+  playerMoveScore: ScoreValue,
   color: Color,
+): number {
+  const wpBest = getWinProbability(bestMoveScore, color);
+  const wpPlayer = getWinProbability(playerMoveScore, color);
+  return (wpBest - wpPlayer) / 100;
+}
+
+function getUniqueness(prevMoves: BestMoves[], color: Color): number {
+  if (prevMoves.length < 2) return 0;
+  const wpBest = getWinProbability(prevMoves[0].score.value, color);
+  const wp2nd = getWinProbability(prevMoves[1].score.value, color);
+  return (wpBest - wp2nd) / 100;
+}
+
+export function classifyMove(
   prevMoves: BestMoves[],
-  is_sacrifice?: boolean,
-  move?: string,
-): Annotation {
-  const { prevCP, nextCP } = normalizeScores(
-    prev || { type: "cp", value: 0 },
-    next,
-    color,
-  );
-  const winChanceDiff = getWinChance(prevCP) - getWinChance(nextCP);
+  currentEval: ScoreValue,
+  prevEval: ScoreValue | null,
+  color: Color,
+  move: string,
+  isSacrifice: boolean,
+): MoveClassification {
+  if (prevMoves.length === 0) return "book";
 
-  if (winChanceDiff > 20) {
-    return "??";
-  }
-  if (winChanceDiff > 10) {
-    return "?";
-  }
-  if (winChanceDiff > 5) {
-    return "?!";
-  }
+  const bestMoveScore = prevMoves[0].score.value;
+  const delta = getExpectedPointsLoss(bestMoveScore, currentEval, color);
+  const isBestMove = prevMoves[0].sanMoves[0] === move;
+  const uniqueness = getUniqueness(prevMoves, color);
 
-  if (prevMoves.length > 1) {
-    const scores = normalizeScores(
-      prevMoves[0].score.value,
-      prevMoves[1].score.value,
-      color,
-    );
-    if (
-      getWinChance(scores.prevCP) - getWinChance(scores.nextCP) > 10 &&
-      move === prevMoves[0].sanMoves[0]
-    ) {
-      const scores = normalizeScores(
-        prevprev || { type: "cp", value: 0 },
-        prevMoves[0].score.value,
-        color,
-      );
-      if (is_sacrifice) {
-        return "!!";
-      }
-      if (getWinChance(scores.nextCP) - getWinChance(scores.prevCP) > 5) {
-        return "!";
-      }
-    } else if (is_sacrifice && nextCP > -200) {
-      return "!?";
+  const wasWinning = prevEval && getWinProbability(prevEval, color) > 80;
+  const isNoLongerWinning = getWinProbability(currentEval, color) < 60;
+  const hadForcedMate =
+    prevEval?.type === "mate" &&
+    (color === "white" ? prevEval.value > 0 : prevEval.value < 0);
+
+  if (delta < 0.02) {
+    if (isBestMove) {
+      if (isSacrifice) return "brilliant";
+      if (uniqueness > 0.1) return "great";
+      return "best";
     }
+    return "best"; // fallback if close enough but not exact match
   }
-  return "";
+
+  if (delta < 0.05) return "excellent";
+  if (delta < 0.1) return "good";
+  if (delta < 0.2) return "inaccuracy";
+
+  if (delta >= 0.35) {
+    if ((wasWinning && isNoLongerWinning) || hadForcedMate) {
+      return "miss";
+    }
+    return "blunder";
+  }
+
+  return "mistake";
+}
+
+export function getAnnotation(
+  prevMoves: BestMoves[],
+  currentEval: ScoreValue,
+  prevEval: ScoreValue | null,
+  color: Color,
+  move: string,
+  isSacrifice: boolean,
+): Annotation {
+  const classification = classifyMove(
+    prevMoves,
+    currentEval,
+    prevEval,
+    color,
+    move,
+    isSacrifice,
+  );
+  return CLASSIFICATION_MAP[classification];
 }

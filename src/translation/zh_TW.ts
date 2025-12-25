@@ -134,6 +134,9 @@ export const zh_TW = {
     "Home.Card.Puzzle.Title": "戰術訓練",
     "Home.Card.Puzzle.Desc": "訓練您的西洋棋技巧",
     "Home.Card.Puzzle.Button": "訓練",
+    "Home.Card.Chess960.Title": "菲舍爾任意制象棋",
+    "Home.Card.Chess960.Desc": "玩菲舍爾任意制象棋 (Chess960)",
+    "Home.Card.Chess960.Button": "開始對局",
 
     "Board.Tabs.Practice": "練習",
     "Board.Tabs.Analysis": "分析",

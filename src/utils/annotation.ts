@@ -35,7 +35,11 @@ export type Annotation =
   | "∆"
   | "□"
   | "⨀"
-  | "⊗";
+  | "⊗"
+  | "⭐"
+  | "✓"
+  | "○"
+  | "✖";
 
 export const NAG_INFO = new Map<string, Annotation>([
   ["$1", "!"],
@@ -83,11 +87,15 @@ type AnnotationInfo = {
 export const ANNOTATION_INFO: Record<Annotation, AnnotationInfo> = {
   "": { name: "None", color: "gray", nag: 0 },
   "!!": { group: "basic", name: "Brilliant", translationKey: "Brilliant", color: "cyan", nag: 3 },
-  "!": { group: "basic", name: "Good", translationKey: "Good", color: "teal", nag: 1 },
+  "!": { group: "basic", name: "Great", translationKey: "Great", color: "teal", nag: 1 },
+  "⭐": { group: "basic", name: "Best", translationKey: "Best", color: "green", nag: 0 },
+  "✓": { group: "basic", name: "Excellent", translationKey: "Excellent", color: "teal", nag: 0 },
+  "○": { group: "basic", name: "Good", translationKey: "Good", color: "blue", nag: 0 },
   "!?": { group: "basic", name: "Interesting", translationKey: "Interesting", color: "lime", nag: 5 },
-  "?!": { group: "basic", name: "Dubious", translationKey: "Dubious", color: "yellow", nag: 6 },
+  "?!": { group: "basic", name: "Inaccuracy", translationKey: "Inaccuracy", color: "yellow", nag: 6 },
   "?": { group: "basic", name: "Mistake", translationKey: "Mistake", color: "orange", nag: 2 },
   "??": { group: "basic", name: "Blunder", translationKey: "Blunder", color: "red", nag: 4 },
+  "✖": { group: "basic", name: "Miss", translationKey: "Miss", color: "red", nag: 9 },
   "+-": {
     group: "advantage",
     name: "White is winning",
@@ -156,5 +164,5 @@ export const ANNOTATION_INFO: Record<Annotation, AnnotationInfo> = {
 export function isBasicAnnotation(
   annotation: string,
 ): annotation is "!" | "!!" | "?" | "??" | "!?" | "?!" {
-  return ["!", "!!", "?", "??", "!?", "?!"].includes(annotation);
+  return ["!", "!!", "?", "??", "!?", "?!", "⭐", "✓", "○", "✖"].includes(annotation);
 }

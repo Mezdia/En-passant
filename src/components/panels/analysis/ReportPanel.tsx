@@ -3,7 +3,11 @@ import EvalChart from "@/components/common/EvalChart";
 import ProgressButton from "@/components/common/ProgressButton";
 import { TreeStateContext } from "@/components/common/TreeStateContext";
 import { activeTabAtom } from "@/state/atoms";
-import { ANNOTATION_INFO, isBasicAnnotation } from "@/utils/annotation";
+import {
+  ANNOTATION_INFO,
+  type Annotation,
+  isBasicAnnotation,
+} from "@/utils/annotation";
 import { getGameStats, getMainLine } from "@/utils/chess";
 import { Grid, Group, Paper, ScrollArea, Stack, Text } from "@mantine/core";
 import { useToggle } from "@mantine/hooks";
@@ -109,11 +113,17 @@ const GameStats = memo(
       <Paper withBorder>
         <Grid columns={11} justify="space-between" p="md">
           {Object.keys(ANNOTATION_INFO)
-            .filter((a) => isBasicAnnotation(a))
+            .filter((a): a is Annotation => isBasicAnnotation(a))
+            .sort(
+              (a, b) =>
+                ANNOTATION_INFO[a].nag - ANNOTATION_INFO[b].nag,
+            )
             .map((annotation) => {
-              const s = annotation as "??" | "?" | "?!" | "!!" | "!" | "!?";
+              const s = annotation;
               const { name, color, translationKey } = ANNOTATION_INFO[s];
+              // @ts-ignore
               const w = whiteAnnotations[s];
+              // @ts-ignore
               const b = blackAnnotations[s];
               return (
                 <React.Fragment key={annotation}>

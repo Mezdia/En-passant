@@ -141,6 +141,8 @@ export const fa_IR = {
     "Home.Card.Chess960.Title": "شطرنج ۹۶۰",
     "Home.Card.Chess960.Desc": "شطرنج فیشر رندوم بازی کنید",
     "Home.Card.Chess960.Button": "بازی",
+    "Home.Card.Chess960.Random": "تصادفی",
+    "Home.Card.Chess960.Custom": "چیدمان دستی",
 
     "Board.Action.TogglePawnStructureView": "نمایش ساختار پیاده‌ها",
     "Board.Action.TakeSnapshot": "گرفتن اسکرین‌شات",

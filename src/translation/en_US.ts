@@ -140,7 +140,9 @@ export const en_US = {
     "Home.Card.Puzzle.Button": "Train",
     "Home.Card.Chess960.Title": "Chess960",
     "Home.Card.Chess960.Desc": "Play Fischer Random Chess",
-    "Home.Card.Chess960.Button": "Play",
+    "Home.Card.Chess960.Button": "Play Chess960",
+    "Home.Card.Chess960.Random": "Random",
+    "Home.Card.Chess960.Custom": "Custom Setup",
 
     "Board.Action.TogglePawnStructureView": "Toggle Pawn Structure View",
     "Board.Action.TakeSnapshot": "Take Snapshot",
