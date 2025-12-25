@@ -138,6 +138,9 @@ export const pt_PT = {
     "Home.Card.Puzzle.Title": "Puzzles",
     "Home.Card.Puzzle.Desc": "Treinar habilidades de xadrez",
     "Home.Card.Puzzle.Button": "Treinar",
+    "Home.Card.Chess960.Title": "Xadrez960",
+    "Home.Card.Chess960.Desc": "Jogue xadrez aleatório de Fischer",
+    "Home.Card.Chess960.Button": "Jogar",
 
     "Board.Tabs.Practice": "Prática",
     "Board.Tabs.Analysis": "Análise",

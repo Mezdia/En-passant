@@ -138,6 +138,9 @@ export const tr_TR = {
     "Home.Card.Puzzle.Title": "Bulmacalar",
     "Home.Card.Puzzle.Desc": "Satranç becelerinizi geliştirin",
     "Home.Card.Puzzle.Button": "Çalış",
+    "Home.Card.Chess960.Title": "Satranç960",
+    "Home.Card.Chess960.Desc": "Fischer Random Satranç oynayın",
+    "Home.Card.Chess960.Button": "Oyna",
 
     "Board.Tabs.Practice": "Egzersis",
     "Board.Tabs.Analysis": "Analiz",

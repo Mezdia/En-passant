@@ -138,6 +138,9 @@ export const es_ES = {
     "Home.Card.Puzzle.Title": "Puzzles",
     "Home.Card.Puzzle.Desc": "Entrena tus habilidades de ajedrez",
     "Home.Card.Puzzle.Button": "Entrenar",
+    "Home.Card.Chess960.Title": "Ajedrez960",
+    "Home.Card.Chess960.Desc": "Juega al ajedrez aleatorio de Fischer",
+    "Home.Card.Chess960.Button": "Jugar",
 
     "Board.Tabs.Practice": "Práctica",
     "Board.Tabs.Analysis": "Análisis",

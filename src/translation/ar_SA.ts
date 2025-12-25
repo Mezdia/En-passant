@@ -138,6 +138,9 @@ export const ar_SA = {
     "Home.Card.Puzzle.Title": "الألغاز",
     "Home.Card.Puzzle.Desc": "تدريب مهارات الشطرنج الخاصة بك",
     "Home.Card.Puzzle.Button": "تدريب",
+    "Home.Card.Chess960.Title": "شطرنج 960",
+    "Home.Card.Chess960.Desc": "العب شطرنج فيشر العشوائي",
+    "Home.Card.Chess960.Button": "لعب",
 
     "Board.Action.TogglePawnStructureView": "تبديل عرض هيكل البيدق",
     "Board.Action.TakeSnapshot": "أخذ لقطة شاشة",

@@ -6,9 +6,11 @@ import { useAtom } from "jotai";
 import { useState } from "react";
 import ImportModal from "./ImportModal";
 
-import { IconChess, IconFileImport, IconPuzzle } from "@tabler/icons-react";
+import { IconChess, IconDice, IconFileImport, IconPuzzle } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import Chessboard from "../icons/Chessboard";
+import { defaultTree } from "@/utils/treeReducer";
+import { generateChess960Fen } from "@/utils/chess";
 
 export default function NewTabHome({ id }: { id: string }) {
   const { t } = useTranslation();
@@ -33,7 +35,28 @@ export default function NewTabHome({ id }: { id: string }) {
       },
     },
     {
+      icon: <IconDice size={60} />,
+      title: t("Home.Card.Chess960.Title"),
+      description: t("Home.Card.Chess960.Desc"),
+      label: t("Home.Card.Chess960.Button"),
+      onClick: () => {
+        const fen = generateChess960Fen();
+        const tree = defaultTree(fen);
+        tree.headers.variant = "Chess960";
+        sessionStorage.setItem(id, JSON.stringify({ version: 0, state: tree }));
+
+        setTabs((prev: Tab[]) => {
+          const tab = prev.find((t) => t.value === id);
+          if (!tab) return prev;
+          tab.name = t("Home.Card.Chess960.Title");
+          tab.type = "play";
+          return [...prev];
+        });
+      },
+    },
+    {
       icon: <Chessboard size={60} />,
+      // ... rest of the cards
       title: t("Home.Card.AnalysisBoard.Title"),
       description: t("Home.Card.AnalysisBoard.Desc"),
       label: t("Home.Card.AnalysisBoard.Button"),

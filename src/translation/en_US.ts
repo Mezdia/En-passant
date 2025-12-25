@@ -138,6 +138,9 @@ export const en_US = {
     "Home.Card.Puzzle.Title": "Puzzles",
     "Home.Card.Puzzle.Desc": "Train your chess skills",
     "Home.Card.Puzzle.Button": "Train",
+    "Home.Card.Chess960.Title": "Chess960",
+    "Home.Card.Chess960.Desc": "Play Fischer Random Chess",
+    "Home.Card.Chess960.Button": "Play",
 
     "Board.Action.TogglePawnStructureView": "Toggle Pawn Structure View",
     "Board.Action.TakeSnapshot": "Take Snapshot",

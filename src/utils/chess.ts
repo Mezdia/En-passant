@@ -276,22 +276,22 @@ export function getPGN(
   }
   const variationsPGN = variations
     ? tree.children.slice(1).map(
-        (variation) =>
-          `${getMoveText(variation, {
-            glyphs,
-            comments,
-            extraMarkups,
-            isFirst: true,
-          })} ${getPGN(variation, {
-            headers: null,
-            glyphs,
-            comments,
-            variations,
-            extraMarkups,
-            root: false,
-            path: null,
-          })}`,
-      )
+      (variation) =>
+        `${getMoveText(variation, {
+          glyphs,
+          comments,
+          extraMarkups,
+          isFirst: true,
+        })} ${getPGN(variation, {
+          headers: null,
+          glyphs,
+          comments,
+          variations,
+          extraMarkups,
+          root: false,
+          path: null,
+        })}`,
+    )
     : [];
   if (tree.children.length > 0) {
     const child = tree.children[path ? path[0] : 0];
@@ -699,4 +699,57 @@ export function hasMorePriority(
   }
 
   return position1[i] < position2[i];
+}
+
+export function generateChess960Fen(): string {
+  const fileChars = ["a", "b", "c", "d", "e", "f", "g", "h"];
+  const pieces = new Array(8).fill(null);
+
+  // Place bishops on opposite colored squares
+  const bishop1Pos = Math.floor(Math.random() * 4) * 2; // 0, 2, 4, 6 (Light)
+  const bishop2Pos = Math.floor(Math.random() * 4) * 2 + 1; // 1, 3, 5, 7 (Dark)
+  pieces[bishop1Pos] = "B";
+  pieces[bishop2Pos] = "B";
+
+  // Place queen
+  let emptyIndices = pieces
+    .map((p, i) => (p === null ? i : -1))
+    .filter((i) => i !== -1);
+  const queenPos =
+    emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+  pieces[queenPos] = "Q";
+
+  // Place knights
+  for (let i = 0; i < 2; i++) {
+    emptyIndices = pieces
+      .map((p, i) => (p === null ? i : -1))
+      .filter((i) => i !== -1);
+    const knightPos =
+      emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+    pieces[knightPos] = "N";
+  }
+
+  // Place rooks and king (King must be between rooks)
+  emptyIndices = pieces
+    .map((p, i) => (p === null ? i : -1))
+    .filter((i) => i !== -1);
+  pieces[emptyIndices[0]] = "R";
+  pieces[emptyIndices[1]] = "K";
+  pieces[emptyIndices[2]] = "R";
+
+  const whitePieces = pieces.join("");
+  const blackPieces = whitePieces.toLowerCase();
+
+  // Castling rights: Use Shredder-FEN (file letters of the rooks)
+  const rook1File = fileChars[emptyIndices[0]];
+  const rook2File = fileChars[emptyIndices[2]];
+
+  const whiteCastling = (
+    rook2File.toUpperCase() + rook1File.toUpperCase()
+  ).split("").sort().join("");
+  const blackCastling = (
+    rook2File.toLowerCase() + rook1File.toLowerCase()
+  ).split("").sort().join("");
+
+  return `${blackPieces}/pppppppp/8/8/8/8/PPPPPPPP/${whitePieces} w ${whiteCastling}${blackCastling} - 0 1`;
 }

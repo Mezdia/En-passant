@@ -138,6 +138,9 @@ export const ru_RU = {
     "Home.Card.Puzzle.Title": "Головоломки",
     "Home.Card.Puzzle.Desc": "Тренируйте шахматные навыки",
     "Home.Card.Puzzle.Button": "Тренироваться",
+    "Home.Card.Chess960.Title": "Шахматы-960",
+    "Home.Card.Chess960.Desc": "Играть в шахматы Фишера",
+    "Home.Card.Chess960.Button": "Играть",
 
     "Board.Action.TogglePawnStructureView":
       "Переключить отображение структуры пешек",

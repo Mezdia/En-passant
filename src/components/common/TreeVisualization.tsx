@@ -12,10 +12,11 @@ import {
     MarkerType,
     Handle,
     Position,
+    SelectionMode,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import clsx from "clsx";
-import { memo, useCallback, useContext, useEffect, useMemo } from "react";
+import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useStore } from "zustand";
 import * as styles from "./TreeVisualization.css";
 import { addPieceSymbol } from "@/utils/annotation";
@@ -92,15 +93,15 @@ function pathsEqual(a: number[], b: number[]): boolean {
 const NODE_WIDTH = 120;
 const NODE_HEIGHT = 50;
 const H_SPACING = 60;
-const V_SPACING = 20; // Reduced vertical spacing for tighter packing similar to n8n
+const V_SPACING = 20;
 
 function calculateLayout(
     root: TreeNode,
-    currentPosition: number[]
+    currentPosition: number[],
+    lastPath: number[]
 ): { nodes: Node[]; edges: Edge[] } {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
-    const previousPosition = currentPosition.length > 0 ? currentPosition.slice(0, -1) : [];
 
     // Calculate height of a subtree to determine vertical offsets
     function layoutParams(node: TreeNode): { height: number } {
@@ -128,10 +129,18 @@ function calculateLayout(
         startY: number
     ) {
         const nodeId = path.length === 0 ? "root" : `node-${path.join("-")}`;
-        // Check if this node is on the current path by comparing each position element
+        // Check if this node is on the current path
         const isCurrentPath = path.length <= currentPosition.length &&
             path.every((val, i) => val === currentPosition[i]);
-        const isPreviousMove = pathsEqual(path, previousPosition);
+
+        // Check if this node is part of the previous path (history)
+        // It is history if it IS in lastPath, BUT NOT in currentPath (otherwise it would be green)
+        // Wait, if I am at E4, and last was E4 E5.
+        // E4 is in currentPath (Green). E5 is in lastPath but not current (Orange).
+        const isLastPath = path.length <= lastPath.length &&
+            path.every((val, i) => val === lastPath[i]);
+
+        const isPreviousMove = isLastPath && !isCurrentPath;
 
         let scoreText: string | null = null;
         if (node.score?.value) {
@@ -154,7 +163,7 @@ function calculateLayout(
                 halfMoves: node.halfMoves,
                 path,
                 isCurrentPath,
-                isPreviousMove,
+                isPreviousMove, // Now this represents "History Trail"
                 isRoot: path.length === 0,
                 score: scoreText,
             } as MoveNodeData,
@@ -162,19 +171,33 @@ function calculateLayout(
         });
 
         if (parentId) {
+            // Edge styling
+            let edgeColor = "var(--mantine-color-gray-4)";
+            let edgeWidth = 1;
+            let animated = false;
+
+            if (isCurrentPath) {
+                edgeColor = "var(--mantine-color-green-filled)";
+                edgeWidth = 2;
+                animated = true;
+            } else if (isPreviousMove) {
+                edgeColor = "var(--mantine-color-yellow-filled)"; // Orange/Yellow
+                edgeWidth = 2;
+            }
+
             edges.push({
                 id: `edge-${parentId}-${nodeId}`,
                 source: parentId,
                 target: nodeId,
                 type: "smoothstep",
                 style: {
-                    stroke: isCurrentPath ? "var(--mantine-color-green-filled)" : "var(--mantine-color-gray-4)",
-                    strokeWidth: isCurrentPath ? 2 : 1,
+                    stroke: edgeColor,
+                    strokeWidth: edgeWidth,
                 },
-                animated: isCurrentPath,
+                animated: animated,
                 markerEnd: {
                     type: MarkerType.ArrowClosed,
-                    color: isCurrentPath ? "var(--mantine-color-green-filled)" : "var(--mantine-color-gray-4)",
+                    color: edgeColor,
                 },
             });
         }
@@ -203,18 +226,29 @@ function TreeVisualization() {
     const position = useStore(store, (s) => s.position);
     const goToMove = useStore(store, (s) => s.goToMove);
 
+    const [lastPath, setLastPath] = useState<number[]>([]);
+    const prevPosRef = useRef(position);
+
+    // Track the previous path history for coloring
+    useEffect(() => {
+        if (prevPosRef.current !== position) {
+            setLastPath(prevPosRef.current);
+            prevPosRef.current = position;
+        }
+    }, [position]);
+
     const { nodes: initialNodes, edges: initialEdges } = useMemo(() => {
-        return calculateLayout(root, position);
-    }, [root, position]);
+        return calculateLayout(root, position, lastPath);
+    }, [root, position, lastPath]);
 
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
     useEffect(() => {
-        const { nodes: newNodes, edges: newEdges } = calculateLayout(root, position);
+        const { nodes: newNodes, edges: newEdges } = calculateLayout(root, position, lastPath);
         setNodes(newNodes);
         setEdges(newEdges);
-    }, [root, position, setNodes, setEdges]);
+    }, [root, position, lastPath, setNodes, setEdges]); // Added lastPath dependency
 
     const onNodeClick = useCallback(
         (_event: React.MouseEvent, node: Node) => {
@@ -237,6 +271,15 @@ function TreeVisualization() {
                 minZoom={0.1}
                 maxZoom={2}
                 attributionPosition="bottom-left"
+                // Interaction Improvements
+                nodesDraggable={true}
+                elementsSelectable={true}
+                // Enable selection box with left click (standard desktop feel)
+                // Disable panOnDrag for Left Click (0), allow for Middle (1) and Right (2)
+                panOnDrag={[1, 2]}
+                selectionOnDrag={true}
+                panOnScroll={true}
+                selectionMode={SelectionMode.Partial}
             >
                 <Background gap={20} size={1} color="var(--mantine-color-gray-3)" />
                 <Controls showInteractive={false} />

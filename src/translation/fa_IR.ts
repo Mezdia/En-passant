@@ -138,6 +138,9 @@ export const fa_IR = {
     "Home.Card.Puzzle.Title": "پازل‌ها",
     "Home.Card.Puzzle.Desc": "مهارت‌های شطرنج خود را تمرین کنید",
     "Home.Card.Puzzle.Button": "تمرین",
+    "Home.Card.Chess960.Title": "شطرنج ۹۶۰",
+    "Home.Card.Chess960.Desc": "شطرنج فیشر رندوم بازی کنید",
+    "Home.Card.Chess960.Button": "بازی",
 
     "Board.Action.TogglePawnStructureView": "نمایش ساختار پیاده‌ها",
     "Board.Action.TakeSnapshot": "گرفتن اسکرین‌شات",

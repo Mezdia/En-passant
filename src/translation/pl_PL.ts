@@ -138,6 +138,9 @@ export const pl_PL = {
     "Home.Card.Puzzle.Title": "Zagadki",
     "Home.Card.Puzzle.Desc": "Trenuj swoje umiejętności szachowe",
     "Home.Card.Puzzle.Button": "Trenuj",
+    "Home.Card.Chess960.Title": "Chess960",
+    "Home.Card.Chess960.Desc": "Graj w szachy Fischera",
+    "Home.Card.Chess960.Button": "Graj",
 
     "Board.Tabs.Practice": "Ćwiczenia",
     "Board.Tabs.Analysis": "Analiza",
