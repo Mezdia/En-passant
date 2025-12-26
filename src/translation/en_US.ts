@@ -143,6 +143,12 @@ export const en_US = {
     "Home.Card.Chess960.Button": "Play Chess960",
     "Home.Card.Chess960.Random": "Random",
     "Home.Card.Chess960.Custom": "Custom Setup",
+    "Home.Card.Chess960.Customize.Title": "Custom Setup",
+    "Home.Card.Chess960.Customize.Back": "Back",
+    "Home.Card.Chess960.Customize.Randomize": "Randomize",
+    "Home.Card.Chess960.Customize.Standard": "Standard",
+    "Home.Card.Chess960.Customize.Play": "Play",
+    "Home.Card.Chess960.Customize.Analysis": "Analysis",
 
     "Board.Action.TogglePawnStructureView": "Toggle Pawn Structure View",
     "Board.Action.TakeSnapshot": "Take Snapshot",

@@ -69,6 +69,8 @@ export default function PieceComponent({
         ref={pieceRef}
         className={getPieceName(piece)}
         style={{
+          width: size,
+          height: size,
           backgroundSize: "contain",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",

@@ -11,12 +11,19 @@ import { useTranslation } from "react-i18next";
 import Chessboard from "../icons/Chessboard";
 import { defaultTree } from "@/utils/treeReducer";
 import { generateChess960Fen } from "@/utils/chess";
+import Chess960Custom from "./Chess960Custom";
 
 export default function NewTabHome({ id }: { id: string }) {
   const { t } = useTranslation();
 
   const [openModal, setOpenModal] = useState(false);
   const [, setTabs] = useAtom(tabsAtom);
+
+  const [custom960, setCustom960] = useState(false);
+
+  if (custom960) {
+    return <Chess960Custom id={id} onBack={() => setCustom960(false)} />;
+  }
 
   const cards = [
     {
@@ -62,21 +69,7 @@ export default function NewTabHome({ id }: { id: string }) {
         {
           label: t("Home.Card.Chess960.Custom"),
           onClick: () => {
-            const fen = generateChess960Fen();
-            const tree = defaultTree(fen);
-            tree.headers.variant = "Chess960";
-            sessionStorage.setItem(
-              id,
-              JSON.stringify({ version: 0, state: tree }),
-            );
-
-            setTabs((prev: Tab[]) => {
-              const tab = prev.find((t) => t.value === id);
-              if (!tab) return prev;
-              tab.name = t("Home.Card.Chess960.Title");
-              tab.type = "analysis";
-              return [...prev];
-            });
+            setCustom960(true);
           },
         },
       ],

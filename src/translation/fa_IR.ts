@@ -143,6 +143,12 @@ export const fa_IR = {
     "Home.Card.Chess960.Button": "بازی",
     "Home.Card.Chess960.Random": "تصادفی",
     "Home.Card.Chess960.Custom": "چیدمان دستی",
+    "Home.Card.Chess960.Customize.Title": "چیدمان دستی",
+    "Home.Card.Chess960.Customize.Back": "بازگشت",
+    "Home.Card.Chess960.Customize.Randomize": "تصادفی",
+    "Home.Card.Chess960.Customize.Standard": "استاندارد",
+    "Home.Card.Chess960.Customize.Play": "بازی",
+    "Home.Card.Chess960.Customize.Analysis": "تحلیل",
 
     "Board.Action.TogglePawnStructureView": "نمایش ساختار پیاده‌ها",
     "Board.Action.TakeSnapshot": "گرفتن اسکرین‌شات",
