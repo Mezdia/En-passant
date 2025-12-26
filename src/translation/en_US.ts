@@ -149,6 +149,9 @@ export const en_US = {
     "Home.Card.Chess960.Customize.Standard": "Standard",
     "Home.Card.Chess960.Customize.Play": "Play",
     "Home.Card.Chess960.Customize.Analysis": "Analysis",
+    "Home.Card.Chess960.Customize.SideToMove": "Side to move",
+    "Home.Card.Chess960.Customize.White": "White",
+    "Home.Card.Chess960.Customize.Black": "Black",
 
     "Board.Action.TogglePawnStructureView": "Toggle Pawn Structure View",
     "Board.Action.TakeSnapshot": "Take Snapshot",
@@ -293,6 +296,8 @@ export const en_US = {
     "Errors.InvalidPockets": "Invalid pockets",
     "Errors.InvalidRemainingChecks": "Invalid remaining checks",
     "Errors.InvalidTurn": "Invalid turn",
+    "Errors.TooManyPieces": "Too many pieces",
+    "Errors.NoLegalMoves": "No legal moves available",
     "Errors.Unknown": "Unknown error",
 
     "Fen.Start": "Start",

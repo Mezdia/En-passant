@@ -149,6 +149,9 @@ export const fa_IR = {
     "Home.Card.Chess960.Customize.Standard": "استاندارد",
     "Home.Card.Chess960.Customize.Play": "بازی",
     "Home.Card.Chess960.Customize.Analysis": "تحلیل",
+    "Home.Card.Chess960.Customize.SideToMove": "نوبت حرکت",
+    "Home.Card.Chess960.Customize.White": "سفید",
+    "Home.Card.Chess960.Customize.Black": "سیاه",
 
     "Board.Action.TogglePawnStructureView": "نمایش ساختار پیاده‌ها",
     "Board.Action.TakeSnapshot": "گرفتن اسکرین‌شات",
@@ -291,6 +294,8 @@ export const fa_IR = {
     "Errors.InvalidPockets": "جیب‌ها نامعتبر",
     "Errors.InvalidRemainingChecks": "چک‌های باقی‌مانده نامعتبر",
     "Errors.InvalidTurn": "نوبت نامعتبر",
+    "Errors.TooManyPieces": "تعداد مهره‌ها بیش از حد مجاز است",
+    "Errors.NoLegalMoves": "هیچ حرکت قانونی وجود ندارد",
     "Errors.Unknown": "خطای ناشناخته",
 
     "Fen.Start": "شروع",
