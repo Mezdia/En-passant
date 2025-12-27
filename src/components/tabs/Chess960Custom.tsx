@@ -12,8 +12,8 @@ import { tabsAtom } from "@/state/atoms";
 import type { Tab } from "@/utils/tabs";
 import PiecesGrid from "@/components/boards/PiecesGrid";
 // Correct imports: Chess is in the root 'chessops', fen utils are in 'chessops/fen'
-import { parseFen, makeFen } from "chessops/fen";
-import { Chess } from "chessops";
+import { parseFen, makeFen, InvalidFen } from "chessops/fen";
+import { Chess, SquareSet, IllegalSetup } from "chessops";
 
 interface Chess960CustomProps {
     id: string;
@@ -104,16 +104,68 @@ export default function Chess960Custom({ id, onBack }: Chess960CustomProps) {
         setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     };
 
+    // Helper to sanitize setup:
+    // 1. Clears En Passant square (prevent stale EP)
+    // 2. Ensures basic move counters
+    // 3. Strips invalid Castling Rights if they cause validation errors
+    const sanitizeSetup = (setup: any) => {
+        // Always clear EP square on manual setup changes to avoid invalid states
+        setup.epSquare = undefined;
+
+        // Ensure proper move counts
+        if (setup.turn === 'black' && setup.fullmoves === 0) setup.fullmoves = 1;
+        if (setup.turn === 'white' && setup.fullmoves === 0) setup.fullmoves = 1;
+
+        // Validating Castling Rights
+        // If the current setup has bad castling flags (e.g. piece moved), Chess.fromSetup will fail.
+        // We try to anticipate or fix this by attempting to validate, and if 'BadCastlingFlags' or similar occurs,
+        // we strip the rights to make the position "Legal" (albeit without castling).
+        // Note: We can't use the error enum directly easily without comprehensive imports, 
+        // but we can try-catch or check the result.
+        const res = Chess.fromSetup(setup);
+        // Use the unwrap pattern correctly to get the error if any
+        const [, posErr] = res.unwrap(
+            (c) => [c, null],
+            (e) => [null, e]
+        );
+
+        if (posErr) {
+            const err = posErr;
+            // Check if error is related to castling issues (e.g. lost rights but flags remain)
+            // We use precise enum checks now that we imported them.
+            if (err && typeof err === 'object' && 'message' in err &&
+                (err.message === InvalidFen.Castling || err.message === InvalidFen.Fen)) {
+
+                // Try stripping castling rights
+                const cleanSetup = { ...setup, unmovedRooks: SquareSet.empty() };
+
+                // Verify if stripping fixes it
+                const cleanRes = Chess.fromSetup(cleanSetup);
+                const [, cleanErr] = cleanRes.unwrap(c => [c, null], e => [null, e]);
+
+                if (!cleanErr) {
+                    // If valid without castling rights, apply the fix
+                    setup.unmovedRooks = SquareSet.empty();
+                }
+            }
+        }
+        return setup;
+    };
+
     const handleTurnChange = (value: string) => {
         const res = parseFen(fen);
         const [setup] = res.unwrap(s => [s, null], e => [null, e]);
         if (!setup) return;
+
         setup.turn = value as "white" | "black";
+
+        // Sanitize to prevent invalid states when just switching turns
+        sanitizeSetup(setup);
+
         setFen(makeFen(setup));
     };
 
     const handleBoardFenChange = (newFen: string) => {
-        // Logic to preserve turn when pieces are moved on the board
         try {
             const oldRes = parseFen(fen);
             const newRes = parseFen(newFen);
@@ -124,6 +176,10 @@ export default function Chess960Custom({ id, onBack }: Chess960CustomProps) {
 
                 // Keep the turn from our potential UI state / previous state
                 newSetup.turn = oldSetup.turn;
+
+                // Sanitize the new board setup (clear EP, check consistency)
+                sanitizeSetup(newSetup);
+
                 setFen(makeFen(newSetup));
             } else {
                 setFen(newFen);
@@ -134,7 +190,6 @@ export default function Chess960Custom({ id, onBack }: Chess960CustomProps) {
     };
 
     const handlePiecePut = (newFen: string) => {
-        // Similar logic for piece palette drops
         handleBoardFenChange(newFen);
     }
 
