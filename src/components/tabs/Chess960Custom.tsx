@@ -7,8 +7,8 @@ import { Chessground } from "@/chessground/Chessground";
 import { generateChess960Fen } from "@/utils/chess";
 import { defaultTree } from "@/utils/treeReducer";
 import { chessopsError } from "@/utils/chessops";
-import { useAtom } from "jotai";
-import { tabsAtom } from "@/state/atoms";
+import { useAtom, useAtomValue } from "jotai";
+import { tabsAtom, pieceSetAtom } from "@/state/atoms";
 import type { Tab } from "@/utils/tabs";
 import PiecesGrid from "@/components/boards/PiecesGrid";
 // Correct imports: Chess is in the root 'chessops', fen utils are in 'chessops/fen'
@@ -23,6 +23,7 @@ interface Chess960CustomProps {
 export default function Chess960Custom({ id, onBack }: Chess960CustomProps) {
     const { t } = useTranslation();
     const theme = useMantineTheme();
+    const pieceSet = useAtomValue(pieceSetAtom);
     // State for the full FEN string
     const [fen, setFen] = useState("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     const [, setTabs] = useAtom(tabsAtom);
@@ -68,25 +69,10 @@ export default function Chess960Custom({ id, onBack }: Chess960CustomProps) {
             return { valid: false, error: chessopsError(posErr!) };
         }
 
-        // 3. Legal Moves Check 
+        // 3. Legal Moves Check
         // We must ensure the side to move has at least one legal move.
-        // allDests() returns a Map of legal moves. It seems .size is a function based on previous errors.
-        // Or we can just count them.
-        let hasMoves = false;
-        // Optimization: checking if size > 0
-        // 'dests' in hasCaptures is iterated. 
-        // If it's a Map, .size is a property. If `dests(turn)` errored with "() => number and number no overlap", 
-        // it means `dests(...)` returned an object with `.size` as a function. 
-        // We'll perform a safe check.
-        // Using allDests() to get all legal moves for the current turn.
         const allMoves = chess.allDests();
-        // Check if map is empty. Iterating is safe.
-        for (const _ of allMoves) {
-            hasMoves = true;
-            break;
-        }
-
-        if (!hasMoves) {
+        if (allMoves.size === 0) {
             return { valid: false, error: "Errors.NoLegalMoves" };
         }
 
