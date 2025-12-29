@@ -253,6 +253,101 @@ export async function getChesscomGame(gameURL: string) {
   return makePgn(game);
 }
 
+// Type for game data used in the Games Viewer
+export type ChessComGameData = {
+  id: string;
+  url: string;
+  pgn: string;
+  timeControl: string;
+  endTime: number;
+  rated: boolean;
+  white: {
+    username: string;
+    rating: number;
+    result: string;
+  };
+  black: {
+    username: string;
+    rating: number;
+    result: string;
+  };
+  opening?: string;
+};
+
+// Fetch games for viewing (returns array of games)
+export async function fetchChessComGames(
+  player: string,
+  maxGames: number = 50
+): Promise<ChessComGameData[]> {
+  const archives = await getGameArchives(player);
+  if (!archives.archives || archives.archives.length === 0) {
+    return [];
+  }
+
+  const allGames: ChessComGameData[] = [];
+  // Start from the most recent archive
+  const sortedArchives = [...archives.archives].reverse();
+
+  for (const archive of sortedArchives) {
+    if (allGames.length >= maxGames) break;
+
+    const response = await fetch(archive, { headers, method: "GET" });
+    const gamesResult = ChessComGames.safeParse(await response.json());
+
+    if (!gamesResult.success) {
+      error(`Failed to fetch Chess.com games from ${archive}`);
+      continue;
+    }
+
+    // Also reverse games within the archive to get most recent first
+    const reversedGames = [...gamesResult.data.games].reverse();
+
+    for (const game of reversedGames) {
+      if (allGames.length >= maxGames) break;
+
+      // Extract game ID from URL
+      const urlMatch = game.url.match(/\/game\/(live|daily)\/(\d+)/);
+      const gameId = urlMatch ? urlMatch[2] : game.url;
+
+      // Try to extract opening from PGN
+      let opening: string | undefined;
+      if (game.pgn) {
+        const ecoMatch = game.pgn.match(/\[ECOUrl\s+"[^"]*\/([^"]+)"\]/);
+        if (ecoMatch) {
+          opening = ecoMatch[1].replace(/-/g, " ");
+        } else {
+          const openingMatch = game.pgn.match(/\[Opening\s+"([^"]+)"\]/);
+          if (openingMatch) {
+            opening = openingMatch[1];
+          }
+        }
+      }
+
+      allGames.push({
+        id: gameId,
+        url: game.url,
+        pgn: game.pgn || "",
+        timeControl: game.time_control,
+        endTime: game.end_time,
+        rated: game.rated,
+        white: {
+          username: game.white.username,
+          rating: game.white.rating,
+          result: game.white.result,
+        },
+        black: {
+          username: game.black.username,
+          rating: game.black.rating,
+          result: game.black.result,
+        },
+        opening,
+      });
+    }
+  }
+
+  return allGames;
+}
+
 export function getStats(stats: ChessComStats) {
   const statsArray = [];
   if (stats.chess_bullet) {

@@ -410,6 +410,97 @@ export async function downloadLichess(
   );
 }
 
+// Type for game data used in the Games Viewer
+export type LichessGameData = {
+  id: string;
+  url: string;
+  pgn: string;
+  speed: string;
+  rated: boolean;
+  createdAt: number;
+  white: {
+    username: string;
+    rating: number;
+    result: "win" | "loss" | "draw";
+  };
+  black: {
+    username: string;
+    rating: number;
+    result: "win" | "loss" | "draw";
+  };
+  opening?: string;
+};
+
+// Fetch games for viewing (returns array of games)
+export async function fetchLichessGames(
+  player: string,
+  maxGames: number = 50,
+  token?: string
+): Promise<LichessGameData[]> {
+  const url = `${baseURL}/games/user/${player}?max=${maxGames}&opening=true&pgnInJson=true`;
+
+  const headers: Record<string, string> = {
+    Accept: "application/x-ndjson",
+  };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, { headers, method: "GET" });
+
+  if (!response.ok) {
+    error(`Failed to fetch Lichess games: ${response.status} ${response.url}`);
+    return [];
+  }
+
+  const text = await response.text();
+  const lines = text.trim().split("\n").filter((line) => line.length > 0);
+
+  const games: LichessGameData[] = [];
+
+  for (const line of lines) {
+    try {
+      const game = JSON.parse(line);
+
+      // Determine results
+      let whiteResult: "win" | "loss" | "draw" = "draw";
+      let blackResult: "win" | "loss" | "draw" = "draw";
+
+      if (game.winner === "white") {
+        whiteResult = "win";
+        blackResult = "loss";
+      } else if (game.winner === "black") {
+        whiteResult = "loss";
+        blackResult = "win";
+      }
+
+      games.push({
+        id: game.id,
+        url: `https://lichess.org/${game.id}`,
+        pgn: game.pgn || "",
+        speed: game.speed,
+        rated: game.rated,
+        createdAt: game.createdAt,
+        white: {
+          username: game.players?.white?.user?.name || game.players?.white?.user?.id || "Anonymous",
+          rating: game.players?.white?.rating || 0,
+          result: whiteResult,
+        },
+        black: {
+          username: game.players?.black?.user?.name || game.players?.black?.user?.id || "Anonymous",
+          rating: game.players?.black?.rating || 0,
+          result: blackResult,
+        },
+        opening: game.opening?.name,
+      });
+    } catch (e) {
+      error(`Failed to parse Lichess game: ${e}`);
+    }
+  }
+
+  return games;
+}
+
 export async function getLichessGame(gameId: string): Promise<string> {
   const response = await window.fetch(
     `https://lichess.org/game/export/${gameId.slice(0, 8)}`,

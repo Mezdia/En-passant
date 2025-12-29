@@ -44,8 +44,8 @@ i18n.use(initReactI18next).init({
     fa_IR: fa_IR,
     ar_SA: ar_SA,
   },
-  lng: localStorage.getItem("lang") || "fa_IR",
-  fallbackLng: "fa_IR",
+  lng: localStorage.getItem("lang") || "en_US",
+  fallbackLng: "en_US",
 });
 
 dayjs.extend(customParseFormat);
