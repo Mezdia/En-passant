@@ -26,8 +26,8 @@
   font-style: normal;
 }
 
-html[lang="fa_IR"] {
-  font-family: 'Vazirmatn', sans-serif;
+html[lang="fa_IR"], html[lang="fa_IR"] body {
+  font-family: 'Vazirmatn', sans-serif !important;
 }
 
 html[lang="ar_SA"] {

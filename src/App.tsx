@@ -12,9 +12,10 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getMatches } from "@tauri-apps/plugin-cli";
 import { attachConsole, info } from "@tauri-apps/plugin-log";
+import i18n from "i18next";
 import { getDefaultStore, useAtom, useAtomValue } from "jotai";
 import { ContextMenuProvider } from "mantine-contextmenu";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import {
   activeTabAtom,
@@ -130,9 +131,27 @@ export default function App() {
   const fontSize = useAtomValue(fontSizeAtom);
   const spellCheck = useAtomValue(spellCheckAtom);
 
+  const [lang, setLang] = useState(localStorage.getItem("lang") || "en_US");
+
   useEffect(() => {
     document.documentElement.style.fontSize = `${fontSize}%`;
   }, [fontSize]);
+
+  // Update HTML lang and dir attributes when language changes to support font switching
+  useEffect(() => {
+    const updateLang = () => {
+      const currentLang = localStorage.getItem("lang") || "en_US";
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = i18n.dir(currentLang);
+      setLang(currentLang);
+    };
+
+    updateLang();
+    i18n.on("languageChanged", updateLang);
+    return () => {
+      i18n.off("languageChanged", updateLang);
+    };
+  }, []);
 
   return (
     <>
@@ -144,6 +163,7 @@ export default function App() {
         defaultColorScheme="dark"
         theme={{
           primaryColor,
+          fontFamily: lang === "fa_IR" ? "Vazirmatn, sans-serif" : "serif",
           components: {
             ActionIcon: ActionIcon.extend({
               defaultProps: {

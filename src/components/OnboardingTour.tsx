@@ -1,54 +1,99 @@
-import {
-    Button,
-    Group,
-    Modal,
-    Stack,
-    Stepper,
-    Text,
-    ThemeIcon,
-    useMantineTheme,
-    Box,
-    Title,
-    Transition,
-} from "@mantine/core";
-import {
-    IconArrowRight,
-    IconArrowLeft,
-    IconCheck,
-    IconChess,
-    IconDatabase,
-    IconLayoutSidebar,
-    IconRobot,
-    IconSettings,
-    IconX,
-    IconClock,
-    IconRocket,
-} from "@tabler/icons-react";
-import { useState, useEffect } from "react";
+import { Button, Group, Modal, Stack, Text, ThemeIcon, Title } from "@mantine/core";
+import { IconRocket } from "@tabler/icons-react";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import * as classes from "./OnboardingTour.css";
+import "./OnboardingTour.css";
 
 interface OnboardingTourProps {
     opened: boolean;
     onClose: () => void;
 }
 
-export type OnboardingStatus = "completed" | "skipped" | "later" | null;
-
 export function OnboardingTour({ opened, onClose }: OnboardingTourProps) {
     const { t, i18n } = useTranslation();
-    const theme = useMantineTheme();
-    const [active, setActive] = useState(0);
     const isRtl = i18n.dir() === "rtl";
+    const driverObj = useRef<ReturnType<typeof driver> | null>(null);
+    const [showWelcome, setShowWelcome] = useState(true);
 
-    const nextStep = () =>
-        setActive((current) => (current < steps.length - 1 ? current + 1 : current));
-    const prevStep = () =>
-        setActive((current) => (current > 0 ? current - 1 : current));
+    // Reset welcome state when reopened
+    useEffect(() => {
+        if (opened) {
+            setShowWelcome(true);
+        }
+    }, [opened]);
 
-    const handleFinish = () => {
-        localStorage.setItem("onboarding_status", "completed");
-        onClose();
+    const handleStart = () => {
+        setShowWelcome(false);
+
+        // Small delay to allow modal to close before driver starts
+        setTimeout(() => {
+            driverObj.current = driver({
+                showProgress: true,
+                animate: true,
+                allowClose: true,
+                doneBtnText: t("Onboarding.Buttons.Finish"),
+                nextBtnText: t("Onboarding.Buttons.Next"),
+                prevBtnText: t("Common.Previous"),
+                onDestroyed: () => {
+                    // If destroyed (closed/finished), we notify parent
+                    onClose();
+                },
+                steps: [
+                    {
+                        element: "#tour-nav-board",
+                        popover: {
+                            title: t("Onboarding.Board.Title"),
+                            description: t("Onboarding.Board.Desc"),
+                            side: isRtl ? "left" : "right",
+                            align: "start",
+                        },
+                    },
+                    {
+                        element: "#tour-nav-files",
+                        popover: {
+                            title: t("Onboarding.Databases.Title"),
+                            description: t("Onboarding.Databases.Desc"),
+                            side: isRtl ? "left" : "right",
+                            align: "start",
+                        },
+                    },
+                    {
+                        element: "#tour-nav-bots",
+                        popover: {
+                            title: t("Onboarding.Bots.Title"),
+                            description: t("Onboarding.Bots.Desc"),
+                            side: isRtl ? "left" : "right",
+                            align: "start",
+                        },
+                    },
+                    {
+                        element: "#tour-nav-settings",
+                        popover: {
+                            title: t("Onboarding.Settings.Title"),
+                            description: t("Onboarding.Settings.Desc"),
+                            side: isRtl ? "left" : "right",
+                            align: "start",
+                        },
+                    },
+                    {
+                        element: "#root", // Center finish
+                        popover: {
+                            title: t("Onboarding.Finish.Title"),
+                            description: t("Onboarding.Finish.Desc"),
+                            side: "top",
+                            align: "center",
+                            onNextClick: () => {
+                                localStorage.setItem("onboarding_status", "completed");
+                                driverObj.current?.destroy();
+                            }
+                        },
+                    },
+                ]
+            });
+            driverObj.current.drive();
+        }, 300);
     };
 
     const handleSkip = () => {
@@ -61,157 +106,43 @@ export function OnboardingTour({ opened, onClose }: OnboardingTourProps) {
         onClose();
     };
 
-    const steps = [
-        {
-            title: t("Onboarding.Welcome.Title"),
-            description: t("Onboarding.Welcome.Desc"),
-            icon: <IconRocket size={32} />,
-            color: "blue",
-        },
-        {
-            title: t("Onboarding.Sidebar.Title"),
-            description: t("Onboarding.Sidebar.Desc"),
-            icon: <IconLayoutSidebar size={32} />,
-            color: "cyan",
-        },
-        {
-            title: t("Onboarding.Board.Title"),
-            description: t("Onboarding.Board.Desc"),
-            icon: <IconChess size={32} />,
-            color: "teal",
-        },
-        {
-            title: t("Onboarding.Databases.Title"),
-            description: t("Onboarding.Databases.Desc"),
-            icon: <IconDatabase size={32} />,
-            color: "orange",
-        },
-        {
-            title: t("Onboarding.Bots.Title"),
-            description: t("Onboarding.Bots.Desc"),
-            icon: <IconRobot size={32} />,
-            color: "indigo",
-        },
-        {
-            title: t("Onboarding.Settings.Title"),
-            description: t("Onboarding.Settings.Desc"),
-            icon: <IconSettings size={32} />,
-            color: "pink",
-        },
-        {
-            title: t("Onboarding.Finish.Title"),
-            description: t("Onboarding.Finish.Desc"),
-            icon: <IconCheck size={32} />,
-            color: "green",
-        },
-    ];
-
     return (
         <Modal
-            opened={opened}
-            onClose={() => { }} // Disable closing by clicking outside/esc
-            withCloseButton={false}
+            opened={opened && showWelcome}
+            onClose={handleLater}
             centered
-            size="xl"
-            padding={0}
+            withCloseButton={false}
+            size="md"
+            padding="xl"
             radius="lg"
             overlayProps={{
-                backgroundOpacity: 0.7,
-                blur: 5,
+                backgroundOpacity: 0.55,
+                blur: 3,
             }}
-            transitionProps={{ transition: 'fade', duration: 300 }}
         >
-            <Box className={classes.root}>
-                <Stack gap={0} h="100%">
-                    {/* Header Area with Graphic/Color Accent */}
-                    <Box className={classes.header} style={{ backgroundColor: theme.colors[steps[active].color][9] }}>
-                        <Transition mounted={opened} transition="slide-down" duration={500} timingFunction="ease">
-                            {(styles) => (
-                                <Stack align="center" style={styles}>
-                                    <ThemeIcon size={80} radius={100} variant="white" color={steps[active].color} className={classes.iconPulse}>
-                                        {steps[active].icon}
-                                    </ThemeIcon>
-                                    <Title order={1} className={classes.title} c="white">
-                                        {steps[active].title}
-                                    </Title>
-                                </Stack>
-                            )}
-                        </Transition>
-                    </Box>
+            <Stack align="center" gap="lg" py="md">
+                <ThemeIcon size={80} radius={100} variant="light" color="blue">
+                    <IconRocket size={40} />
+                </ThemeIcon>
 
-                    {/* Content Area */}
-                    <Box className={classes.content}>
-                        <Stack align="center" gap="xl" h="100%" justify="space-between">
-                            <Text size="lg" ta="center" className={classes.description}>
-                                {steps[active].description}
-                            </Text>
+                <Title order={2} ta="center">{t("Onboarding.Welcome.Title")}</Title>
 
-                            <Stepper
-                                active={active}
-                                onStepClick={setActive}
-                                className={classes.stepper}
-                                size="sm"
-                                allowNextStepsSelect={false}
-                            >
-                                {steps.map((_, index) => (
-                                    <Stepper.Step key={index} />
-                                ))}
-                            </Stepper>
+                <Text c="dimmed" ta="center" size="lg">
+                    {t("Onboarding.Welcome.Desc")}
+                </Text>
 
-                            <Group justify="space-between" w="100%" mt="xl">
-                                <Group>
-                                    <Button
-                                        variant="subtle"
-                                        color="gray"
-                                        onClick={handleSkip}
-                                        leftSection={<IconX size={16} />}
-                                    >
-                                        {t("Onboarding.Buttons.Close")}
-                                    </Button>
-                                    <Button
-                                        variant="subtle"
-                                        color="gray"
-                                        onClick={handleLater}
-                                        leftSection={<IconClock size={16} />}
-                                    >
-                                        {t("Onboarding.Buttons.Later")}
-                                    </Button>
-                                </Group>
-
-                                <Group>
-                                    {active > 0 && (
-                                        <Button
-                                            variant="default"
-                                            onClick={prevStep}
-                                            leftSection={isRtl ? <IconArrowRight size={18} /> : <IconArrowLeft size={18} />}
-                                        >
-                                            {t("Common.Previous")}
-                                        </Button>
-                                    )}
-                                    {active < steps.length - 1 ? (
-                                        <Button
-                                            onClick={nextStep}
-                                            rightSection={isRtl ? <IconArrowLeft size={18} /> : <IconArrowRight size={18} />}
-                                            className={classes.actionButton}
-                                        >
-                                            {t("Onboarding.Buttons.Next")}
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            color="green"
-                                            onClick={handleFinish}
-                                            leftSection={<IconCheck size={18} />}
-                                            className={classes.actionButton}
-                                        >
-                                            {t("Onboarding.Buttons.Finish")}
-                                        </Button>
-                                    )}
-                                </Group>
-                            </Group>
-                        </Stack>
-                    </Box>
-                </Stack>
-            </Box>
+                <Group w="100%" justify="center" mt="md">
+                    <Button variant="subtle" color="gray" onClick={handleSkip}>
+                        {t("Onboarding.Buttons.Close")}
+                    </Button>
+                    <Button variant="default" onClick={handleLater}>
+                        {t("Onboarding.Buttons.Later")}
+                    </Button>
+                    <Button size="md" onClick={handleStart}>
+                        {t("Onboarding.Buttons.Finish")}
+                    </Button>
+                </Group>
+            </Stack>
         </Modal>
     );
 }
