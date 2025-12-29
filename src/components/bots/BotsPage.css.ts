@@ -38,15 +38,14 @@ export const card = style({
     flexDirection: "column",
     position: "relative",
     overflow: "hidden",
-    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
 
     [vars.lightSelector]: {
         background: vars.colors.white,
         borderColor: vars.colors.gray[2],
         ":hover": {
             borderColor: "var(--mantine-primary-color-filled)",
-            transform: "translateY(-6px)",
-            boxShadow: "0 12px 24px -8px rgba(0, 0, 0, 0.12)",
+            boxShadow: "0 8px 20px -6px rgba(0, 0, 0, 0.15)",
         },
     },
     [vars.darkSelector]: {
@@ -54,8 +53,7 @@ export const card = style({
         borderColor: vars.colors.dark[4],
         ":hover": {
             borderColor: "var(--mantine-primary-color-filled)",
-            transform: "translateY(-6px)",
-            boxShadow: "0 16px 32px -12px rgba(0, 0, 0, 0.45)",
+            boxShadow: "0 12px 28px -8px rgba(0, 0, 0, 0.5)",
         },
     },
 });
@@ -85,11 +83,11 @@ export const cardImage = style({
     width: "100%",
     height: "100%",
     objectFit: "cover",
-    transition: "transform 0.5s ease",
+    transition: "opacity 0.4s ease",
 
     selectors: {
         [`${card}:hover &`]: {
-            transform: "scale(1.1)",
+            opacity: 0.9,
         },
     },
 });
@@ -245,7 +243,7 @@ export const categoryItem = style({
     width: "100%",
     fontSize: vars.fontSizes.sm,
     fontWeight: 500,
-    transition: "all 0.2s ease",
+    transition: "all 0.3s ease",
     textAlign: "left",
 
     [vars.lightSelector]: {
@@ -355,7 +353,7 @@ export const playSideBtn = style({
     alignItems: "center",
     gap: "8px",
     cursor: "pointer",
-    transition: "all 0.2s ease",
+    transition: "all 0.3s ease",
     background: "transparent",
 
     [vars.lightSelector]: {
@@ -367,7 +365,7 @@ export const playSideBtn = style({
 
     ":hover": {
         borderColor: "var(--mantine-primary-color-filled)",
-        transform: "translateY(-2px)",
+        boxShadow: "0 4px 12px -2px rgba(0, 0, 0, 0.1)",
     },
 });
 
@@ -389,7 +387,7 @@ export const modeBtn = style({
     border: "2px solid transparent",
     cursor: "pointer",
     textAlign: "left",
-    transition: "all 0.2s ease",
+    transition: "all 0.3s ease",
     background: "transparent",
     display: "flex",
     flexDirection: "column",
@@ -424,6 +422,82 @@ export const modeTitle = style({
 export const modeDesc = style({
     fontSize: "0.7rem",
     opacity: 0.7,
+});
+
+// Golden Card Styles - Premium appearance for special bots
+export const cardGolden = style({
+    // Golden gradient border that stays consistent
+    border: "2px solid transparent",
+    
+    [vars.lightSelector]: {
+        background: `
+            linear-gradient(white, white) padding-box,
+            linear-gradient(135deg, #FFD700, #FFA500, #FFD700) border-box
+        `,
+        boxShadow: "0 4px 20px -2px rgba(255, 215, 0, 0.3)",
+        ":hover": {
+            background: `
+                linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #FFD700, #FFA500, #FF8C00) border-box
+            `,
+            boxShadow: "0 8px 24px -4px rgba(255, 215, 0, 0.5)",
+        },
+    },
+    [vars.darkSelector]: {
+        background: `
+            linear-gradient(${vars.colors.dark[7]}, ${vars.colors.dark[7]}) padding-box,
+            linear-gradient(135deg, #FFD700, #FFA500, #FFD700) border-box
+        `,
+        boxShadow: "0 4px 20px -2px rgba(255, 215, 0, 0.4)",
+        ":hover": {
+            background: `
+                linear-gradient(${vars.colors.dark[7]}, ${vars.colors.dark[7]}) padding-box,
+                linear-gradient(135deg, #FFD700, #FFA500, #FF8C00) border-box
+            `,
+            boxShadow: "0 8px 24px -4px rgba(255, 215, 0, 0.6)",
+        },
+    },
+});
+
+export const cardGoldenSelected = style({
+    border: "2px solid transparent !important",
+    background: `
+        linear-gradient(${vars.colors.white}, ${vars.colors.white}) padding-box,
+        linear-gradient(135deg, #FFD700, #FFA500, #FF8C00) border-box
+    `,
+    boxShadow: "0 0 0 4px rgba(255, 215, 0, 0.4) !important",
+    
+    [vars.darkSelector]: {
+        background: `
+            linear-gradient(${vars.colors.dark[7]}, ${vars.colors.dark[7]}) padding-box,
+            linear-gradient(135deg, #FFD700, #FFA500, #FF8C00) border-box
+        `,
+        boxShadow: "0 0 0 4px rgba(255, 215, 0, 0.5) !important",
+    },
+});
+
+// Golden rating badge
+export const ratingBadgeGolden = style({
+    background: "linear-gradient(135deg, #FFD700, #FFA500) !important",
+    color: vars.colors.dark[8] + " !important",
+    boxShadow: "0 4px 12px rgba(255, 215, 0, 0.4) !important",
+    fontWeight: 900,
+    textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
+});
+
+// Golden rating icon
+export const ratingIconGolden = style({
+    color: vars.colors.dark[8] + " !important",
+    filter: "drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))",
+});
+
+// Golden level badge
+export const cardLevelGolden = style({
+    background: "linear-gradient(135deg, #FFD700, #FFA500) !important",
+    color: vars.colors.dark[8] + " !important",
+    fontWeight: 900,
+    textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
+    border: "1px solid rgba(255, 215, 0, 0.3)",
 });
 
 // Legacy support (to avoid crashes if components still use them)

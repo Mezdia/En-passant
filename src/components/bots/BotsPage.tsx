@@ -98,7 +98,12 @@ function BotCard({
 
     return (
         <Box
-            className={cx(classes.card, { [classes.cardSelected]: isSelected })}
+            className={cx(
+                classes.card, 
+                { [classes.cardSelected]: isSelected },
+                { [classes.cardGolden]: bot.cardStyle === "golden" },
+                { [classes.cardGoldenSelected]: bot.cardStyle === "golden" && isSelected }
+            )}
             component="button"
             type="button"
             onClick={onClick}
@@ -133,8 +138,8 @@ function BotCard({
                 )}
 
                 {/* Rating Badge */}
-                <div className={classes.ratingBadge}>
-                    <IconTrophy size={14} className={classes.ratingIcon} />
+                <div className={cx(classes.ratingBadge, { [classes.ratingBadgeGolden]: bot.cardStyle === "golden" })}>
+                    <IconTrophy size={14} className={cx(classes.ratingIcon, { [classes.ratingIconGolden]: bot.cardStyle === "golden" })} />
                     <span>{bot.rating}</span>
                 </div>
             </div>
@@ -147,7 +152,7 @@ function BotCard({
                 <p className={classes.cardDescription}>
                     {t(bot.descriptionKey, { defaultValue: bot.description })}
                 </p>
-                <div className={classes.cardLevel}>
+                <div className={cx(classes.cardLevel, { [classes.cardLevelGolden]: bot.cardStyle === "golden" })}>
                     <IconChessKing size={12} />
                     <span>{getRatingDescription(bot.rating)}</span>
                 </div>

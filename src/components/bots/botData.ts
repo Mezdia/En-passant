@@ -12,7 +12,10 @@ export interface Bot {
     image?: string;           // Path to bot image
     country?: string | string[]; // Country code(s) for flag (e.g., "us", "ru", or ["fr", "ir"])
     greeting?: string;        // Custom greeting translation key
+    cardStyle?: "golden";    // Special card appearance style
 }
+
+export type CardStyle = "golden";
 
 export type BotCategory =
     | "Beginner"
@@ -921,7 +924,8 @@ export const TOP_PLAYER_BOTS: Bot[] = [
         category: "TopPlayers",
         image: "/bots/top_players/Hikaru-bot.png",
         country: "us",
-        greeting: "bot.hikaru.greeting"
+        greeting: "bot.hikaru.greeting",
+        cardStyle: "golden"
     },
     {
         id: "AnnaMuzychukBot",
@@ -969,7 +973,8 @@ export const TOP_PLAYER_BOTS: Bot[] = [
         category: "TopPlayers",
         image: "/bots/top_players/Caruanabot.png",
         country: "us",
-        greeting: "bot.caruanabot.greeting"
+        greeting: "bot.caruanabot.greeting",
+        cardStyle: "golden"
     },
     {
         id: "Kosteniuk-Bot",
@@ -1173,7 +1178,8 @@ export const TOP_PLAYER_BOTS: Bot[] = [
         category: "TopPlayers",
         image: "/bots/top_players/world-champion-carlsen.png",
         country: "no",
-        greeting: "bot.carlsen.greeting"
+        greeting: "bot.carlsen.greeting",
+        cardStyle: "golden"
     },
     {
         id: "firouzja-bot",
@@ -1185,7 +1191,8 @@ export const TOP_PLAYER_BOTS: Bot[] = [
         category: "TopPlayers",
         image: "/bots/top_players/firouzjaBot.png",
         country: ["fr", "ir"],
-        greeting: "bot.firouzja.greeting"
+        greeting: "bot.firouzja.greeting",
+        cardStyle: "golden"
     }
 ];
 
