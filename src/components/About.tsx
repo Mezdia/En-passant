@@ -90,20 +90,20 @@ function AboutModal({
 
         <Text fw="bold">Project Repository:</Text>
         <Anchor
-          href="https://github.com/Mezdia/en-croissant"
+          href="https://github.com/Mezdia/en-passant"
           target="_blank"
           rel="noreferrer"
         >
-          https://github.com/Mezdia/en-croissant
+          https://github.com/Mezdia/en-passant
         </Anchor>
 
         <Text fw="bold">Website:</Text>
         <Anchor
-          href="https://www.encroissant.ir"
+          href="https://www.enpassant.ir"
           target="_blank"
           rel="noreferrer"
         >
-          https://www.encroissant.ir
+          https://www.enpassant.ir
         </Anchor>
 
         <Text size="sm" c="dimmed">Copyright © 2025 Mezdia. All rights reserved.</Text>

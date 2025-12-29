@@ -1,5 +1,7 @@
 import type { Dirs } from "@/App";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import AboutModal from "@/components/About";
+import { LanguageSelectorModal } from "@/components/LanguageSelectorModal";
 import { SideBar } from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
 import { activeTabAtom, nativeBarAtom, tabsAtom } from "@/state/atoms";
@@ -134,6 +136,14 @@ function RootLayout() {
   useHotkeys(keyMap.NEW_TAB.keys, createNewTab);
   useHotkeys(keyMap.OPEN_FILE.keys, openNewFile);
   const [opened, setOpened] = useState(false);
+  const [languageModalOpened, setLanguageModalOpened] = useState(false);
+
+  useEffect(() => {
+    const lang = localStorage.getItem("lang");
+    if (!lang) {
+      setLanguageModalOpened(true);
+    }
+  }, []);
 
   const menuActions: MenuGroup[] = useMemo(
     () => [
@@ -198,7 +208,7 @@ function RootLayout() {
             id: "logs",
             action: async () => {
               let path = "en-croissant.log"; // Default path for development
-              
+
               if (isTauri()) {
                 try {
                   const { appLogDir } = await import("@tauri-apps/api/path");
@@ -207,12 +217,12 @@ function RootLayout() {
                   console.warn("Failed to get app log dir:", e);
                 }
               }
-              
+
               notifications.show({
                 title: "Logs",
                 message: `Logs would be at: ${path}`,
               });
-              
+
               if (isTauri()) {
                 try {
                   const { open: shellOpen } = await import("@tauri-apps/plugin-shell");
@@ -246,14 +256,14 @@ function RootLayout() {
 
   useEffect(() => {
     if (!menu) return;
-    
+
     if (isTauri()) {
       if (isNative || import.meta.env.VITE_PLATFORM !== "win32") {
         menu.setAsAppMenu();
-        getCurrentWindow().then((window) => window.setDecorations(true));
+        getCurrentWindow().setDecorations(true);
       } else {
         Menu.new().then((m) => m.setAsAppMenu());
-        getCurrentWindow().then((window) => window.setDecorations(false));
+        getCurrentWindow().setDecorations(false);
       }
     }
     // In development mode, we don't set up the native menu
@@ -269,8 +279,8 @@ function RootLayout() {
         isNative || import.meta.env.VITE_PLATFORM !== "win32"
           ? undefined
           : {
-              height: "2.5rem",
-            }
+            height: "2.5rem",
+          }
       }
       styles={{
         main: {
@@ -279,6 +289,10 @@ function RootLayout() {
         },
       }}
     >
+      <LanguageSelectorModal
+        opened={languageModalOpened}
+        onClose={() => setLanguageModalOpened(false)}
+      />
       <AboutModal opened={opened} setOpened={setOpened} />
       {!isNative && import.meta.env.VITE_PLATFORM === "win32" && (
         <AppShell.Header>
