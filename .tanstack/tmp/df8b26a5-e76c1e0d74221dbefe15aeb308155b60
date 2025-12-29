@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as FilesRouteImport } from './routes/files'
 import { Route as EnginesRouteImport } from './routes/engines'
-import { Route as BotsRouteImport } from './routes/bots'
 import { Route as AccountsRouteImport } from './routes/accounts'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DatabasesIndexRouteImport } from './routes/databases/index'
@@ -31,11 +30,6 @@ const FilesRoute = FilesRouteImport.update({
 const EnginesRoute = EnginesRouteImport.update({
   id: '/engines',
   path: '/engines',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BotsRoute = BotsRouteImport.update({
-  id: '/bots',
-  path: '/bots',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountsRoute = AccountsRouteImport.update({
@@ -62,7 +56,6 @@ const DatabasesDatabaseIdRoute = DatabasesDatabaseIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accounts': typeof AccountsRoute
-  '/bots': typeof BotsRoute
   '/engines': typeof EnginesRoute
   '/files': typeof FilesRoute
   '/settings': typeof SettingsRoute
@@ -72,7 +65,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accounts': typeof AccountsRoute
-  '/bots': typeof BotsRoute
   '/engines': typeof EnginesRoute
   '/files': typeof FilesRoute
   '/settings': typeof SettingsRoute
@@ -83,7 +75,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/accounts': typeof AccountsRoute
-  '/bots': typeof BotsRoute
   '/engines': typeof EnginesRoute
   '/files': typeof FilesRoute
   '/settings': typeof SettingsRoute
@@ -95,7 +86,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/accounts'
-    | '/bots'
     | '/engines'
     | '/files'
     | '/settings'
@@ -105,7 +95,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/accounts'
-    | '/bots'
     | '/engines'
     | '/files'
     | '/settings'
@@ -115,7 +104,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/accounts'
-    | '/bots'
     | '/engines'
     | '/files'
     | '/settings'
@@ -126,7 +114,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountsRoute: typeof AccountsRoute
-  BotsRoute: typeof BotsRoute
   EnginesRoute: typeof EnginesRoute
   FilesRoute: typeof FilesRoute
   SettingsRoute: typeof SettingsRoute
@@ -155,13 +142,6 @@ declare module '@tanstack/react-router' {
       path: '/engines'
       fullPath: '/engines'
       preLoaderRoute: typeof EnginesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bots': {
-      id: '/bots'
-      path: '/bots'
-      fullPath: '/bots'
-      preLoaderRoute: typeof BotsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/accounts': {
@@ -198,7 +178,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountsRoute: AccountsRoute,
-  BotsRoute: BotsRoute,
   EnginesRoute: EnginesRoute,
   FilesRoute: FilesRoute,
   SettingsRoute: SettingsRoute,

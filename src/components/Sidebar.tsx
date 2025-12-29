@@ -7,6 +7,7 @@ import {
   IconFiles,
   IconSettings,
   IconUser,
+  IconRobot,
 } from "@tabler/icons-react";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import cx from "clsx";
@@ -45,6 +46,7 @@ const linksdata = [
     label: "Databases",
     url: "/databases",
   },
+  { icon: IconRobot, label: "Bots", url: "/bots" },
   { icon: IconCpu, label: "Engines", url: "/engines" },
 ];
 
