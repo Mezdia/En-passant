@@ -493,9 +493,9 @@ export const fa_IR = {
     "Settings.OpeningReport.MinGames.Desc":
       "حداقل تعداد بازی‌ها در هر موقعیت برای در نظر گرفته شدن",
     "Settings.Anarchy.Desc": "گزینه‌های سرگرم‌کننده",
-    "Settings.Anarchy.ForcedEnCroissant": "ان کروسان اجباری",
-    "Settings.Anarchy.ForcedEnCroissant.Desc":
-      "در صورتی که حرکت قانونی باشد، شما را مجبور می‌کند 'En Croissant' را بازی کنید.",
+    "Settings.Anarchy.ForcedEnPassant": "En-passant اجباری",
+    "Settings.Anarchy.ForcedEnPassant.Desc":
+      "در صورتی که حرکت قانونی باشد، شما را مجبور می‌کند 'En-passant' را بازی کنید.",
     "Settings.Appearance.Desc": "سفارشی‌سازی ظاهر برنامه",
     "Settings.Appearance.Theme": "تم",
     "Settings.Appearance.Theme.Desc": "طرح رنگ کلی",

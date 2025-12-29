@@ -120,7 +120,7 @@ export function useDefaultDatabases(opened: boolean) {
   const { data, error, isLoading } = useSWR(
     opened ? "default-dbs" : null,
     async () => {
-      const data = await fetch("https://www.encroissant.org/databases", {
+      const data = await fetch("https://www.enpassant.ir/databases", {
         method: "GET",
       });
       if (!data.ok) {
@@ -139,7 +139,7 @@ export function useDefaultDatabases(opened: boolean) {
 export async function getDefaultPuzzleDatabases(): Promise<
   (PuzzleDatabaseInfo & { downloadLink: string })[]
 > {
-  const data = await fetch("https://www.encroissant.org/puzzle_databases", {
+  const data = await fetch("https://www.enpassant.ir/puzzle_databases", {
     method: "GET",
   });
   if (!data.ok) {

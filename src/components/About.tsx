@@ -58,7 +58,7 @@ function AboutModal({
       centered
       opened={opened}
       onClose={() => setOpened(false)}
-      title="About En Croissant"
+      title="About En-passant"
       size="md"
     >
       <Stack gap="md">

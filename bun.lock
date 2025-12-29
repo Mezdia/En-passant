@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "en-croissant",
+      "name": "En-passant",
       "dependencies": {
         "@badrap/result": "^0.2.13",
         "@hello-pangea/dnd": "^16.5.0",

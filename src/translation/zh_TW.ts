@@ -216,7 +216,7 @@ export const zh_TW = {
     "Engines.Add.ImageFile": "圖片檔案",
     "Engines.Add.ImageFile.Desc": "點擊以選取圖片檔案 (建議尺寸: 60x60)",
     "Engines.Remove.Title": "移除引擎",
-    "Engines.Remove.Message": "您確定要從 En Croissant 中移除此引擎嗎？",
+    "Engines.Remove.Message": "您確定要從 En-passant 中移除此引擎嗎？",
 
     "Databases.Title": "您的資料庫",
     "Databases.Card.Games": "對局",
@@ -310,9 +310,9 @@ export const zh_TW = {
     "Settings.OpeningReport.MinGames": "最少對局數",
     "Settings.OpeningReport.MinGames.Desc": "每個局面需考慮的最低對局數",
     "Settings.Anarchy.Desc": "趣味選項",
-    "Settings.Anarchy.ForcedEnCroissant": "強制吃過路兵",
-    "Settings.Anarchy.ForcedEnCroissant.Desc":
-      "如果吃過路兵是合法著手，則強制走這步棋。",
+    "Settings.Anarchy.ForcedEnPassant": "強制 En-passant",
+    "Settings.Anarchy.ForcedEnPassant.Desc":
+      "如果 En-passant 是合法著手，則強制走這步棋。",
     "Settings.Appearance.Desc": "自訂應用程式外觀",
     "Settings.Appearance.Theme": "主題",
     "Settings.Appearance.Theme.Desc": "整體配色",

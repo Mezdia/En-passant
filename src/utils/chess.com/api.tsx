@@ -18,7 +18,7 @@ import { decodeTCN } from "./tcn";
 
 const baseURL = "https://api.chess.com";
 const headers = {
-  "User-Agent": "EnCroissant",
+  "User-Agent": "EnPassant",
 };
 
 const ChessComPerf = z.object({

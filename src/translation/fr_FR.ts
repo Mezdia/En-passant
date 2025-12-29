@@ -370,9 +370,9 @@ export const fr_FR = {
     "Settings.OpeningReport.MinGames.Desc":
       "Numbre minimum de parties à considérer pour chaque position",
     "Settings.Anarchy.Desc": "Options fun",
-    "Settings.Anarchy.ForcedEnCroissant": "En Croissant forcé",
-    "Settings.Anarchy.ForcedEnCroissant.Desc":
-      "Vous oblige à jouer En Croissant, si c'est un coup candidat.",
+    "Settings.Anarchy.ForcedEnPassant": "En-passant forcé",
+    "Settings.Anarchy.ForcedEnPassant.Desc":
+      "Vous oblige à jouer En-passant, si c'est un coup candidat.",
     "Settings.Appearance.Desc":
       "Personnalisation de l'interface de l'application",
     "Settings.Appearance.Theme": "Thème",

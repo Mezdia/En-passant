@@ -3,6 +3,59 @@
 version = 4
 
 [[package]]
+name = "En-passant"
+version = "0.12.1"
+dependencies = [
+ "axum",
+ "btoi",
+ "bzip2",
+ "chrono",
+ "csv",
+ "dashmap 6.0.1",
+ "derivative",
+ "diesel",
+ "futures-util",
+ "governor",
+ "lazy_static",
+ "log",
+ "nonzero_ext",
+ "oauth2",
+ "once_cell",
+ "pgn-reader",
+ "rand 0.8.5",
+ "rayon",
+ "reqwest 0.12.5",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "shakmaty",
+ "specta",
+ "specta-typescript",
+ "strsim 0.11.0",
+ "sysinfo",
+ "tar",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-cli",
+ "tauri-plugin-dialog",
+ "tauri-plugin-fs",
+ "tauri-plugin-http",
+ "tauri-plugin-log",
+ "tauri-plugin-os",
+ "tauri-plugin-process",
+ "tauri-plugin-shell",
+ "tauri-plugin-updater",
+ "tauri-plugin-window-state",
+ "tauri-specta",
+ "tempfile",
+ "thiserror 2.0.17",
+ "tokio",
+ "vampirc-uci",
+ "zip",
+ "zstd",
+]
+
+[[package]]
 name = "Inflector"
 version = "0.11.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1405,59 +1458,6 @@ name = "embed_plist"
 version = "1.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ef6b89e5b37196644d8796de5268852ff179b44e96276cf4290264843743bb7"
-
-[[package]]
-name = "en-croissant"
-version = "0.12.1"
-dependencies = [
- "axum",
- "btoi",
- "bzip2",
- "chrono",
- "csv",
- "dashmap 6.0.1",
- "derivative",
- "diesel",
- "futures-util",
- "governor",
- "lazy_static",
- "log",
- "nonzero_ext",
- "oauth2",
- "once_cell",
- "pgn-reader",
- "rand 0.8.5",
- "rayon",
- "reqwest 0.12.5",
- "rusqlite",
- "serde",
- "serde_json",
- "shakmaty",
- "specta",
- "specta-typescript",
- "strsim 0.11.0",
- "sysinfo",
- "tar",
- "tauri",
- "tauri-build",
- "tauri-plugin-cli",
- "tauri-plugin-dialog",
- "tauri-plugin-fs",
- "tauri-plugin-http",
- "tauri-plugin-log",
- "tauri-plugin-os",
- "tauri-plugin-process",
- "tauri-plugin-shell",
- "tauri-plugin-updater",
- "tauri-plugin-window-state",
- "tauri-specta",
- "tempfile",
- "thiserror 2.0.17",
- "tokio",
- "vampirc-uci",
- "zip",
- "zstd",
-]
 
 [[package]]
 name = "encoding_rs"
@@ -6120,7 +6120,7 @@ checksum = "8fec26a25bd6fca441cdd0f769fd7f891bae119f996de31f86a5eddccef54c1d"
 [[package]]
 name = "vampirc-uci"
 version = "0.11.1"
-source = "git+https://github.com/franciscoBSalgueiro/vampirc-uci?rev=c60e65c7d801920ccfc533df3ab87e292d6d0448#c60e65c7d801920ccfc533df3ab87e292d6d0448"
+source = "git+https://github.com/Mezdia/vampirc-uci?rev=c60e65c7d801920ccfc533df3ab87e292d6d0448#c60e65c7d801920ccfc533df3ab87e292d6d0448"
 dependencies = [
  "chrono",
  "pest",

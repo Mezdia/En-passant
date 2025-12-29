@@ -237,7 +237,7 @@ export const ar_SA = {
       "انقر لتحديد ملف الصورة (الحجم الموصى به: 60x60)",
     "Engines.Remove.Title": "إزالة المحرك",
     "Engines.Remove.Message":
-      "هل أنت متأكد من أنك تريد إزالة هذا المحرك من En Croissant؟",
+      "هل أنت متأكد من أنك تريد إزالة هذا المحرك من En-passant؟",
 
     "Databases.Title": "قواعد بياناتك",
     "Databases.Card.Games": "الألعاب",
@@ -366,9 +366,9 @@ export const ar_SA = {
     "Settings.OpeningReport.MinGames.Desc":
       "الحد الأدنى لعدد الألعاب في كل موقف ليُعتبر",
     "Settings.Anarchy.Desc": "خيارات ممتعة",
-    "Settings.Anarchy.ForcedEnCroissant": "إن كروسان مجبر",
-    "Settings.Anarchy.ForcedEnCroissant.Desc":
-      "يجبرك على لعب إن كروسان، إذا كان نقلة قانونية.",
+    "Settings.Anarchy.ForcedEnPassant": "En-passant مجبر",
+    "Settings.Anarchy.ForcedEnPassant.Desc":
+      "يجبرك على لعب En-passant، إذا كان نقلة قانونية.",
     "Settings.Appearance.Desc": "تخصيص مظهر التطبيق",
     "Settings.Appearance.Theme": "الموضوع",
     "Settings.Appearance.Theme.Desc": "نظام الألوان العام",

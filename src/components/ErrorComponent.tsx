@@ -55,7 +55,7 @@ export default function ErrorComponent({
       <Text>
         Please report this on{" "}
         <Anchor
-          href="https://github.com/franciscoBSalgueiro/en-croissant/issues/new?assignees=&labels=bug&projects=&template=bug.yml"
+          href="https://github.com/Mezdia/En-passant/issues/new?assignees=&labels=bug&projects=&template=bug.yml"
           target="_blank"
         >
           Github

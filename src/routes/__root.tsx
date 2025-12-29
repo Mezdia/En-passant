@@ -186,7 +186,7 @@ function RootLayout() {
           {
             label: t("Menu.Help.Documentation"),
             id: "documentation",
-            action: () => shellOpen("https://encroissant.org/docs/"),
+            action: () => shellOpen("https://enpassant.ir/docs/"),
           },
           {
             label: t("Menu.Help.ClearSavedData"),
@@ -207,12 +207,12 @@ function RootLayout() {
             label: t("Menu.Help.OpenLogs"),
             id: "logs",
             action: async () => {
-              let path = "en-croissant.log"; // Default path for development
+              let path = "en-passant.log"; // Default path for development
 
               if (isTauri()) {
                 try {
                   const { appLogDir } = await import("@tauri-apps/api/path");
-                  path = await resolve(await appLogDir(), "en-croissant.log");
+                  path = await resolve(await appLogDir(), "en-passant.log");
                 } catch (e) {
                   console.warn("Failed to get app log dir:", e);
                 }

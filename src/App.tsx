@@ -68,23 +68,23 @@ const router = createRouter({
         try {
           if (isTauri()) {
             const { documentDir, homeDir } = await import("@tauri-apps/api/path");
-            doc = await resolve(await documentDir(), "EnCroissant");
+            doc = await resolve(await documentDir(), "EnPassant");
           } else {
             // Fallback for development mode
-            doc = await resolve("./data", "EnCroissant");
+            doc = await resolve("./data", "EnPassant");
           }
         } catch (e) {
           try {
             if (isTauri()) {
               const { homeDir } = await import("@tauri-apps/api/path");
-              doc = await resolve(await homeDir(), "EnCroissant");
+              doc = await resolve(await homeDir(), "EnPassant");
             } else {
               // Fallback for development mode
-              doc = await resolve("./data", "EnCroissant");
+              doc = await resolve("./data", "EnPassant");
             }
           } catch (fallbackError) {
             // Final fallback
-            doc = "./data/EnCroissant";
+            doc = "./data/EnPassant";
           }
         }
       }

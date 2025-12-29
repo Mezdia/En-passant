@@ -362,7 +362,7 @@ export const en_US = {
       "Click to select the image file (recommended size: 60x60)",
     "Engines.Remove.Title": "Remove Engine",
     "Engines.Remove.Message":
-      "Are you sure you want to remove this engine from En Croissant?",
+      "Are you sure you want to remove this engine from En-passant?",
 
     "Databases.Title": "Your Databases",
     "Databases.Card.Games": "Games",
@@ -496,9 +496,9 @@ export const en_US = {
     "Settings.OpeningReport.MinGames.Desc":
       "Minimum number of games in each position for it to be considered",
     "Settings.Anarchy.Desc": "Fun options",
-    "Settings.Anarchy.ForcedEnCroissant": "Forced En Croissant",
-    "Settings.Anarchy.ForcedEnCroissant.Desc":
-      "Forces you to play En Croissant, if it's a legal move.",
+    "Settings.Anarchy.ForcedEnPassant": "Forced En-passant",
+    "Settings.Anarchy.ForcedEnPassant.Desc":
+      "Forces you to play En-passant, if it's a legal move.",
     "Settings.Appearance.Desc": "Customize the look of the app",
     "Settings.Appearance.Theme": "Theme",
     "Settings.Appearance.Theme.Desc": "Overall color scheme",
@@ -585,16 +585,16 @@ export const en_US = {
     "Keybind.PreviousGame": "Previous game",
     "Keybind.NextGame": "Next game",
 
-    "About.Title": "About En Croissant",
+    "About.Title": "About En-passant",
     "About.Version": "Version",
     "About.TauriVersion": "Tauri Version",
     "About.OS": "Operating System",
     "About.DevelopedBy": "Developed by",
     "About.MezdiaLink": "Mezdia",
     "About.ProjectRepository": "Project Repository",
-    "About.RepositoryLink": "en-croissant on GitHub",
+    "About.RepositoryLink": "en-passant on GitHub",
     "About.Website": "Website",
-    "About.WebsiteLink": "encroissant.ir",
+    "About.WebsiteLink": "enpassant.ir",
     "About.Copyright": "Copyright © 2025 Mezdia. All rights reserved.",
     "About.MezdAttribution": "Made by Mezd",
     "About.MezdiaRights": "All rights belong to Mezdia",

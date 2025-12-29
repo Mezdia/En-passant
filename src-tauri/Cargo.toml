@@ -1,10 +1,10 @@
 [package]
-name = "en-croissant"
+name = "En-passant"
 version = "0.12.1"
 description = "A Modern Chess Database"
-authors = ["Francisco Salgueiro <fgcdbs@gmail.com>"]
+authors = ["Mezdia <mehdieisa51@gmail.com>"]
 license = "GPL-3.0-only"
-repository = "https://github.com/franciscoBSalgueiro/en-croissant"
+repository = "https://github.com/Mezdia/En-passant"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -39,7 +39,7 @@ derivative = "2.2.0"
 dashmap = "6.0.1"
 once_cell = "1.17.1"
 rand = "0.8.5"
-vampirc-uci = { git = "https://github.com/franciscoBSalgueiro/vampirc-uci", rev = "c60e65c7d801920ccfc533df3ab87e292d6d0448", features = [
+vampirc-uci = { git = "https://github.com/Mezdia/vampirc-uci", rev = "c60e65c7d801920ccfc533df3ab87e292d6d0448", features = [
     "specta",
     "serde",
 ] }

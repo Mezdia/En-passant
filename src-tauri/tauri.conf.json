@@ -23,7 +23,7 @@
         "bundleMediaFramework": true
       }
     },
-    "publisher": "Francisco Salgueiro",
+    "publisher": "Mezdia",
     "shortDescription": "Ultimate Chess Toolkit",
     "longDescription": "",
     "macOS": {
@@ -43,9 +43,9 @@
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420"
   },
-  "productName": "en-croissant",
-  "mainBinaryName": "en-croissant",
-  "identifier": "org.encroissant.app",
+  "productName": "en-passant",
+  "mainBinaryName": "en-passant",
+  "identifier": "ir.enpassant.app",
   "plugins": {
     "cli": {
       "args": [
@@ -59,7 +59,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDdGOTBFNjg2MzFGM0RDODUKUldTRjNQTXhodWFRZjc2MTNVeXRONGJkRjdGUXlCeW1MSlZESUczT0U4eE5hKzBmY3M2S0U2L0oK",
       "endpoints": [
-        "https://www.encroissant.org/updates"
+        "https://www.enpassant.ir/updates"
       ]
     }
   },
@@ -67,7 +67,7 @@
     "withGlobalTauri": false,
     "windows": [
       {
-        "title": "En Croissant",
+        "title": "En-passant",
         "visible": false,
         "decorations": true
       }

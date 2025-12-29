@@ -70,7 +70,7 @@ export function LanguageSelectorModal({
                         <IconLanguage style={{ width: "70%", height: "70%" }} />
                     </ThemeIcon>
                     <Text fw={700} size="xl">
-                        Welcome to En Croissant
+                        Welcome to En-passant
                     </Text>
                 </Group>
             }

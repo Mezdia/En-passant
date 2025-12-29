@@ -417,9 +417,9 @@ export default function Page() {
                 className={classes.item}
               >
                 <div>
-                  <Text>{t("Settings.Anarchy.ForcedEnCroissant")}</Text>
+                  <Text>{t("Settings.Anarchy.ForcedEnPassant")}</Text>
                   <Text size="xs" c="dimmed">
-                    {t("Settings.Anarchy.ForcedEnCroissant.Desc")}
+                    {t("Settings.Anarchy.ForcedEnPassant.Desc")}
                   </Text>
                 </div>
                 <SettingsSwitch atom={forcedEnPassantAtom} />
@@ -729,7 +729,7 @@ export default function Page() {
           </Card>
         </ScrollArea>
         <Text size="xs" c="dimmed" ta="right">
-          En Croissant v{version}
+          En-passant v{version}
         </Text>
       </Stack>
     </Tabs>

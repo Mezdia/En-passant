@@ -23,8 +23,8 @@ Before you start working on a contribution, please check the issues page. It's p
 The following steps will get you setup to contribute changes to this repo:
 
 - Fork the repo
-- Clone your forked repository: `git clone git@github.com:{your_username}/en-croissant.git`
-- Enter the en-croissant directory: `cd en-croissant`
+- Clone your forked repository: `git clone git@github.com:{your_username}/En-passant.git`
+- Enter the En-passant directory: `cd En-passant`
 - Create a new branch off the `master` branch: `git checkout -b your-feature-name`
 - Install dependencies `pnpm i`
 - Open the code in your preferred IDE and contribute your changes
@@ -62,7 +62,7 @@ The following steps will get you setup to contribute changes to this repo:
 - Implement your contributions (see the [Development](#development) section for more information)
 - Before submitting a PR, first build the app using `pnpm tauri build -b none` and check every feature you've contributed to.
 - Format and lint your code using `pnpm format` followed by `pnpm lint:fix`
-- Go to [the comparison page](https://github.com/franciscoBSalgueiro/en-croissant/compare) and select the branch you just pushed in the `compare:` dropdown
+- Go to [the comparison page](https://github.com/Mezdia/En-passant/compare) and select the branch you just pushed in the `compare:` dropdown
 - Submit the new PR. The maintainers will follow up ASAP.
 
 ## Extra Notes

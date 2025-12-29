@@ -232,7 +232,7 @@ export const ko_KR = {
       "클릭하여 이미지 파일 선택 (권장 크기: 60x60)",
     "Engines.Remove.Title": "엔진 제거",
     "Engines.Remove.Message":
-      "정말로 En Croissant에서 이 엔진을 제거하시겠습니까?",
+      "정말로 En-passant에서 이 엔진을 제거하시겠습니까?",
 
     "Databases.Title": "내 데이터베이스",
     "Databases.Card.Games": "게임 수",
@@ -359,9 +359,9 @@ export const ko_KR = {
     "Settings.OpeningReport.MinGames.Desc":
       "보고서에서 고려되기 위한 각 포지션의 최소 게임 수",
     "Settings.Anarchy.Desc": "재미있는 설정",
-    "Settings.Anarchy.ForcedEnCroissant": "강제 En Croissant",
-    "Settings.Anarchy.ForcedEnCroissant.Desc":
-      "En Croissant이 가능하다면 강제로 수행합니다.",
+    "Settings.Anarchy.ForcedEnPassant": "강제 En-passant",
+    "Settings.Anarchy.ForcedEnPassant.Desc":
+      "En-passant이 가능하다면 강제로 수행합니다.",
     "Settings.Appearance.Desc": "앱의 시각적 요소를 설정합니다",
     "Settings.Appearance.Theme": "테마",
     "Settings.Appearance.Theme.Desc": "전체적인 색상 구성",

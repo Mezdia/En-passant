@@ -236,7 +236,7 @@ export const ru_RU = {
       "Нажмите для выбора файла изображения (рекомендуется: 60x60)",
     "Engines.Remove.Title": "Удалить движок",
     "Engines.Remove.Message":
-      "Вы уверены, что хотите удалить этот движок из En Croissant?",
+      "Вы уверены, что хотите удалить этот движок из En-passant?",
 
     "Databases.Title": "Базы данных",
     "Databases.Card.Games": "Игры",
@@ -365,9 +365,9 @@ export const ru_RU = {
     "Settings.OpeningReport.MinGames.Desc":
       "Минимальное количество игр для каждой позиции, чтобы быть учтённой",
     "Settings.Anarchy.Desc": "Весёлые опции",
-    "Settings.Anarchy.ForcedEnCroissant": "Принудительный En Croissant",
-    "Settings.Anarchy.ForcedEnCroissant.Desc":
-      "Заставляет делать ход En Croissant, если это легальный ход.",
+    "Settings.Anarchy.ForcedEnPassant": "Принудительный En-passant",
+    "Settings.Anarchy.ForcedEnPassant.Desc":
+      "Заставляет делать ход En-passant, если это легальный ход.",
     "Settings.Appearance.Desc": "Настроить внешний вид приложения",
     "Settings.Appearance.Theme": "Тема",
     "Settings.Appearance.Theme.Desc": "Общая цветовая схема",
