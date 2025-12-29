@@ -21,6 +21,7 @@ import {
   IconArrowRight,
   IconArrowUpRight,
   IconDownload,
+  IconEye,
   IconRefresh,
   IconX,
   type TablerIconsProps,
@@ -28,6 +29,8 @@ import {
 import { appDataDir, resolve } from "@tauri-apps/api/path";
 import { info } from "@tauri-apps/plugin-log";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import GamesViewerModal from "./GamesViewerModal";
 import LichessLogo from "./LichessLogo";
 import * as classes from "./styles.css";
 
@@ -94,8 +97,10 @@ export function AccountCard({
       </Card>
     );
   });
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
+  const [gamesModalOpen, setGamesModalOpen] = useState(false);
 
   async function convert(filepath: string, timestamp: number | null) {
     info(`converting ${filepath} ${timestamp}`);
@@ -191,7 +196,12 @@ export function AccountCard({
                 </Text>
               </Group>
               <ActionIcon.Group>
-                <Tooltip label="Update stats">
+                <Tooltip label={t("GamesViewer.ViewGames", "View games")}>
+                  <ActionIcon onClick={() => setGamesModalOpen(true)}>
+                    <IconEye size="1rem" />
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip label={t("GamesViewer.UpdateStats", "Update stats")}>
                   <ActionIcon onClick={() => reload()}>
                     <IconRefresh size="1rem" />
                   </ActionIcon>
@@ -235,12 +245,19 @@ export function AccountCard({
                     )}
                   </ActionIcon>
                 </Tooltip>
-                <Tooltip label="Remove account">
+                <Tooltip label={t("GamesViewer.RemoveAccount", "Remove account")}>
                   <ActionIcon onClick={() => logout()}>
                     <IconX size="1rem" />
                   </ActionIcon>
                 </Tooltip>
               </ActionIcon.Group>
+              <GamesViewerModal
+                opened={gamesModalOpen}
+                onClose={() => setGamesModalOpen(false)}
+                username={title}
+                platform={type}
+                token={token}
+              />
             </div>
           </Group>
         </Stack>
