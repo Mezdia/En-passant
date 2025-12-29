@@ -43,7 +43,7 @@
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420"
   },
-  "productName": "en-passant",
+  "productName": "En-passant",
   "mainBinaryName": "en-passant",
   "identifier": "ir.enpassant.app",
   "plugins": {

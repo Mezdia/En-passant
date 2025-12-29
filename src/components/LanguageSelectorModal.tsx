@@ -17,6 +17,7 @@ import * as classes from "./LanguageSelectorModal.css";
 interface LanguageSelectorModalProps {
     opened: boolean;
     onClose: () => void;
+    onLanguageSelected?: () => void;
 }
 
 const languages = [
@@ -42,6 +43,7 @@ const languages = [
 export function LanguageSelectorModal({
     opened,
     onClose,
+    onLanguageSelected,
 }: LanguageSelectorModalProps) {
     const theme = useMantineTheme();
 
@@ -49,6 +51,7 @@ export function LanguageSelectorModal({
         localStorage.setItem("lang", langCode);
         i18n.changeLanguage(langCode);
         onClose();
+        onLanguageSelected?.();
     };
 
     return (

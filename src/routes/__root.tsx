@@ -2,6 +2,7 @@ import type { Dirs } from "@/App";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import AboutModal from "@/components/About";
 import { LanguageSelectorModal } from "@/components/LanguageSelectorModal";
+import { OnboardingTour } from "@/components/OnboardingTour";
 import { SideBar } from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
 import { activeTabAtom, nativeBarAtom, tabsAtom } from "@/state/atoms";
@@ -137,11 +138,17 @@ function RootLayout() {
   useHotkeys(keyMap.OPEN_FILE.keys, openNewFile);
   const [opened, setOpened] = useState(false);
   const [languageModalOpened, setLanguageModalOpened] = useState(false);
+  const [onboardingOpened, setOnboardingOpened] = useState(false);
 
   useEffect(() => {
     const lang = localStorage.getItem("lang");
     if (!lang) {
       setLanguageModalOpened(true);
+    } else {
+      const onboardingStatus = localStorage.getItem("onboarding_status");
+      if (!onboardingStatus || onboardingStatus === "later") {
+        setOnboardingOpened(true);
+      }
     }
   }, []);
 
@@ -292,6 +299,11 @@ function RootLayout() {
       <LanguageSelectorModal
         opened={languageModalOpened}
         onClose={() => setLanguageModalOpened(false)}
+        onLanguageSelected={() => setOnboardingOpened(true)}
+      />
+      <OnboardingTour
+        opened={onboardingOpened}
+        onClose={() => setOnboardingOpened(false)}
       />
       <AboutModal opened={opened} setOpened={setOpened} />
       {!isNative && import.meta.env.VITE_PLATFORM === "win32" && (

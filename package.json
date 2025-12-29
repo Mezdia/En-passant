@@ -1,12 +1,14 @@
 {
   "name": "En-passant",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.12.1",
   "type": "module",
   "scripts": {
     "start-vite": "vite",
     "build-vite": "tsc --noEmit && vite build",
-    "build": "tauri build --no-bundle",
+    "build": "tauri build",
+    "build:no-bundle": "tauri build --no-bundle",
+    "build:windows": "tauri build",
     "dev": "tauri dev",
     "tauri": "tauri",
     "format": "biome format --write ./src",
