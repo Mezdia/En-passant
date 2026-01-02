@@ -1,5 +1,4 @@
 import type { Dirs } from "@/App";
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import AboutModal from "@/components/About";
 import { LanguageSelectorModal } from "@/components/LanguageSelectorModal";
 import { OnboardingTour } from "@/components/OnboardingTour";
@@ -16,6 +15,7 @@ import {
   createRootRouteWithContext,
   useNavigate,
 } from "@tanstack/react-router";
+import { isTauri } from "@tauri-apps/api/core";
 import {
   Menu,
   MenuItem,
@@ -23,7 +23,7 @@ import {
   Submenu,
 } from "@tauri-apps/api/menu";
 import { resolve } from "@tauri-apps/api/path";
-import { isTauri } from "@tauri-apps/api/core";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ask, message, open } from "@tauri-apps/plugin-dialog";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { exit } from "@tauri-apps/plugin-process";
@@ -232,7 +232,9 @@ function RootLayout() {
 
               if (isTauri()) {
                 try {
-                  const { open: shellOpen } = await import("@tauri-apps/plugin-shell");
+                  const { open: shellOpen } = await import(
+                    "@tauri-apps/plugin-shell"
+                  );
                   await shellOpen(path);
                 } catch (e) {
                   console.warn("Failed to open logs:", e);
@@ -286,8 +288,8 @@ function RootLayout() {
         isNative || import.meta.env.VITE_PLATFORM !== "win32"
           ? undefined
           : {
-            height: "2.5rem",
-          }
+              height: "2.5rem",
+            }
       }
       styles={{
         main: {

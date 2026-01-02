@@ -348,356 +348,355 @@
     "fact": "علیرضا فیروزجا با پیشرفت سریعش به عنوان رقیب آینده کارلسن شناخته می‌شه.",
     "source": "اظهارات کارلسن و کارشناسان",
     "tags": ["رقیب", "آینده"]
+  },
+  {
+    "id": 51,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در چس دات کام کلاسیک ۲۰۲۴ مگنوس کارلسن رو در فینال دو بار شکست داد و قهرمان شد!",
+    "source": "Chess.com Classic ۲۰۲۴",
+    "tags": ["آنلاین", "پیروزی بزرگ"]
+  },
+  {
+    "id": 52,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در بولت چس چمپیونشیپ ۲۰۲۴ هیکارو ناکامورا رو دو بار شکست داد و قهرمان شد.",
+    "source": "Bullet Chess Championship ۲۰۲۴",
+    "tags": ["بولت", "پیروزی"]
+  },
+  {
+    "id": 53,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۵ بولت چس چمپیونشیپ رو دوباره برد و سومین عنوانش رو گرفت.",
+    "source": "Bullet Chess Championship ۲۰۲۵",
+    "tags": ["بولت", "قهرمانی"]
+  },
+  {
+    "id": 54,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در اسپید چس چمپیونشیپ ۲۰۲۵ نپومنیاشچی رو ۱۹-۹ شکست داد و به فینال رسید.",
+    "source": "Speed Chess Championship ۲۰۲۵",
+    "tags": ["آنلاین", "پیروزی"]
+  },
+  {
+    "id": 55,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در فری‌استایل چس گرند اسلم ۲۰۲۵ مرحله راند رابین رو برد و اول شد.",
+    "source": "Freestyle Chess Grand Slam ۲۰۲۵",
+    "tags": ["فری‌استایل", "پیروزی"]
+  },
+  {
+    "id": 56,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در مارس ۲۰۲۵ به تیم فالکونز عربستان پیوست و خبرساز شد.",
+    "source": "اخبار Chess.com ۲۰۲۵",
+    "tags": ["اسپورت", "تیم"]
+  },
+  {
+    "id": 57,
+    "player_name": "Alireza Firouzجا",
+    "fact": "علیرضا فیروزجا در گلوبال چس لیگ ۲۰۲۴ با تیمش ترایونی قهرمان شد.",
+    "source": "Global Chess League ۲۰۲۴",
+    "tags": ["تیمی", "قهرمانی"]
+  },
+  {
+    "id": 58,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در کاندیداهای ۲۰۲۴ کفش‌هاش صدای زیاد می‌داد و جنجال به پا کرد که وایرال شد!",
+    "source": "Candidates Tournament ۲۰۲۴",
+    "tags": ["جنجال", "وایرال"]
+  },
+  {
+    "id": 59,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۱۹ نقره رپید جهان گرفت و اولین ایرانی روی سکو شد.",
+    "source": "World Rapid Championship ۲۰۱۹",
+    "tags": ["مدال", "اولین ایرانی"]
+  },
+  {
+    "id": 60,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در پراگ مسترز ۲۰۲۰ جایگزین وی یی شد و تورنمنت رو برد.",
+    "source": "Prague Masters ۲۰۲۰",
+    "tags": ["تورنمنت", "پیروزی"]
+  },
+  {
+    "id": 61,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۱۸ برنز بلیتز جهان گرفت.",
+    "source": "World Blitz Championship",
+    "tags": ["مدال", "جهانی"]
+  },
+  {
+    "id": 62,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در بولت براول نوامبر ۲۰۲۴ با ۴۲ بازی بدون شکست برد.",
+    "source": "Bullet Brawl ۲۰۲۴",
+    "tags": ["بولت", "استریک"]
+  },
+  {
+    "id": 63,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۴ بیش از ۶۰۰ هزار دلار جایزه برد و سومین شد.",
+    "source": "Prize money ۲۰۲۴",
+    "tags": ["جایزه", "رکورد"]
+  },
+  {
+    "id": 64,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در گلوبال چس لیگ قربانی‌های درخشان داد که ویدیو‌هاش میلیون‌ها بازدید گرفت.",
+    "source": "Global Chess League",
+    "tags": ["قربانی", "وایرال"]
+  },
+  {
+    "id": 65,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در نوجوانی کارلسن رو در بنتر بلیتز کاپ فینال شکست داد.",
+    "source": "Banter Blitz Cup ۲۰۲۰",
+    "tags": ["آنلاین", "فینال"]
+  },
+  {
+    "id": 66,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در آسیایی جوون‌ها چندین مدال طلا گرفت.",
+    "source": "Asian Youth Championships",
+    "tags": ["جوون‌ها", "مدال"]
+  },
+  {
+    "id": 67,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۹ سالگی فوتبال بارسلونا رو تحلیل می‌کرد و مربی‌اش شگفت‌زده شد.",
+    "source": "بیوگرافی",
+    "tags": ["کودکی", "پرودیجی"]
+  },
+  {
+    "id": 68,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۱۸ رپید جهان ششم شد با عملکرد ۲۸۴۸.",
+    "source": "World Rapid ۲۰۱۸",
+    "tags": ["عملکرد", "رکورد"]
+  },
+  {
+    "id": 69,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۲ گرند چس تور رو برد و جایزه ۱۰۰ هزار دلاری گرفت.",
+    "source": "Grand Chess Tour ۲۰۲۲",
+    "tags": ["تور", "قهرمانی"]
+  },
+  {
+    "id": 70,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۴ گرند چس تور رو دوباره برد.",
+    "source": "Grand Chess Tour ۲۰۲۴",
+    "tags": ["تور", "قهرمانی"]
+  },
+  {
+    "id": 71,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در المپیاد شطرنج ۲۰۱۶ با تیم جوون‌های ایران روسیه رو شکست داد.",
+    "source": "U16 Olympiad ۲۰۱۶",
+    "tags": ["تیمی", "پیروزی"]
+  },
+  {
+    "id": 72,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۱۹ دو بار قهرمان ایران شد.",
+    "source": "Iranian Championship ۲۰۱۹",
+    "tags": ["ایران", "قهرمانی"]
+  },
+  {
+    "id": 73,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در شارجه مسترز ۲۰۱۹ مشترک اول شد.",
+    "source": "Sharjah Masters ۲۰۱۹",
+    "tags": ["تورنمنت", "نفر اول"]
+  },
+  {
+    "id": 74,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ورد تیم ۲۰۱۹ عملکرد عالی داشت.",
+    "source": "World Team Championship ۲۰۱۹",
+    "tags": ["تیمی", "عملکرد"]
+  },
+  {
+    "id": 75,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۰ نروژی چس دوم شد پشت کارلسن.",
+    "source": "Norway Chess ۲۰۲۰",
+    "tags": ["تورنمنت", "نفر دوم"]
+  },
+  {
+    "id": 76,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در تاتا استیل ۲۰۲۰ عملکرد خیره‌کننده‌ای داشت.",
+    "source": "Tata Steel ۲۰۲۰",
+    "tags": ["تورنمنت", "عملکرد"]
+  },
+  {
+    "id": 77,
+    "player_name": "Alireza Firوزja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۱ نقره نروژی چس گرفت.",
+    "source": "Norway Chess ۲۰۲۱",
+    "tags": ["تورنمنت", "مدال"]
+  },
+  {
+    "id": 78,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در کاندیداهای ۲۰۲۲ جوان‌ترین شرکت‌کننده بود.",
+    "source": "Candidates ۲۰۲۲",
+    "tags": ["کاندیداها", "جوان"]
+  },
+  {
+    "id": 79,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۳ تورنمنتی برای افزایش ریتینگ برگزار کرد که جنجالی شد.",
+    "source": "Race to Candidates ۲۰۲۳",
+    "tags": ["جنجال", "ریتینگ"]
+  },
+  {
+    "id": 80,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در روئن اوپن ۲۰۲۳ با ۷ از ۷ به کاندیداها رسید.",
+    "source": "Rouen Open ۲۰۲۳",
+    "tags": ["تورنمنت کوچک", "صعود"]
+  },
+  {
+    "id": 81,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۵ چسیبل مسترز شرکت کرد و به مرحله knockout رسید.",
+    "source": "Chessable Masters ۲۰۲۵",
+    "tags": ["آنلاین", "تورنمنت"]
+  },
+  {
+    "id": 82,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا سبک بازی خلاقانه و تاکتیکی داره که حرکت‌هاش اغلب بریلیانت می‌شن.",
+    "source": "تحلیل‌های Chess.com",
+    "tags": ["سبک بازی", "تاکتیک"]
+  },
+  {
+    "id": 83,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۱۷ آئروفلوت اوپن عملکرد عالی داشت بین ۸۰ گرندمستر.",
+    "source": "Aeroflot Open ۲۰۱۷",
+    "tags": ["تورنمنت", "عملکرد"]
+  },
+  {
+    "id": 84,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۱۷ خزر کاپ سوم شد.",
+    "source": "Khazar Cup ۲۰۱۷",
+    "tags": ["تورنمنت", "نفر سوم"]
+  },
+  {
+    "id": 85,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۲ سوپر یونایتد کرواسی شرکت کرد.",
+    "source": "SuperUnited Croatia ۲۰۲۲",
+    "tags": ["تورنمنت", "سوپر"]
+  },
+  {
+    "id": 86,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در FTX کریپتو کاپ ۲۰۲۲ بازی کرد.",
+    "source": "FTX Crypto Cup ۲۰۲۲",
+    "tags": ["آنلاین", "تورنمنت"]
+  },
+  {
+    "id": 87,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۱ نیو این چس کلاسیک شرکت کرد.",
+    "source": "New In Chess Classic ۲۰۲۱",
+    "tags": ["آنلاین", "تورنمنت"]
+  },
+  {
+    "id": 88,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۰ مگنوس کارلسن اینویتشنال بازی کرد.",
+    "source": "Magnus Carlsen Invitational ۲۰۲۰",
+    "tags": ["آنلاین", "تورنمنت"]
+  },
+  {
+    "id": 89,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۳ سوپربیت چس کلاسیک شرکت کرد.",
+    "source": "Superbet Chess Classic ۲۰۲۳",
+    "tags": ["تورنمنت", "سوپر"]
+  },
+  {
+    "id": 90,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۳ نروژی چس کلاسیک بازی کرد.",
+    "source": "Norway Chess ۲۰۲۳",
+    "tags": ["تورنمنت", "کلاسیک"]
+  },
+  {
+    "id": 91,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۴ بیش از همه تورنمنت‌های بزرگ برد و رکورد جایزه زد.",
+    "source": "اخبار ۲۰۲۴",
+    "tags": ["جایزه", "رکورد"]
+  },
+  {
+    "id": 92,
+    "player_name": "Alireza Firوزja",
+    "fact": "علیرضا فیروزجا در نوجوانی رکورد جوان‌ترین ۲۷۰۰ رو بعد از وی یی شکست.",
+    "source": "FIDE ۲۰۱۹",
+    "tags": ["رکورد", "جوان"]
+  },
+  {
+    "id": 93,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا اولین بازیکن متولد ۲۰۰۰ که به top ۱۰ جهان رسید.",
+    "source": "رتبه‌بندی FIDE",
+    "tags": ["اولین", "top 10"]
+  },
+  {
+    "id": 94,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۱ با عملکرد ۳۰۰۰+ در تیم اروپا طلا گرفت.",
+    "source": "European Team ۲۰۲۱",
+    "tags": ["تیمی", "طلا"]
+  },
+  {
+    "id": 95,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا کارلسن رو در آرماگدون چس دات کام کلاسیک شکست داد.",
+    "source": "Chess.com Classic ۲۰۲۴",
+    "tags": ["آرماگدون", "کارلسن"]
+  },
+  {
+    "id": 96,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در سینکوفیلد کاپ ۲۰۲۲ پلی‌آف برد و قهرمان شد.",
+    "source": "Sinquefield Cup ۲۰۲۲",
+    "tags": ["پلی‌آف", "قهرمانی"]
+  },
+  {
+    "id": 97,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۴ سینکوفیلد کاپ کاروانا، دینگ و گیری رو شکست داد.",
+    "source": "Sinquefield Cup ۲۰۲۴",
+    "tags": ["پیروزی بزرگ", "تورنمنت"]
+  },
+  {
+    "id": 98,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا به عنوان یکی از بهترین بازیکنان بولت تاریخ شناخته می‌شه.",
+    "source": "Chess.com Bullet",
+    "tags": ["بولت", "بهترین"]
+  },
+  {
+    "id": 99,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا در ۲۰۲۵ اسپورتس ورلد کاپ به فینال رسید اما به کارلسن باخت.",
+    "source": "Esports World Cup ۲۰۲۵",
+    "tags": ["فینال", "تورنمنت"]
+  },
+  {
+    "id": 100,
+    "player_name": "Alireza Firouzja",
+    "fact": "علیرضا فیروزجا با پیشرفتش کارلسن رو به چالش می‌کشه و آینده شطرنج محسوب می‌شه.",
+    "source": "اظهارات کارشناسان",
+    "tags": ["آینده", "رقیب"]
   }
-,
-{
-"id": 51,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در چس دات کام کلاسیک ۲۰۲۴ مگنوس کارلسن رو در فینال دو بار شکست داد و قهرمان شد!",
-"source": "Chess.com Classic ۲۰۲۴",
-"tags": ["آنلاین", "پیروزی بزرگ"]
-},
-{
-"id": 52,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در بولت چس چمپیونشیپ ۲۰۲۴ هیکارو ناکامورا رو دو بار شکست داد و قهرمان شد.",
-"source": "Bullet Chess Championship ۲۰۲۴",
-"tags": ["بولت", "پیروزی"]
-},
-{
-"id": 53,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۵ بولت چس چمپیونشیپ رو دوباره برد و سومین عنوانش رو گرفت.",
-"source": "Bullet Chess Championship ۲۰۲۵",
-"tags": ["بولت", "قهرمانی"]
-},
-{
-"id": 54,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در اسپید چس چمپیونشیپ ۲۰۲۵ نپومنیاشچی رو ۱۹-۹ شکست داد و به فینال رسید.",
-"source": "Speed Chess Championship ۲۰۲۵",
-"tags": ["آنلاین", "پیروزی"]
-},
-{
-"id": 55,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در فری‌استایل چس گرند اسلم ۲۰۲۵ مرحله راند رابین رو برد و اول شد.",
-"source": "Freestyle Chess Grand Slam ۲۰۲۵",
-"tags": ["فری‌استایل", "پیروزی"]
-},
-{
-"id": 56,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در مارس ۲۰۲۵ به تیم فالکونز عربستان پیوست و خبرساز شد.",
-"source": "اخبار Chess.com ۲۰۲۵",
-"tags": ["اسپورت", "تیم"]
-},
-{
-"id": 57,
-"player_name": "Alireza Firouzجا",
-"fact": "علیرضا فیروزجا در گلوبال چس لیگ ۲۰۲۴ با تیمش ترایونی قهرمان شد.",
-"source": "Global Chess League ۲۰۲۴",
-"tags": ["تیمی", "قهرمانی"]
-},
-{
-"id": 58,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در کاندیداهای ۲۰۲۴ کفش‌هاش صدای زیاد می‌داد و جنجال به پا کرد که وایرال شد!",
-"source": "Candidates Tournament ۲۰۲۴",
-"tags": ["جنجال", "وایرال"]
-},
-{
-"id": 59,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۱۹ نقره رپید جهان گرفت و اولین ایرانی روی سکو شد.",
-"source": "World Rapid Championship ۲۰۱۹",
-"tags": ["مدال", "اولین ایرانی"]
-},
-{
-"id": 60,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در پراگ مسترز ۲۰۲۰ جایگزین وی یی شد و تورنمنت رو برد.",
-"source": "Prague Masters ۲۰۲۰",
-"tags": ["تورنمنت", "پیروزی"]
-},
-{
-"id": 61,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۱۸ برنز بلیتز جهان گرفت.",
-"source": "World Blitz Championship",
-"tags": ["مدال", "جهانی"]
-},
-{
-"id": 62,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در بولت براول نوامبر ۲۰۲۴ با ۴۲ بازی بدون شکست برد.",
-"source": "Bullet Brawl ۲۰۲۴",
-"tags": ["بولت", "استریک"]
-},
-{
-"id": 63,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۴ بیش از ۶۰۰ هزار دلار جایزه برد و سومین شد.",
-"source": "Prize money ۲۰۲۴",
-"tags": ["جایزه", "رکورد"]
-},
-{
-"id": 64,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در گلوبال چس لیگ قربانی‌های درخشان داد که ویدیو‌هاش میلیون‌ها بازدید گرفت.",
-"source": "Global Chess League",
-"tags": ["قربانی", "وایرال"]
-},
-{
-"id": 65,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در نوجوانی کارلسن رو در بنتر بلیتز کاپ فینال شکست داد.",
-"source": "Banter Blitz Cup ۲۰۲۰",
-"tags": ["آنلاین", "فینال"]
-},
-{
-"id": 66,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در آسیایی جوون‌ها چندین مدال طلا گرفت.",
-"source": "Asian Youth Championships",
-"tags": ["جوون‌ها", "مدال"]
-},
-{
-"id": 67,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۹ سالگی فوتبال بارسلونا رو تحلیل می‌کرد و مربی‌اش شگفت‌زده شد.",
-"source": "بیوگرافی",
-"tags": ["کودکی", "پرودیجی"]
-},
-{
-"id": 68,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۱۸ رپید جهان ششم شد با عملکرد ۲۸۴۸.",
-"source": "World Rapid ۲۰۱۸",
-"tags": ["عملکرد", "رکورد"]
-},
-{
-"id": 69,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۲ گرند چس تور رو برد و جایزه ۱۰۰ هزار دلاری گرفت.",
-"source": "Grand Chess Tour ۲۰۲۲",
-"tags": ["تور", "قهرمانی"]
-},
-{
-"id": 70,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۴ گرند چس تور رو دوباره برد.",
-"source": "Grand Chess Tour ۲۰۲۴",
-"tags": ["تور", "قهرمانی"]
-},
-{
-"id": 71,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در المپیاد شطرنج ۲۰۱۶ با تیم جوون‌های ایران روسیه رو شکست داد.",
-"source": "U16 Olympiad ۲۰۱۶",
-"tags": ["تیمی", "پیروزی"]
-},
-{
-"id": 72,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۱۹ دو بار قهرمان ایران شد.",
-"source": "Iranian Championship ۲۰۱۹",
-"tags": ["ایران", "قهرمانی"]
-},
-{
-"id": 73,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در شارجه مسترز ۲۰۱۹ مشترک اول شد.",
-"source": "Sharjah Masters ۲۰۱۹",
-"tags": ["تورنمنت", "نفر اول"]
-},
-{
-"id": 74,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ورد تیم ۲۰۱۹ عملکرد عالی داشت.",
-"source": "World Team Championship ۲۰۱۹",
-"tags": ["تیمی", "عملکرد"]
-},
-{
-"id": 75,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۰ نروژی چس دوم شد پشت کارلسن.",
-"source": "Norway Chess ۲۰۲۰",
-"tags": ["تورنمنت", "نفر دوم"]
-},
-{
-"id": 76,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در تاتا استیل ۲۰۲۰ عملکرد خیره‌کننده‌ای داشت.",
-"source": "Tata Steel ۲۰۲۰",
-"tags": ["تورنمنت", "عملکرد"]
-},
-{
-"id": 77,
-"player_name": "Alireza Firوزja",
-"fact": "علیرضا فیروزجا در ۲۰۲۱ نقره نروژی چس گرفت.",
-"source": "Norway Chess ۲۰۲۱",
-"tags": ["تورنمنت", "مدال"]
-},
-{
-"id": 78,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در کاندیداهای ۲۰۲۲ جوان‌ترین شرکت‌کننده بود.",
-"source": "Candidates ۲۰۲۲",
-"tags": ["کاندیداها", "جوان"]
-},
-{
-"id": 79,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۳ تورنمنتی برای افزایش ریتینگ برگزار کرد که جنجالی شد.",
-"source": "Race to Candidates ۲۰۲۳",
-"tags": ["جنجال", "ریتینگ"]
-},
-{
-"id": 80,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در روئن اوپن ۲۰۲۳ با ۷ از ۷ به کاندیداها رسید.",
-"source": "Rouen Open ۲۰۲۳",
-"tags": ["تورنمنت کوچک", "صعود"]
-},
-{
-"id": 81,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۵ چسیبل مسترز شرکت کرد و به مرحله knockout رسید.",
-"source": "Chessable Masters ۲۰۲۵",
-"tags": ["آنلاین", "تورنمنت"]
-},
-{
-"id": 82,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا سبک بازی خلاقانه و تاکتیکی داره که حرکت‌هاش اغلب بریلیانت می‌شن.",
-"source": "تحلیل‌های Chess.com",
-"tags": ["سبک بازی", "تاکتیک"]
-},
-{
-"id": 83,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۱۷ آئروفلوت اوپن عملکرد عالی داشت بین ۸۰ گرندمستر.",
-"source": "Aeroflot Open ۲۰۱۷",
-"tags": ["تورنمنت", "عملکرد"]
-},
-{
-"id": 84,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۱۷ خزر کاپ سوم شد.",
-"source": "Khazar Cup ۲۰۱۷",
-"tags": ["تورنمنت", "نفر سوم"]
-},
-{
-"id": 85,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۲ سوپر یونایتد کرواسی شرکت کرد.",
-"source": "SuperUnited Croatia ۲۰۲۲",
-"tags": ["تورنمنت", "سوپر"]
-},
-{
-"id": 86,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در FTX کریپتو کاپ ۲۰۲۲ بازی کرد.",
-"source": "FTX Crypto Cup ۲۰۲۲",
-"tags": ["آنلاین", "تورنمنت"]
-},
-{
-"id": 87,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۱ نیو این چس کلاسیک شرکت کرد.",
-"source": "New In Chess Classic ۲۰۲۱",
-"tags": ["آنلاین", "تورنمنت"]
-},
-{
-"id": 88,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۰ مگنوس کارلسن اینویتشنال بازی کرد.",
-"source": "Magnus Carlsen Invitational ۲۰۲۰",
-"tags": ["آنلاین", "تورنمنت"]
-},
-{
-"id": 89,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۳ سوپربیت چس کلاسیک شرکت کرد.",
-"source": "Superbet Chess Classic ۲۰۲۳",
-"tags": ["تورنمنت", "سوپر"]
-},
-{
-"id": 90,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۳ نروژی چس کلاسیک بازی کرد.",
-"source": "Norway Chess ۲۰۲۳",
-"tags": ["تورنمنت", "کلاسیک"]
-},
-{
-"id": 91,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۴ بیش از همه تورنمنت‌های بزرگ برد و رکورد جایزه زد.",
-"source": "اخبار ۲۰۲۴",
-"tags": ["جایزه", "رکورد"]
-},
-{
-"id": 92,
-"player_name": "Alireza Firوزja",
-"fact": "علیرضا فیروزجا در نوجوانی رکورد جوان‌ترین ۲۷۰۰ رو بعد از وی یی شکست.",
-"source": "FIDE ۲۰۱۹",
-"tags": ["رکورد", "جوان"]
-},
-{
-"id": 93,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا اولین بازیکن متولد ۲۰۰۰ که به top ۱۰ جهان رسید.",
-"source": "رتبه‌بندی FIDE",
-"tags": ["اولین", "top 10"]
-},
-{
-"id": 94,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۱ با عملکرد ۳۰۰۰+ در تیم اروپا طلا گرفت.",
-"source": "European Team ۲۰۲۱",
-"tags": ["تیمی", "طلا"]
-},
-{
-"id": 95,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا کارلسن رو در آرماگدون چس دات کام کلاسیک شکست داد.",
-"source": "Chess.com Classic ۲۰۲۴",
-"tags": ["آرماگدون", "کارلسن"]
-},
-{
-"id": 96,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در سینکوفیلد کاپ ۲۰۲۲ پلی‌آف برد و قهرمان شد.",
-"source": "Sinquefield Cup ۲۰۲۲",
-"tags": ["پلی‌آف", "قهرمانی"]
-},
-{
-"id": 97,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۴ سینکوفیلد کاپ کاروانا، دینگ و گیری رو شکست داد.",
-"source": "Sinquefield Cup ۲۰۲۴",
-"tags": ["پیروزی بزرگ", "تورنمنت"]
-},
-{
-"id": 98,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا به عنوان یکی از بهترین بازیکنان بولت تاریخ شناخته می‌شه.",
-"source": "Chess.com Bullet",
-"tags": ["بولت", "بهترین"]
-},
-{
-"id": 99,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا در ۲۰۲۵ اسپورتس ورلد کاپ به فینال رسید اما به کارلسن باخت.",
-"source": "Esports World Cup ۲۰۲۵",
-"tags": ["فینال", "تورنمنت"]
-},
-{
-"id": 100,
-"player_name": "Alireza Firouzja",
-"fact": "علیرضا فیروزجا با پیشرفتش کارلسن رو به چالش می‌کشه و آینده شطرنج محسوب می‌شه.",
-"source": "اظهارات کارشناسان",
-"tags": ["آینده", "رقیب"]
-}
 ]

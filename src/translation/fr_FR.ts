@@ -408,9 +408,11 @@ export const fr_FR = {
       "C'est ici que vos fichiers de parties seront sauvegardés",
 
     "Settings.Board.MoveNotation": "Notation des coups",
-    "Settings.Board.MoveNotation.Desc": "Choisissez comment afficher les pièces dans la notation",
+    "Settings.Board.MoveNotation.Desc":
+      "Choisissez comment afficher les pièces dans la notation",
     "Settings.Board.WaysToMovePieces": "Façons de déplacer les pièces",
-    "Settings.Board.WaysToMovePieces.Desc": "Déplacer les pièces en les faisant glisser, en cliquant, ou les deux",
+    "Settings.Board.WaysToMovePieces.Desc":
+      "Déplacer les pièces en les faisant glisser, en cliquant, ou les deux",
     "Settings.Board.Drag": "Glisser",
     "Settings.Board.Click": "Cliquer",
     "Settings.Board.Both": "Les deux",
@@ -425,4 +427,3 @@ export const fr_FR = {
     "PgnInput.TotalMoves": "Nombre total de coups",
   },
 };
-

@@ -50,8 +50,8 @@ const colorSchemeManager = localStorageColorSchemeManager({
 });
 
 import ErrorComponent from "@/components/ErrorComponent";
-import { resolve } from "@tauri-apps/api/path";
 import { isTauri } from "@tauri-apps/api/core";
+import { resolve } from "@tauri-apps/api/path";
 import { routeTree } from "./routeTree.gen";
 
 export type Dirs = {
@@ -68,7 +68,9 @@ const router = createRouter({
       if (!doc) {
         try {
           if (isTauri()) {
-            const { documentDir, homeDir } = await import("@tauri-apps/api/path");
+            const { documentDir, homeDir } = await import(
+              "@tauri-apps/api/path"
+            );
             doc = await resolve(await documentDir(), "EnPassant");
           } else {
             // Fallback for development mode

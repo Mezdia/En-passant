@@ -387,4 +387,3 @@ export const zh_TW = {
     "Keybind.NextGame": "下一局",
   },
 };
-

@@ -5,15 +5,14 @@ import {
   IconCpu,
   IconDatabase,
   IconFiles,
+  IconRobot,
   IconSettings,
   IconUser,
-  IconRobot,
 } from "@tabler/icons-react";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import cx from "clsx";
 import { useTranslation } from "react-i18next";
 import * as classes from "./Sidebar.css";
-
 
 interface NavbarLinkProps {
   icon: Icon;

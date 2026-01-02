@@ -400,4 +400,3 @@ export const uk_UA = {
     "Keybind.NextGame": "Наступна гра",
   },
 };
-

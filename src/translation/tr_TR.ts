@@ -406,4 +406,3 @@ export const tr_TR = {
     "Keybind.NextGame": "Sonraki oyun",
   },
 };
-

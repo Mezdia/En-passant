@@ -83,7 +83,6 @@ export function getCPLoss(
   return Math.max(0, prevCP - nextCP);
 }
 
-
 export type MoveClassification =
   | "book"
   | "brilliant"

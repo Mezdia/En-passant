@@ -23,6 +23,7 @@ import { getWinChance, normalizeScore } from "@/utils/score";
 import { parseUci } from "chessops";
 import { INITIAL_FEN, makeFen } from "chessops/fen";
 import equal from "fast-deep-equal";
+import i18n from "i18next";
 import { type PrimitiveAtom, atom } from "jotai";
 import { atomFamily } from "jotai-family";
 import type { AtomFamily } from "jotai-family";
@@ -32,7 +33,6 @@ import type { ReviewLog } from "ts-fsrs";
 import { z } from "zod";
 import type { Session } from "../utils/session";
 import { createAsyncZodStorage, createZodStorage, fileStorage } from "./utils";
-import i18n from "i18next";
 
 const zodArray = <S>(itemSchema: z.ZodType<S>) => {
   const catchValue = {} as never;

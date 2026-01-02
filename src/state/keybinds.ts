@@ -26,7 +26,10 @@ const keys = {
   },
   DELETE_MOVE: { name: "Keybind.DeleteMove", keys: "delete" },
   CYCLE_TABS: { name: "Keybind.CycleTabs", keys: "ctrl+tab" },
-  REVERSE_CYCLE_TABS: { name: "Keybind.ReverseCycleTabs", keys: "ctrl+shift+tab" },
+  REVERSE_CYCLE_TABS: {
+    name: "Keybind.ReverseCycleTabs",
+    keys: "ctrl+shift+tab",
+  },
   TOGGLE_EVAL_BAR: { name: "Keybind.ToggleEvalBar", keys: "z" },
   PRACTICE_TAB: { name: "Keybind.PracticeTab", keys: "p" },
   ANALYSIS_TAB: { name: "Keybind.AnalysisTab", keys: "a" },

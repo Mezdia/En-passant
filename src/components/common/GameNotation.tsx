@@ -160,7 +160,11 @@ const NotationHeader = memo(function NotationHeader({
         <OpeningName />
         <Group gap="sm">
           <Tooltip label={showTree ? "Hide tree" : "Show tree view"}>
-            <ActionIcon onClick={() => toggleTree()} variant={showTree ? "filled" : "subtle"} color={showTree ? "green" : undefined}>
+            <ActionIcon
+              onClick={() => toggleTree()}
+              variant={showTree ? "filled" : "subtle"}
+              color={showTree ? "green" : undefined}
+            >
               <IconBinaryTree2 size="1rem" />
             </ActionIcon>
           </Tooltip>
@@ -194,7 +198,6 @@ const NotationHeader = memo(function NotationHeader({
   );
 });
 
-
 const RenderVariationTree = memo(
   function RenderVariationTree({
     tree,
@@ -218,34 +221,34 @@ const RenderVariationTree = memo(
     const variations = tree.children;
     const variationNodes = showVariations
       ? variations.slice(1).map((variation) => {
-        const newPath = [...path, variations.indexOf(variation)];
-        return (
-          <React.Fragment key={variation.fen}>
-            <CompleteMoveCell
-              targetRef={targetRef}
-              annotations={variation.annotations}
-              comment={variation.comment}
-              halfMoves={variation.halfMoves}
-              move={variation.san}
-              fen={variation.fen}
-              movePath={newPath}
-              showComments={showComments}
-              isStart={equal(newPath, start)}
-              first
-            />
-            <RenderVariationTree
-              targetRef={targetRef}
-              tree={variation}
-              depth={depth + 2}
-              first
-              showVariations={showVariations}
-              showComments={showComments}
-              start={start}
-              path={newPath}
-            />
-          </React.Fragment>
-        );
-      })
+          const newPath = [...path, variations.indexOf(variation)];
+          return (
+            <React.Fragment key={variation.fen}>
+              <CompleteMoveCell
+                targetRef={targetRef}
+                annotations={variation.annotations}
+                comment={variation.comment}
+                halfMoves={variation.halfMoves}
+                move={variation.san}
+                fen={variation.fen}
+                movePath={newPath}
+                showComments={showComments}
+                isStart={equal(newPath, start)}
+                first
+              />
+              <RenderVariationTree
+                targetRef={targetRef}
+                tree={variation}
+                depth={depth + 2}
+                first
+                showVariations={showVariations}
+                showComments={showComments}
+                start={start}
+                path={newPath}
+              />
+            </React.Fragment>
+          );
+        })
       : [];
 
     const newPath = [...path, 0];

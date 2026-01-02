@@ -396,4 +396,3 @@ export const nb_NO = {
     "Keybind.NextGame": "Neste spill",
   },
 };
-

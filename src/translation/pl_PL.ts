@@ -402,4 +402,3 @@ export const pl_PL = {
     "Keybind.NextGame": "Następna gra",
   },
 };
-

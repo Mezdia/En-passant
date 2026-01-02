@@ -6,7 +6,7 @@ export const Route = createFileRoute("/settings")({
   component: SettingsPage,
   loader: async ({ context: { loadDirs } }) => {
     let version = "0.0.0"; // Default version for development
-    
+
     if (isTauri()) {
       try {
         const { getVersion } = await import("@tauri-apps/api/app");
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/settings")({
         console.warn("Failed to get app version:", e);
       }
     }
-    
+
     return {
       dirs: await loadDirs(),
       version,

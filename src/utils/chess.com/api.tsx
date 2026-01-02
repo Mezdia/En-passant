@@ -277,7 +277,7 @@ export type ChessComGameData = {
 // Fetch games for viewing (returns array of games)
 export async function fetchChessComGames(
   player: string,
-  maxGames: number = 50
+  maxGames = 50,
 ): Promise<ChessComGameData[]> {
   const archives = await getGameArchives(player);
   if (!archives.archives || archives.archives.length === 0) {

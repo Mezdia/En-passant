@@ -188,8 +188,7 @@ export const ar_SA = {
       "لم يتم تحديد قاعدة بيانات مرجعية. حدد واحدة أولاً في صفحة قواعد البيانات",
     "Board.Analysis.Time": "الوقت (مللي ثانية)",
     "Board.Analysis.Reversed": "تحليل معكوس",
-    "Board.Analysis.Reversed.Desc":
-      "تحليل اللعبة بدءاً من النقلة الأخيرة.",
+    "Board.Analysis.Reversed.Desc": "تحليل اللعبة بدءاً من النقلة الأخيرة.",
     "Board.Analysis.AnnotateNovelties": "تعليق الجديد",
     "Board.Analysis.AnnotateNovelties.Desc":
       "إضافة تعليق إلى الموقف الأول الذي ليس في قاعدة البيانات المرجعية.",
@@ -225,8 +224,7 @@ export const ar_SA = {
     "Engines.Settings.Reset": "إعادة تعيين إلى الافتراضي",
     "Engines.Add.Title": "إضافة محرك",
     "Engines.Add.Cloud": "سحابة",
-    "Engines.Add.ErrorFetch":
-      "فشل في جلب معلومات المحرك من الخادم.",
+    "Engines.Add.ErrorFetch": "فشل في جلب معلومات المحرك من الخادم.",
     "Engines.Add.BinaryFile": "ملف ثنائي",
     "Engines.Add.BinaryFile.Desc": "انقر لتحديد الملف الثنائي",
     "Engines.Add.Name": "الاسم",
@@ -245,8 +243,7 @@ export const ar_SA = {
     "Databases.Card.Storage": "التخزين",
     "Databases.Add.Title": "إضافة قاعدة بيانات",
     "Databases.Add.Web": "ويب",
-    "Databases.Add.ErrorFetch":
-      "فشل في جلب معلومات قاعدة البيانات من الخادم.",
+    "Databases.Add.ErrorFetch": "فشل في جلب معلومات قاعدة البيانات من الخادم.",
     "Databases.Add.ClickToSelectPGN": "انقر لتحديد ملف PGN",
     "Databases.Add.Convert": "تحويل",
     "Databases.Settings.ReferenceDatabase": "قاعدة البيانات المرجعية",
@@ -375,8 +372,7 @@ export const ar_SA = {
     "Settings.Appearance.Theme.Light": "فاتح",
     "Settings.Appearance.Theme.Dark": "داكن",
     "Settings.Appearance.TitleBar": "شريط العنوان",
-    "Settings.Appearance.TitleBar.Desc":
-      "اختيار بين شريط عنوان أصلي أو مخصص",
+    "Settings.Appearance.TitleBar.Desc": "اختيار بين شريط عنوان أصلي أو مخصص",
     "Settings.Appearance.Language": "اللغة",
     "Settings.Appearance.Language.Desc": "اللغة المستخدمة في التطبيق",
     "Settings.Appearance.TitleBar.Native": "أصلي",
@@ -386,8 +382,7 @@ export const ar_SA = {
     "Settings.Appearance.PieceSet": "مجموعة القطع",
     "Settings.Appearance.PieceSet.Desc": "القطع المستخدمة على الرقع",
     "Settings.Appearance.BoardImage": "صورة الرقعة",
-    "Settings.Appearance.BoardImage.Desc":
-      "الصورة المستخدمة كخلفية للرقعة",
+    "Settings.Appearance.BoardImage.Desc": "الصورة المستخدمة كخلفية للرقعة",
     "Settings.Appearance.AccentColor": "لون التمييز",
     "Settings.Appearance.AccentColor.Desc": "اللون الرئيسي للتطبيق",
     "Settings.Sound.Desc": "تخصيص إعدادات الصوت",
@@ -403,7 +398,8 @@ export const ar_SA = {
     "Settings.Board.MoveNotation": "رمز الحركة",
     "Settings.Board.MoveNotation.Desc": "اختر كيفية عرض القطع في الرمز",
     "Settings.Board.WaysToMovePieces": "طرق تحريك القطع",
-    "Settings.Board.WaysToMovePieces.Desc": "حرك القطع بسحبها أو النقر عليها أو كليهما",
+    "Settings.Board.WaysToMovePieces.Desc":
+      "حرك القطع بسحبها أو النقر عليها أو كليهما",
     "Settings.Board.Drag": "سحب",
     "Settings.Board.Click": "نقر",
     "Settings.Board.Both": "كليهما",

@@ -434,8 +434,8 @@ export type LichessGameData = {
 // Fetch games for viewing (returns array of games)
 export async function fetchLichessGames(
   player: string,
-  maxGames: number = 50,
-  token?: string
+  maxGames = 50,
+  token?: string,
 ): Promise<LichessGameData[]> {
   const url = `${baseURL}/games/user/${player}?max=${maxGames}&opening=true&pgnInJson=true`;
 
@@ -454,7 +454,10 @@ export async function fetchLichessGames(
   }
 
   const text = await response.text();
-  const lines = text.trim().split("\n").filter((line) => line.length > 0);
+  const lines = text
+    .trim()
+    .split("\n")
+    .filter((line) => line.length > 0);
 
   const games: LichessGameData[] = [];
 
@@ -482,12 +485,18 @@ export async function fetchLichessGames(
         rated: game.rated,
         createdAt: game.createdAt,
         white: {
-          username: game.players?.white?.user?.name || game.players?.white?.user?.id || "Anonymous",
+          username:
+            game.players?.white?.user?.name ||
+            game.players?.white?.user?.id ||
+            "Anonymous",
           rating: game.players?.white?.rating || 0,
           result: whiteResult,
         },
         black: {
-          username: game.players?.black?.user?.name || game.players?.black?.user?.id || "Anonymous",
+          username:
+            game.players?.black?.user?.name ||
+            game.players?.black?.user?.id ||
+            "Anonymous",
           rating: game.players?.black?.rating || 0,
           result: blackResult,
         },

@@ -245,7 +245,9 @@ export function AccountCard({
                     )}
                   </ActionIcon>
                 </Tooltip>
-                <Tooltip label={t("GamesViewer.RemoveAccount", "Remove account")}>
+                <Tooltip
+                  label={t("GamesViewer.RemoveAccount", "Remove account")}
+                >
                   <ActionIcon onClick={() => logout()}>
                     <IconX size="1rem" />
                   </ActionIcon>

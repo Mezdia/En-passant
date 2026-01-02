@@ -59,10 +59,11 @@ export default function EnginesPage() {
 
   const [engines, setEngines] = useAtom(enginesAtom);
   const [opened, setOpened] = useState(false);
-  const { selected } = Route.useSearch();
+  const _search: any = Route.useSearch();
+  const selected: number | undefined = _search?.selected;
   const navigate = useNavigate();
   const setSelected = (v: number | null) => {
-    navigate({ search: { selected: v ?? undefined } });
+    (navigate as any)({ search: { selected: v ?? undefined } });
   };
 
   const selectedEngine = selected !== undefined ? engines[selected] : null;

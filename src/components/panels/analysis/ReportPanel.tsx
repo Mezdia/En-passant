@@ -114,10 +114,7 @@ const GameStats = memo(
         <Grid columns={11} justify="space-between" p="md">
           {Object.keys(ANNOTATION_INFO)
             .filter((a): a is Annotation => isBasicAnnotation(a))
-            .sort(
-              (a, b) =>
-                ANNOTATION_INFO[a].nag - ANNOTATION_INFO[b].nag,
-            )
+            .sort((a, b) => ANNOTATION_INFO[a].nag - ANNOTATION_INFO[b].nag)
             .map((annotation) => {
               const s = annotation;
               const { name, color, translationKey } = ANNOTATION_INFO[s];

@@ -1,4 +1,4 @@
-import { Anchor, Modal, Text, Group, Stack } from "@mantine/core";
+import { Anchor, Group, Modal, Stack, Text } from "@mantine/core";
 import { isTauri } from "@tauri-apps/api/core";
 import { useEffect, useState } from "react";
 
@@ -21,8 +21,14 @@ function AboutModal({
     async function load() {
       if (isTauri()) {
         try {
-          const { getVersion, getTauriVersion } = await import("@tauri-apps/api/app");
-          const { version: OSVersion, arch, type } = await import("@tauri-apps/plugin-os");
+          const { getVersion, getTauriVersion } = await import(
+            "@tauri-apps/api/app"
+          );
+          const {
+            version: OSVersion,
+            arch,
+            type,
+          } = await import("@tauri-apps/plugin-os");
 
           const os = await type();
           const version = await getVersion();
@@ -72,10 +78,14 @@ function AboutModal({
         </Group>
         <Group>
           <Text fw="bold">Operating System:</Text>
-          <Text>{info?.os} {info?.architecture} {info?.osVersion}</Text>
+          <Text>
+            {info?.os} {info?.architecture} {info?.osVersion}
+          </Text>
         </Group>
 
-        <Text fw="bold" size="lg">Credits</Text>
+        <Text fw="bold" size="lg">
+          Credits
+        </Text>
         <Text>Made by Mezd</Text>
         <Text>All rights belong to Mezdia</Text>
 
@@ -106,7 +116,9 @@ function AboutModal({
           https://www.enpassant.ir
         </Anchor>
 
-        <Text size="sm" c="dimmed">Copyright © 2025 Mezdia. All rights reserved.</Text>
+        <Text size="sm" c="dimmed">
+          Copyright © 2025 Mezdia. All rights reserved.
+        </Text>
       </Stack>
     </Modal>
   );

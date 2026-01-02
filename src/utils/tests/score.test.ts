@@ -1,3 +1,4 @@
+import type { BestMoves } from "@/bindings";
 import { expect, test } from "vitest";
 import {
   formatScore,
@@ -6,7 +7,6 @@ import {
   getCPLoss,
   getWinProbability,
 } from "../score";
-import type { BestMoves } from "@/bindings";
 
 test("should format a positive cp score correctly", () => {
   expect(formatScore({ type: "cp", value: 50 })).toBe("+0.50");
@@ -40,7 +40,11 @@ test("should calculate the accuracy correctly (CAPS II)", () => {
   ).toBeGreaterThan(90);
   // Example: blunder
   expect(
-    getAccuracy({ type: "cp", value: 200 }, { type: "cp", value: -200 }, "white"),
+    getAccuracy(
+      { type: "cp", value: 200 },
+      { type: "cp", value: -200 },
+      "white",
+    ),
   ).toBeLessThan(50);
 });
 
@@ -115,4 +119,3 @@ test("should annotate missed win", () => {
     ),
   ).toBe("✖");
 });
-

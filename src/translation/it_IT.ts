@@ -396,9 +396,11 @@ export const it_IT = {
     "Keybind.DatabaseTab": "Vai alla scheda database",
     "Keybind.AnnotateTab": "Vai alla scheda annota",
     "Keybind.InfoTab": "Vai alla scheda info",
-    "Keybind.AnnotationBrilliant": "Attiva/disattiva annotazione mossa brillante",
+    "Keybind.AnnotationBrilliant":
+      "Attiva/disattiva annotazione mossa brillante",
     "Keybind.AnnotationGood": "Attiva/disattiva annotazione mossa buona",
-    "Keybind.AnnotationInteresting": "Attiva/disattiva annotazione mossa interessante",
+    "Keybind.AnnotationInteresting":
+      "Attiva/disattiva annotazione mossa interessante",
     "Keybind.AnnotationDubious": "Attiva/disattiva annotazione mossa dubbia",
     "Keybind.AnnotationMistake": "Attiva/disattiva annotazione errore",
     "Keybind.AnnotationBlunder": "Attiva/disattiva annotazione errore grave",
@@ -408,4 +410,3 @@ export const it_IT = {
     "Keybind.NextGame": "Partita successiva",
   },
 };
-

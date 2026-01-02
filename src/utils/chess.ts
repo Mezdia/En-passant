@@ -276,22 +276,22 @@ export function getPGN(
   }
   const variationsPGN = variations
     ? tree.children.slice(1).map(
-      (variation) =>
-        `${getMoveText(variation, {
-          glyphs,
-          comments,
-          extraMarkups,
-          isFirst: true,
-        })} ${getPGN(variation, {
-          headers: null,
-          glyphs,
-          comments,
-          variations,
-          extraMarkups,
-          root: false,
-          path: null,
-        })}`,
-    )
+        (variation) =>
+          `${getMoveText(variation, {
+            glyphs,
+            comments,
+            extraMarkups,
+            isFirst: true,
+          })} ${getPGN(variation, {
+            headers: null,
+            glyphs,
+            comments,
+            variations,
+            extraMarkups,
+            root: false,
+            path: null,
+          })}`,
+      )
     : [];
   if (tree.children.length > 0) {
     const child = tree.children[path ? path[0] : 0];
@@ -752,12 +752,14 @@ export function generateChess960Fen(): string {
   const rook1File = fileChars[emptyIndices[0]];
   const rook2File = fileChars[emptyIndices[2]];
 
-  const whiteCastling = (
-    rook2File.toUpperCase() + rook1File.toUpperCase()
-  ).split("").sort().join("");
-  const blackCastling = (
-    rook2File.toLowerCase() + rook1File.toLowerCase()
-  ).split("").sort().join("");
+  const whiteCastling = (rook2File.toUpperCase() + rook1File.toUpperCase())
+    .split("")
+    .sort()
+    .join("");
+  const blackCastling = (rook2File.toLowerCase() + rook1File.toLowerCase())
+    .split("")
+    .sort()
+    .join("");
 
   return `${blackPieces}/pppppppp/8/8/8/8/PPPPPPPP/${whitePieces} w ${whiteCastling}${blackCastling} - 0 1`;
 }

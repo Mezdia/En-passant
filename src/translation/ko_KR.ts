@@ -438,4 +438,3 @@ export const ko_KR = {
     "Keybind.NextGame": "다음 게임",
   },
 };
-

@@ -406,7 +406,8 @@ export const es_ES = {
     "Keybind.InfoTab": "Ir a la pestaña de información",
     "Keybind.AnnotationBrilliant": "Alternar anotación de movimiento brillante",
     "Keybind.AnnotationGood": "Alternar anotación de movimiento bueno",
-    "Keybind.AnnotationInteresting": "Alternar anotación de movimiento interesante",
+    "Keybind.AnnotationInteresting":
+      "Alternar anotación de movimiento interesante",
     "Keybind.AnnotationDubious": "Alternar anotación de movimiento dudoso",
     "Keybind.AnnotationMistake": "Alternar anotación de error",
     "Keybind.AnnotationBlunder": "Alternar anotación de error grave",
@@ -416,4 +417,3 @@ export const es_ES = {
     "Keybind.NextGame": "Siguiente juego",
   },
 };
-

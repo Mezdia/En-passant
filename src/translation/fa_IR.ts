@@ -193,7 +193,8 @@ export const fa_IR = {
     "Bots.Game.Greeting": "سلام، من {{name}} هستم!",
 
     "Bots.Bot.Martin.Name": "مارتین",
-    "Bots.Bot.Martin.Desc": "ربات مبتدی دوستانه که تازه قوانین را یاد گرفته است.",
+    "Bots.Bot.Martin.Desc":
+      "ربات مبتدی دوستانه که تازه قوانین را یاد گرفته است.",
     "Bots.Bot.Wayne.Name": "وین",
     "Bots.Bot.Wayne.Desc": "ربات مبتدی که حرکت‌های ساده انجام می‌دهد.",
     "Bots.Bot.Fabian.Name": "فابیان",
@@ -531,7 +532,8 @@ export const fa_IR = {
     "Settings.Board.MoveNotation": "نماد حرکت",
     "Settings.Board.MoveNotation.Desc": "انتخاب نحوه نمایش مهره‌ها در نماد",
     "Settings.Board.WaysToMovePieces": "روش‌های حرکت مهره‌ها",
-    "Settings.Board.WaysToMovePieces.Desc": "حرکت مهره‌ها با کشیدن، کلیک یا هر دو",
+    "Settings.Board.WaysToMovePieces.Desc":
+      "حرکت مهره‌ها با کشیدن، کلیک یا هر دو",
     "Settings.Board.Drag": "کشیدن",
     "Settings.Board.Click": "کلیک",
     "Settings.Board.Both": "هر دو",
@@ -621,13 +623,17 @@ export const fa_IR = {
     "GamesViewer.WinRate": "نرخ برد",
 
     "Onboarding.Welcome.Title": "به ان-پاسان خوش آمدید",
-    "Onboarding.Welcome.Desc": "برای آشنایی با امکانات برنامه، یک تور تعاملی کوتاه را شروع کنید.",
+    "Onboarding.Welcome.Desc":
+      "برای آشنایی با امکانات برنامه، یک تور تعاملی کوتاه را شروع کنید.",
     "Onboarding.Sidebar.Title": "منوی اصلی",
-    "Onboarding.Sidebar.Desc": "دسترسی سریع به صفحه تحلیل، فایل‌ها، پایگاه داده و ربات‌ها.",
+    "Onboarding.Sidebar.Desc":
+      "دسترسی سریع به صفحه تحلیل، فایل‌ها، پایگاه داده و ربات‌ها.",
     "Onboarding.Board.Title": "صفحه تحلیل",
-    "Onboarding.Board.Desc": "بازی‌ها را با انجین‌های قدرتمند تحلیل کنید و تمرین کنید.",
+    "Onboarding.Board.Desc":
+      "بازی‌ها را با انجین‌های قدرتمند تحلیل کنید و تمرین کنید.",
     "Onboarding.Databases.Title": "فایل‌ها و پایگاه داده",
-    "Onboarding.Databases.Desc": "مدیریت فایل‌های PGN و جستجو در پایگاه‌های داده.",
+    "Onboarding.Databases.Desc":
+      "مدیریت فایل‌های PGN و جستجو در پایگاه‌های داده.",
     "Onboarding.Bots.Title": "بازی با ربات‌ها",
     "Onboarding.Bots.Desc": "با ربات‌های هوشمند در سطوح مختلف رقابت کنید.",
     "Onboarding.Settings.Title": "تنظیمات",

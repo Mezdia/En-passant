@@ -446,4 +446,3 @@ export const ru_RU = {
     "Keybind.NextGame": "Следующая игра",
   },
 };
-

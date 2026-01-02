@@ -6,11 +6,16 @@ import { useAtom } from "jotai";
 import { useState } from "react";
 import ImportModal from "./ImportModal";
 
-import { IconChess, IconDice, IconFileImport, IconPuzzle } from "@tabler/icons-react";
+import { generateChess960Fen } from "@/utils/chess";
+import { defaultTree } from "@/utils/treeReducer";
+import {
+  IconChess,
+  IconDice,
+  IconFileImport,
+  IconPuzzle,
+} from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import Chessboard from "../icons/Chessboard";
-import { defaultTree } from "@/utils/treeReducer";
-import { generateChess960Fen } from "@/utils/chess";
 import Chess960Custom from "./Chess960Custom";
 
 export default function NewTabHome({ id }: { id: string }) {

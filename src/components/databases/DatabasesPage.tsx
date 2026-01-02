@@ -26,7 +26,7 @@ import {
 } from "@mantine/core";
 import { useDebouncedValue, useToggle } from "@mantine/hooks";
 import { IconArrowRight, IconDatabase, IconPlus } from "@tabler/icons-react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { open as openDialog, save } from "@tauri-apps/plugin-dialog";
 import { useAtom, useStore } from "jotai";
 import { useEffect, useMemo, useState } from "react";
@@ -138,6 +138,7 @@ export default function DatabasesPage() {
                     if (item.type === "error") return;
                     navigate({
                       to: "/databases/$databaseId",
+                      // @ts-ignore
                       params: {
                         databaseId: item.title,
                       },
@@ -273,11 +274,15 @@ export default function DatabasesPage() {
                     <div>
                       {selectedDatabase.type === "success" && (
                         <Button
-                          component={Link}
-                          to="/databases/$databaseId"
-                          params={{ databaseId: selectedDatabase.title }}
-                          //onClick={() => setStorageSelected(selectedDatabase)}
-                          onClick={() => setActiveDatabase(selectedDatabase)}
+                          onClick={() => {
+                            navigate({
+                              to: "/databases/$databaseId",
+                              params: {
+                                databaseId: selectedDatabase.title,
+                              },
+                            });
+                            setActiveDatabase(selectedDatabase);
+                          }}
                           fullWidth
                           variant="default"
                           size="lg"

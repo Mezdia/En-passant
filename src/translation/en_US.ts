@@ -532,9 +532,11 @@ export const en_US = {
       "This is where your games in the Files page are stored",
 
     "Settings.Board.MoveNotation": "Move notation",
-    "Settings.Board.MoveNotation.Desc": "Choose how to display pieces in notation",
+    "Settings.Board.MoveNotation.Desc":
+      "Choose how to display pieces in notation",
     "Settings.Board.WaysToMovePieces": "Ways to Move Pieces",
-    "Settings.Board.WaysToMovePieces.Desc": "Move pieces by dragging, clicking, or both",
+    "Settings.Board.WaysToMovePieces.Desc":
+      "Move pieces by dragging, clicking, or both",
     "Settings.Board.Drag": "Drag",
     "Settings.Board.Click": "Click",
     "Settings.Board.Both": "Both",
@@ -624,13 +626,17 @@ export const en_US = {
     "GamesViewer.WinRate": "Win rate",
 
     "Onboarding.Welcome.Title": "Welcome to En-passant",
-    "Onboarding.Welcome.Desc": "Take a quick interactive tour to explore the features of En-passant.",
+    "Onboarding.Welcome.Desc":
+      "Take a quick interactive tour to explore the features of En-passant.",
     "Onboarding.Sidebar.Title": "Main Navigation",
-    "Onboarding.Sidebar.Desc": "Navigate between Board, Files, Databases, Bots and Engines here.",
+    "Onboarding.Sidebar.Desc":
+      "Navigate between Board, Files, Databases, Bots and Engines here.",
     "Onboarding.Board.Title": "Analysis Board",
-    "Onboarding.Board.Desc": "Analyze games with powerful engines and build your repertoire.",
+    "Onboarding.Board.Desc":
+      "Analyze games with powerful engines and build your repertoire.",
     "Onboarding.Databases.Title": "Files & Databases",
-    "Onboarding.Databases.Desc": "Manage PGN files and search through chess databases.",
+    "Onboarding.Databases.Desc":
+      "Manage PGN files and search through chess databases.",
     "Onboarding.Bots.Title": "Play vs Bots",
     "Onboarding.Bots.Desc": "Challenge bots of varying difficulty levels.",
     "Onboarding.Settings.Title": "Settings",

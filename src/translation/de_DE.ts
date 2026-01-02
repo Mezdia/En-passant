@@ -411,4 +411,3 @@ export const de_DE = {
     "Keybind.NextGame": "Nächstes Spiel",
   },
 };
-

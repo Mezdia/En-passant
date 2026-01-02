@@ -389,4 +389,3 @@ export const zh_CN = {
     "Keybind.NextGame": "下一局",
   },
 };
-
