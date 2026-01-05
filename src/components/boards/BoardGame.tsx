@@ -92,20 +92,20 @@ function EnginesSelect({
 
 export type OpponentSettings =
   | {
-      type: "human";
-      timeControl?: TimeControlField;
-      name?: string;
-      timeUnit?: TimeType;
-      incrementUnit?: TimeType;
-    }
+    type: "human";
+    timeControl?: TimeControlField;
+    name?: string;
+    timeUnit?: TimeType;
+    incrementUnit?: TimeType;
+  }
   | {
-      type: "engine";
-      timeControl?: TimeControlField;
-      engine: LocalEngine | null;
-      go: GoMode;
-      timeUnit?: TimeType;
-      incrementUnit?: TimeType;
-    };
+    type: "engine";
+    timeControl?: TimeControlField;
+    engine: LocalEngine | null;
+    go: GoMode;
+    timeUnit?: TimeType;
+    incrementUnit?: TimeType;
+  };
 
 function OpponentForm({
   sameTimeControl,
@@ -383,30 +383,61 @@ function BoardGame() {
       const player = currentTurn === "white" ? players.white : players.black;
 
       if (player.type === "engine" && player.engine) {
+        // Prepare engine options
+        const baseOptions = (player.engine.settings || [])
+          .filter((s) => s.name !== "MultiPV")
+          .map((s) => ({
+            ...s,
+            value: s.value?.toString() ?? "",
+          }));
+
+        // If this is a bot game, we might have extra options for rating
+        let extraOptions = baseOptions;
+        let goMode = player.go;
+
+        const sessionSettings = sessionStorage.getItem(`gameSettings_${activeTab}`);
+        if (sessionSettings) {
+          const botInfo = JSON.parse(sessionSettings);
+          // Only apply if the engine matches the one in botInfo
+          if (botInfo.engine === player.engine.path) {
+            // Merge bot-specific engine options (Skill Level, Elo, etc.)
+            const botOptions = botInfo.engineOptions || [];
+            for (const opt of botOptions) {
+              const existingIndex = extraOptions.findIndex(
+                (o) => o.name === opt.name,
+              );
+              if (existingIndex !== -1) {
+                extraOptions[existingIndex] = opt;
+              } else {
+                extraOptions.push(opt);
+              }
+            }
+            // Use bot-specific GoMode if available
+            if (botInfo.goMode) {
+              goMode = botInfo.goMode;
+            }
+          }
+        }
+
         commands.getBestMoves(
           currentTurn,
           player.engine.path,
           activeTab + currentTurn,
           player.timeControl
             ? {
-                t: "PlayersTime",
-                c: {
-                  white: whiteTime ?? 0,
-                  black: blackTime ?? 0,
-                  winc: player.timeControl.increment ?? 0,
-                  binc: player.timeControl.increment ?? 0,
-                },
-              }
-            : player.go,
+              t: "PlayersTime",
+              c: {
+                white: whiteTime ?? 0,
+                black: blackTime ?? 0,
+                winc: player.timeControl.increment ?? 0,
+                binc: player.timeControl.increment ?? 0,
+              },
+            }
+            : goMode,
           {
             fen: root.fen,
             moves: moves,
-            extraOptions: (player.engine.settings || [])
-              .filter((s) => s.name !== "MultiPV")
-              .map((s) => ({
-                ...s,
-                value: s.value?.toString() ?? "",
-              })),
+            extraOptions,
           },
         );
       }
@@ -537,25 +568,22 @@ function BoardGame() {
       if (sameTimeControl && players.white.timeControl) {
         newHeaders.time_control = `${players.white.timeControl.seconds / 1000}`;
         if (players.white.timeControl.increment) {
-          newHeaders.time_control += `+${
-            players.white.timeControl.increment / 1000
-          }`;
+          newHeaders.time_control += `+${players.white.timeControl.increment / 1000
+            }`;
         }
       } else {
         if (players.white.timeControl) {
           newHeaders.white_time_control = `${players.white.timeControl.seconds / 1000}`;
           if (players.white.timeControl.increment) {
-            newHeaders.white_time_control += `+${
-              players.white.timeControl.increment / 1000
-            }`;
+            newHeaders.white_time_control += `+${players.white.timeControl.increment / 1000
+              }`;
           }
         }
         if (players.black.timeControl) {
           newHeaders.black_time_control = `${players.black.timeControl.seconds / 1000}`;
           if (players.black.timeControl.increment) {
-            newHeaders.black_time_control += `+${
-              players.black.timeControl.increment / 1000
-            }`;
+            newHeaders.black_time_control += `+${players.black.timeControl.increment / 1000
+              }`;
           }
         }
       }
@@ -581,13 +609,79 @@ function BoardGame() {
 
         return tab.value === activeTab
           ? {
-              ...tab,
-              name: `${whiteName} vs. ${blackName}`,
-            }
+            ...tab,
+            name: `${whiteName} vs. ${blackName}`,
+          }
           : tab;
       }),
     );
   }
+
+  // Auto-start bot games from sessionStorage
+  const engines = useAtomValue(enginesAtom);
+  useEffect(() => {
+    if (gameState === "settingUp" && activeTab) {
+      const sessionSettings = sessionStorage.getItem(`gameSettings_${activeTab}`);
+      if (sessionSettings) {
+        try {
+          const botInfo = JSON.parse(sessionSettings);
+          const { bot, playSide, engine: enginePath } = botInfo;
+
+          const engine = engines.find(
+            (e): e is LocalEngine => e.type === "local" && e.path === enginePath,
+          );
+
+          if (engine) {
+            const humanPlayer: OpponentSettings = {
+              type: "human",
+              name: "User", // Could get from global state if available
+            };
+
+            const botPlayer: OpponentSettings = {
+              type: "engine",
+              engine,
+              go: botInfo.goMode || { t: "Depth", c: 15 },
+            };
+
+            let whiteP: OpponentSettings;
+            let blackP: OpponentSettings;
+
+            const actualSide =
+              playSide === "random"
+                ? Math.random() > 0.5
+                  ? "white"
+                  : "black"
+                : playSide;
+
+            if (actualSide === "white") {
+              whiteP = humanPlayer;
+              blackP = botPlayer;
+            } else {
+              whiteP = botPlayer;
+              blackP = humanPlayer;
+            }
+
+            setPlayers({ white: whiteP, black: blackP });
+            setGameState("playing");
+
+            const newHeaders: Partial<GameHeaders> = {
+              white: whiteP.type === "human" ? whiteP.name : (whiteP.engine?.name ?? "?"),
+              black: blackP.type === "human" ? blackP.name : (blackP.engine?.name ?? "?"),
+              fen: root.fen,
+              orientation: actualSide === "black" ? "black" : "white",
+            };
+
+            setHeaders({ ...headers, ...newHeaders });
+
+            // Clear sessionStorage after reading to prevent restart on reload
+            // sessionStorage.removeItem(`gameSettings_${activeTab}`);
+          }
+        } catch (e) {
+          console.error("Failed to parse bot game info", e);
+        }
+      }
+    }
+  }, [gameState, activeTab, engines, setPlayers, setGameState, setHeaders, root.fen]);
 
   useEffect(() => {
     if (gameState === "playing" && !intervalId) {

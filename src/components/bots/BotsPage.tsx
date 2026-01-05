@@ -357,23 +357,30 @@ function CustomSettingsPanel({
 // Bot Settings Panel (shown when bot is selected)
 function BotSettingsPanel({
   bot,
+  playSide,
+  setPlaySide,
+  gameMode,
+  setGameMode,
+  customSettings,
+  setCustomSettings,
+  selectedEngine,
+  setSelectedEngine,
   onStartGame,
 }: {
   bot: Bot | null;
-  onStartGame: () => void;
+  playSide: PlaySide;
+  setPlaySide: (side: PlaySide) => void;
+  gameMode: GameMode;
+  setGameMode: (mode: GameMode) => void;
+  customSettings: CustomSettings;
+  setCustomSettings: (settings: CustomSettings) => void;
+  selectedEngine: string;
+  setSelectedEngine: (path: string) => void;
+  onStartGame: () => void | Promise<void>;
 }) {
   const { t } = useTranslation();
   const engines = useAtomValue(enginesAtom).filter(
     (e): e is LocalEngine => e.type === "local",
-  );
-
-  const [playSide, setPlaySide] = useState<PlaySide>("white");
-  const [gameMode, setGameMode] = useState<GameMode>("competition");
-  const [customSettings, setCustomSettings] = useState<CustomSettings>(
-    DEFAULT_CUSTOM_SETTINGS,
-  );
-  const [selectedEngine, setSelectedEngine] = useState<string>(
-    engines[0]?.path || "",
   );
 
   if (!bot) {
@@ -580,15 +587,23 @@ export default function BotsPage() {
   const [customSettings, setCustomSettings] = useState<CustomSettings>(
     DEFAULT_CUSTOM_SETTINGS,
   );
+  const [selectedEngine, setSelectedEngine] = useState<string>("");
+
+  // Initialize engine selection
+  useEffect(() => {
+    if (engines.length > 0 && !selectedEngine) {
+      setSelectedEngine(engines[0].path);
+    }
+  }, [engines, selectedEngine]);
 
   // Get bots for selected category
   const bots = getBotsByCategory(selectedCategory);
 
   // Start game with selected bot
-  const startGame = useCallback(() => {
+  const startGame = useCallback(async () => {
     if (!selectedBot) return;
 
-    const engine = engines[0];
+    const engine = engines.find((e) => e.path === selectedEngine) || engines[0];
     if (!engine) return;
 
     // Store bot info in session storage for the game
@@ -604,7 +619,7 @@ export default function BotsPage() {
     };
 
     // Create a new tab for the bot game
-    createTab({
+    const id = await createTab({
       tab: {
         name: `${t("Bots.Game.VsPrefix")} ${selectedBot.name}`,
         type: "play",
@@ -614,14 +629,15 @@ export default function BotsPage() {
       pgn: "",
     });
 
-    // Store bot info for the game page
-    sessionStorage.setItem("currentBotGame", JSON.stringify(botGameInfo));
+    // Store bot info for the game page using the new tab ID
+    sessionStorage.setItem(`gameSettings_${id}`, JSON.stringify(botGameInfo));
   }, [
     selectedBot,
     playSide,
     gameMode,
     customSettings,
     engines,
+    selectedEngine,
     t,
     setTabs,
     setActiveTab,
@@ -696,7 +712,18 @@ export default function BotsPage() {
               [classes.settingsPanelClosing]: isClosing,
             })}
           >
-            <BotSettingsPanel bot={selectedBot} onStartGame={startGame} />
+            <BotSettingsPanel
+              bot={selectedBot}
+              playSide={playSide}
+              setPlaySide={setPlaySide}
+              gameMode={gameMode}
+              setGameMode={setGameMode}
+              customSettings={customSettings}
+              setCustomSettings={setCustomSettings}
+              selectedEngine={selectedEngine}
+              setSelectedEngine={setSelectedEngine}
+              onStartGame={startGame}
+            />
           </Paper>
         )}
       </div>
