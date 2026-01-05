@@ -15,7 +15,10 @@ import { warn } from "@tauri-apps/plugin-log";
 import type { z } from "zod";
 
 const options = { baseDir: BaseDirectory.AppData };
-const isTauriEnv = typeof window !== "undefined" && (window as any).__TAURI__ !== undefined;
+const isTauriEnv =
+  typeof window !== "undefined" &&
+  ((window as any).__TAURI__ !== undefined ||
+    (window as any).__TAURI_IPC__ !== undefined);
 export const fileStorage: AsyncStringStorage = {
   async getItem(key) {
     if (!isTauriEnv) {
@@ -32,7 +35,7 @@ export const fileStorage: AsyncStringStorage = {
       const res = await readTextFile(key, options);
       try {
         console.debug(`[fileStorage] getItem ${key} -> ${res?.length ?? 0} chars`);
-      } catch {}
+      } catch { }
       return res;
     } catch (error) {
       console.debug(`[fileStorage] getItem ${key} -> error: ${error}`);
@@ -54,7 +57,7 @@ export const fileStorage: AsyncStringStorage = {
       await writeTextFile(key, newValue, options);
       try {
         console.debug(`[fileStorage] setItem ${key} -> ${newValue?.length ?? 0} chars`);
-      } catch {}
+      } catch { }
     } catch (error) {
       console.debug(`[fileStorage] setItem ${key} -> error: ${error}`);
       throw error;
@@ -134,7 +137,7 @@ export function createAsyncZodStorage<Value>(
         }
         try {
           console.debug(`[createAsyncZodStorage] getItem ${key} -> ${storedValue?.length ?? 0} chars`);
-        } catch {}
+        } catch { }
         const res = schema.safeParse(JSON.parse(storedValue));
         if (res.success) {
           return res.data;
@@ -153,7 +156,7 @@ export function createAsyncZodStorage<Value>(
         await storage.setItem(key, serialized);
         try {
           console.debug(`[createAsyncZodStorage] setItem ${key} -> ${serialized?.length ?? 0} chars`);
-        } catch {}
+        } catch { }
       } catch (e) {
         warn(`Failed to write ${key}: ${e}`);
         throw e;

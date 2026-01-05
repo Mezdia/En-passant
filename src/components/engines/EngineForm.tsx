@@ -6,7 +6,7 @@ import { isTauri } from "@/utils/tauri";
 import { Button, Input, NumberInput, Text, TextInput } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
 import { open } from "@tauri-apps/plugin-dialog";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { match } from "ts-pattern";
 import FileInput from "../common/FileInput";
@@ -38,6 +38,8 @@ export default function EngineForm({
     .with("windows", () => [{ name: "Executable Files", extensions: ["exe"] }])
     .otherwise(() => []);
 
+  const [loading, setLoading] = useState(false);
+
   return (
     <form
       onSubmit={form.onSubmit(async (values) =>
@@ -49,19 +51,25 @@ export default function EngineForm({
         description={t("Engines.Add.BinaryFile.Desc")}
         filename={form.values.path}
         withAsterisk
-          onClick={async () => {
-            if (!isTauri()) return;
-            const selected = await open({
-              multiple: false,
-              filters,
-            });
-            if (!selected) return;
-            config.current = unwrap(
-              await commands.getEngineConfig(selected as string),
-            );
+        disabled={loading}
+        onClick={async () => {
+          const selected = await open({
+            multiple: false,
+            filters,
+          });
+          if (!selected) return;
+          setLoading(true);
+          try {
+            const res = await commands.getEngineConfig(selected as string);
+            config.current = unwrap(res);
             form.setFieldValue("path", selected as string);
             form.setFieldValue("name", config.current.name);
-          }}
+          } catch (e) {
+            console.error(e);
+          } finally {
+            setLoading(false);
+          }
+        }}
       />
 
       <TextInput

@@ -1,4 +1,4 @@
-import { Input, type InputWrapperProps, Text } from "@mantine/core";
+import { Input, type InputWrapperProps, Loader, Text } from "@mantine/core";
 
 function FileInput({
   label,
@@ -28,6 +28,7 @@ function FileInput({
         type="button"
         onClick={onClick}
         disabled={disabled}
+        rightSection={disabled && <Loader size="xs" />}
       >
         <Text lineClamp={1}>{filename}</Text>
       </Input>
