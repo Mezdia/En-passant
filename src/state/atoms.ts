@@ -535,3 +535,11 @@ export const enableAllAtom = atom(null, (get, set, value: boolean) => {
     set(atom, { ...get(atom), enabled: value });
   }
 });
+// Bot Game History
+import { getBotGameHistory, type BotGameRecord } from '@/components/bots/botGameHistory';
+
+export const botGameHistoryTriggerAtom = atom(0); // Used to force reload
+export const botGameHistoryAtom = atom<BotGameRecord[]>((get) => {
+  get(botGameHistoryTriggerAtom);
+  return getBotGameHistory();
+});

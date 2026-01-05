@@ -25,7 +25,9 @@ import {
   IconPlus,
   IconRobot,
   IconTrophy,
+  IconHistory,
 } from "@tabler/icons-react";
+import { BotGamesViewer } from "./BotGamesViewer";
 import cx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import * as Flags from "mantine-flagpack";
@@ -44,11 +46,14 @@ import {
   getBotsByCategory,
 } from "./botData";
 import {
+  getCompatibleEngineOptions,
   getEngineOptionsForElo,
   getGoModeForElo,
   getRatingBehavior,
   getRatingDescription,
 } from "./engineRating";
+import { commands } from "@/bindings";
+import { unwrap } from "@/utils/unwrap";
 
 // Helper to get Flag component by country code
 const flagComponents = Object.entries(Flags).map(([key, value]) => ({
@@ -564,6 +569,9 @@ export default function BotsPage() {
     useState<BotCategory>("Beginner");
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
 
+  // History Viewer State
+  const [showHistory, setShowHistory] = useState(false);
+
   // Animation state for settings panel
   const [showPanel, setShowPanel] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -607,10 +615,36 @@ export default function BotsPage() {
 
   // Start game with selected bot
   const startGame = useCallback(async () => {
-    if (!selectedBot) return;
+    console.log("[BotsPage] Start Game clicked");
 
+    if (!selectedBot) {
+      console.error("[BotsPage] No bot selected");
+      return;
+    }
+
+    // Default to first engine if selection is invalid/empty, but try to respect selection first
+    // If selectedEngine is null, we try engines[0].
     const engine = engines.find((e) => e.path === selectedEngine) || engines[0];
-    if (!engine) return;
+
+    if (!engine) {
+      console.error("[BotsPage] No engine found! Engines list:", engines);
+      alert("No engine found! Please install an engine first.");
+      return;
+    }
+
+    console.log("[BotsPage] Using engine:", engine);
+
+    // Get supported options from engine
+    let engineOptions: Array<{ name: string; value: string }> = [];
+    try {
+      const config = unwrap(await commands.getEngineConfig(engine.path));
+      const supportedOptions = config.options.map((o: any) => o.value.name);
+      engineOptions = getCompatibleEngineOptions(selectedBot.rating, supportedOptions);
+    } catch (e) {
+      console.warn("Failed to fetch engine options, using defaults", e);
+      // Fallback to optimistic options if we can't check capabilities
+      engineOptions = getEngineOptionsForElo(selectedBot.rating);
+    }
 
     // Store bot info in session storage for the game
     const botGameInfo = {
@@ -620,7 +654,7 @@ export default function BotsPage() {
       customSettings: gameMode === "custom" ? customSettings : null,
       engine: engine.path,
       rating: selectedBot.rating,
-      engineOptions: getEngineOptionsForElo(selectedBot.rating),
+      engineOptions,
       goMode: getGoModeForElo(selectedBot.rating),
     };
 
@@ -629,7 +663,7 @@ export default function BotsPage() {
     const id = await createTab({
       tab: {
         name: `${t("Bots.Game.VsPrefix")} ${botName}`,
-        type: "play",
+        type: "bot-game",
       },
       setTabs,
       setActiveTab,
@@ -655,6 +689,13 @@ export default function BotsPage() {
     <div className={classes.pageContainer}>
       <div className={classes.pageHeader}>
         <Title order={2}>{t("Bots.Title")}</Title>
+        <Button
+          variant="subtle"
+          leftSection={<IconHistory size={20} />}
+          onClick={() => setShowHistory(true)}
+        >
+          {t("Bots.GameHistory")}
+        </Button>
       </div>
 
       <div className={classes.mainContent}>
@@ -734,7 +775,13 @@ export default function BotsPage() {
             />
           </Paper>
         )}
+
       </div>
+
+      <BotGamesViewer
+        opened={showHistory}
+        onClose={() => setShowHistory(false)}
+      />
     </div>
   );
 }

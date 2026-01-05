@@ -19,6 +19,7 @@ import Puzzles from "../puzzles/Puzzles";
 import { BoardTab } from "./BoardTab";
 import ConfirmChangesModal from "./ConfirmChangesModal";
 import NewTabHome from "./NewTabHome";
+import { BotGamePage } from "../botgame/BotGamePage";
 
 import "react-mosaic-component/react-mosaic-component.css";
 
@@ -337,5 +338,20 @@ function TabSwitch({
         <Puzzles id={tab.value} />
       </TreeStateProvider>
     ))
+    .with("bot-game", () => {
+      const sessionData = sessionStorage.getItem(`gameSettings_${tab.value}`);
+      const botGameInfo = sessionData ? JSON.parse(sessionData) : null;
+
+      if (!botGameInfo || !botGameInfo.bot) {
+        return <div>Error loading bot game</div>;
+      }
+
+      return (
+        <BotGamePage
+          bot={botGameInfo.bot}
+          onExit={() => closeTab(tab.value)}
+        />
+      );
+    })
     .exhaustive();
 }
