@@ -206,31 +206,6 @@ git commit -m "feat: add your feature"
 git push origin feature/your-feature-name
 ```
 
-## Boundaries
-
-### What En-passant Does
-- ✅ Chess game analysis and visualization
-- ✅ Multi-engine support (UCI protocol)
-- ✅ Game database management
-- ✅ Opening repertoire training
-- ✅ Cross-platform desktop application
-- ✅ Lichess/Chess.com integration
-
-### What En-passant Does NOT Do
-- ❌ Online multiplayer chess (use dedicated sites)
-- ❌ Chess engine development (integrates existing engines)
-- ❌ Web browser compatibility (desktop-only via Tauri)
-- ❌ Mobile applications (desktop-focused)
-- ❌ Cloud storage (local-first approach)
-- ❌ Real-time collaboration features
-
-### Security Boundaries
-- 🔒 **Never disclose user data**: Personal games and analysis remain local
-- 🔒 **No external API keys required**: Integrations use public APIs only
-- 🔒 **Filesystem access limited**: Only chess-related directories
-- 🔒 **No network surveillance**: No telemetry or tracking
-- 🔒 **Open source transparency**: All code auditable
-
 ## Building from Source
 
 Refer to the [Tauri documentation](https://tauri.app/v1/guides/getting-started/prerequisites) for system requirements.
