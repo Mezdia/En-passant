@@ -105,7 +105,8 @@ function BotCard({
   isSelected: boolean;
   onClick: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isPersian = i18n.language.startsWith("fa");
 
   const flagData = bot.country ? getFlag(bot.country) : null;
 
@@ -127,7 +128,11 @@ function BotCard({
       {/* Large Image Container */}
       <div className={classes.cardImageContainer}>
         {bot.image ? (
-          <img src={bot.image} alt={bot.name} className={classes.cardImage} />
+          <img
+            src={bot.image}
+            alt={isPersian ? bot.namePersian : bot.nameEnglish}
+            className={classes.cardImage}
+          />
         ) : (
           <div className={classes.cardPlaceholder}>
             <IconRobot size="1em" stroke={1} />
@@ -173,10 +178,10 @@ function BotCard({
       {/* Content Section */}
       <div className={classes.cardContent}>
         <h4 className={classes.cardName}>
-          {t(bot.nameKey, { defaultValue: bot.name })}
+          {t(bot.nameKey, { defaultValue: isPersian ? bot.namePersian : bot.nameEnglish })}
         </h4>
         <p className={classes.cardDescription}>
-          {t(bot.descriptionKey, { defaultValue: bot.description })}
+          {t(bot.descriptionKey, { defaultValue: isPersian ? bot.descriptionPersian : bot.descriptionEnglish })}
         </p>
         <div
           className={cx(classes.cardLevel, {
@@ -378,7 +383,8 @@ function BotSettingsPanel({
   setSelectedEngine: (path: string) => void;
   onStartGame: () => void | Promise<void>;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isPersian = i18n.language.startsWith("fa");
   const engines = useAtomValue(enginesAtom).filter(
     (e): e is LocalEngine => e.type === "local",
   );
@@ -397,12 +403,11 @@ function BotSettingsPanel({
   return (
     <ScrollArea h="100%" offsetScrollbars>
       <Stack>
-        {/* Bot Info */}
         <Group wrap="nowrap">
           {bot.image ? (
             <img
               src={bot.image}
-              alt={bot.name}
+              alt={isPersian ? bot.namePersian : bot.nameEnglish}
               style={{
                 width: 64,
                 height: 64,
@@ -428,7 +433,7 @@ function BotSettingsPanel({
           <Stack gap={4}>
             <Group gap="xs">
               <Title order={4}>
-                {t(bot.nameKey, { defaultValue: bot.name })}
+                {t(bot.nameKey, { defaultValue: isPersian ? bot.namePersian : bot.nameEnglish })}
               </Title>
               {flagData && (
                 <div className={classes.settingsPanelFlags}>
@@ -461,7 +466,7 @@ function BotSettingsPanel({
               </Text>
             </Group>
             <Text size="sm" c="dimmed">
-              {t(bot.descriptionKey, { defaultValue: bot.description })}
+              {t(bot.descriptionKey, { defaultValue: isPersian ? bot.descriptionPersian : bot.descriptionEnglish })}
             </Text>
           </Stack>
         </Group>
@@ -547,7 +552,8 @@ function BotSettingsPanel({
 
 // Main BotsPage Component
 export default function BotsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isPersian = i18n.language.startsWith("fa");
   const [tabs, setTabs] = useAtom(tabsAtom);
   const [, setActiveTab] = useAtom(activeTabAtom);
   const engines = useAtomValue(enginesAtom).filter(
@@ -619,9 +625,10 @@ export default function BotsPage() {
     };
 
     // Create a new tab for the bot game
+    const botName = isPersian ? selectedBot.namePersian : selectedBot.nameEnglish;
     const id = await createTab({
       tab: {
-        name: `${t("Bots.Game.VsPrefix")} ${selectedBot.name}`,
+        name: `${t("Bots.Game.VsPrefix")} ${botName}`,
         type: "play",
       },
       setTabs,
@@ -639,6 +646,7 @@ export default function BotsPage() {
     engines,
     selectedEngine,
     t,
+    i18n,
     setTabs,
     setActiveTab,
   ]);

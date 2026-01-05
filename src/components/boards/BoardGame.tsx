@@ -46,6 +46,7 @@ import {
   useState,
 } from "react";
 import { match } from "ts-pattern";
+import { useTranslation } from "react-i18next";
 import { useStore } from "zustand";
 import GameInfo from "../common/GameInfo";
 import GameNotation from "../common/GameNotation";
@@ -294,6 +295,8 @@ const DEFAULT_TIME_CONTROL: TimeControlField = {
 };
 
 function BoardGame() {
+  const { t, i18n } = useTranslation();
+  const isPersian = i18n.language.startsWith("fa");
   const activeTab = useAtomValue(activeTabAtom);
 
   const [inputColor, setInputColor] = useState<"white" | "random" | "black">(
@@ -664,9 +667,11 @@ function BoardGame() {
             setPlayers({ white: whiteP, black: blackP });
             setGameState("playing");
 
+            const botName = isPersian ? botInfo.bot.namePersian : botInfo.bot.nameEnglish;
+
             const newHeaders: Partial<GameHeaders> = {
-              white: whiteP.type === "human" ? whiteP.name : (whiteP.engine?.name ?? "?"),
-              black: blackP.type === "human" ? blackP.name : (blackP.engine?.name ?? "?"),
+              white: whiteP.type === "human" ? whiteP.name : botName,
+              black: blackP.type === "human" ? blackP.name : botName,
               fen: root.fen,
               orientation: actualSide === "black" ? "black" : "white",
             };
