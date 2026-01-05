@@ -1,6 +1,7 @@
 import LocalImage from "@/components/common/LocalImage";
 import { activeTabAtom, enginesAtom } from "@/state/atoms";
 import { type Engine, stopEngine } from "@/utils/engines";
+import { isTauri } from "@/utils/tauri";
 import {
   Center,
   Checkbox,
@@ -31,6 +32,11 @@ function EngineBox({
       w="100%"
       h="3rem"
       onClick={() => {
+        if (!isTauri()) {
+          // in web build local engine operations aren't supported; just toggle UI state
+          toggleEnabled();
+          return;
+        }
         if (engine.loaded && engine.type === "local") {
           stopEngine(engine, activeTab!);
         }

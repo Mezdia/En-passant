@@ -2,6 +2,7 @@ import { type UciOptionConfig, commands } from "@/bindings";
 import { type LocalEngine, requiredEngineSettings } from "@/utils/engines";
 import { usePlatform } from "@/utils/files";
 import { unwrap } from "@/utils/unwrap";
+import { isTauri } from "@/utils/tauri";
 import { Button, Input, NumberInput, Text, TextInput } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
 import { open } from "@tauri-apps/plugin-dialog";
@@ -48,18 +49,19 @@ export default function EngineForm({
         description={t("Engines.Add.BinaryFile.Desc")}
         filename={form.values.path}
         withAsterisk
-        onClick={async () => {
-          const selected = await open({
-            multiple: false,
-            filters,
-          });
-          if (!selected) return;
-          config.current = unwrap(
-            await commands.getEngineConfig(selected as string),
-          );
-          form.setFieldValue("path", selected as string);
-          form.setFieldValue("name", config.current.name);
-        }}
+          onClick={async () => {
+            if (!isTauri()) return;
+            const selected = await open({
+              multiple: false,
+              filters,
+            });
+            if (!selected) return;
+            config.current = unwrap(
+              await commands.getEngineConfig(selected as string),
+            );
+            form.setFieldValue("path", selected as string);
+            form.setFieldValue("name", config.current.name);
+          }}
       />
 
       <TextInput

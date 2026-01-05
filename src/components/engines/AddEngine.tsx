@@ -32,6 +32,7 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ProgressButton from "../common/ProgressButton";
 import EngineForm from "./EngineForm";
+import { isTauri } from "@/utils/tauri";
 
 function AddEngine({
   opened,
@@ -204,6 +205,7 @@ function EngineCard({
   const [, setEngines] = useAtom(enginesAtom);
   const downloadEngine = useCallback(
     async (id: number, url: string) => {
+      if (!isTauri()) return;
       setInProgress(true);
       let path = await resolve(
         await appDataDir(),

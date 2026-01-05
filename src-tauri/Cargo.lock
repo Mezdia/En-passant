@@ -6120,7 +6120,7 @@ checksum = "8fec26a25bd6fca441cdd0f769fd7f891bae119f996de31f86a5eddccef54c1d"
 [[package]]
 name = "vampirc-uci"
 version = "0.11.1"
-source = "git+https://github.com/Mezdia/vampirc-uci?rev=c60e65c7d801920ccfc533df3ab87e292d6d0448#c60e65c7d801920ccfc533df3ab87e292d6d0448"
+source = "git+https://github.com/vampirc/vampirc-uci?rev=c60e65c7d801920ccfc533df3ab87e292d6d0448#c60e65c7d801920ccfc533df3ab87e292d6d0448"
 dependencies = [
  "chrono",
  "pest",

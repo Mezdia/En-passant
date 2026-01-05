@@ -77,6 +77,9 @@ pub enum Error {
 
     #[error("Players aren't the same. They have played against each other")]
     NotDistinctPlayers,
+
+    #[error("{0}")]
+    Other(String),
 }
 
 impl serde::Serialize for Error {

@@ -465,6 +465,12 @@ pub async fn get_best_moves(
 ) -> Result<Option<(f32, Vec<BestMoves>)>, Error> {
     let path = PathBuf::from(&engine);
 
+    // ensure engine binary exists before attempting to spawn
+    if !path.exists() {
+        error!("Engine binary does not exist: {}", path.display());
+        return Err(Error::Other(format!("Engine not found: {}", path.display())));
+    }
+
     let key = (tab.clone(), engine.clone());
 
     if state.engine_processes.contains_key(&key) {
@@ -606,6 +612,12 @@ pub async fn analyze_game(
     app: tauri::AppHandle,
 ) -> Result<Vec<MoveAnalysis>, Error> {
     let path = PathBuf::from(&engine);
+    // ensure engine binary exists
+    if !path.exists() {
+        error!("Engine binary does not exist for analyze_game: {}", path.display());
+        return Err(Error::Other(format!("Engine not found: {}", path.display())));
+    }
+
     let mut analysis: Vec<MoveAnalysis> = Vec::new();
 
     let (mut proc, mut reader) = EngineProcess::new(path).await?;
