@@ -11,8 +11,6 @@
     <a href="https://www.enpassant.ir"><strong>enpassant.ir</strong></a>
     <br />
     <br />
-    <a href="https://discord.gg/tdYzfDbSSW">Discord Server</a>
-    ·
     <a href="https://www.enpassant.ir/download">Download</a>
     .
     <a href="https://www.enpassant.ir/docs">Explore the docs</a>
