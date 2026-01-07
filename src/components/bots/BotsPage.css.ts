@@ -103,6 +103,31 @@ export const cardPlaceholder = style({
   opacity: 0.6,
 });
 
+// YouTube icon badge
+export const youtubeBadge = style({
+  position: "absolute",
+  top: "12px",
+  left: "12px",
+  borderRadius: "4px",
+  overflow: "hidden",
+  zIndex: 2,
+});
+
+export const youtubeLink = style({
+  display: "block",
+  transition: "opacity 0.3s ease",
+
+  ":hover": {
+    opacity: 0.8,
+  },
+});
+
+export const youtubeIcon = style({
+  width: "24px",
+  height: "24px",
+  display: "block",
+});
+
 // Country flag badge
 export const flagBadge = style({
   position: "absolute",
@@ -498,6 +523,80 @@ export const cardLevelGolden = style({
   fontWeight: 900,
   textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
   border: "1px solid rgba(255, 215, 0, 0.3)",
+});
+
+// YouTube Card Styles - Red gradient for Persian creators
+export const cardYoutube = style({
+  // Red gradient border
+  border: "2px solid transparent",
+  position: "relative",
+
+  [vars.lightSelector]: {
+    background: `
+            linear-gradient(white, white) padding-box,
+            linear-gradient(135deg, #FF0000, #DC143C, #FF0000) border-box
+        `,
+    ":hover": {
+      background: `
+                linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #FF0000, #DC143C, #B22222) border-box
+            `,
+      transform: "translateY(-2px)",
+    },
+  },
+  [vars.darkSelector]: {
+    background: `
+            linear-gradient(${vars.colors.dark[7]}, ${vars.colors.dark[7]}) padding-box,
+            linear-gradient(135deg, #FF0000, #DC143C, #FF0000) border-box
+        `,
+    ":hover": {
+      background: `
+                linear-gradient(${vars.colors.dark[7]}, ${vars.colors.dark[7]}) padding-box,
+                linear-gradient(135deg, #FF0000, #DC143C, #B22222) border-box
+            `,
+      transform: "translateY(-2px)",
+    },
+  },
+
+  // Smooth transition
+  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+});
+
+export const cardYoutubeSelected = style({
+  border: "2px solid transparent !important",
+  background: `
+        linear-gradient(${vars.colors.white}, ${vars.colors.white}) padding-box,
+        linear-gradient(135deg, #FF0000, #DC143C, #B22222) border-box
+    `,
+  transform: "translateY(-2px) !important",
+
+  [vars.darkSelector]: {
+    background: `
+            linear-gradient(${vars.colors.dark[7]}, ${vars.colors.dark[7]}) padding-box,
+            linear-gradient(135deg, #FF0000, #DC143C, #B22222) border-box
+        `,
+  },
+});
+
+// YouTube rating badge
+export const ratingBadgeYoutube = style({
+  background: "linear-gradient(135deg, #FF0000, #DC143C) !important",
+  color: vars.colors.white + " !important",
+  fontWeight: 900,
+  textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
+});
+
+// YouTube rating icon
+export const ratingIconYoutube = style({
+  color: vars.colors.white + " !important",
+});
+
+// YouTube level badge
+export const cardLevelYoutube = style({
+  background: "linear-gradient(135deg, #FF0000, #DC143C) !important",
+  color: vars.colors.white + " !important",
+  fontWeight: 900,
+  textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
 });
 
 // Legacy support (to avoid crashes if components still use them)

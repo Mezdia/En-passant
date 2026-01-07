@@ -125,6 +125,11 @@ function BotCard({
           [classes.cardGoldenSelected]:
             bot.cardStyle === "golden" && isSelected,
         },
+        { [classes.cardYoutube]: bot.cardStyle === "youtube" },
+        {
+          [classes.cardYoutubeSelected]:
+            bot.cardStyle === "youtube" && isSelected,
+        },
       )}
       component="button"
       type="button"
@@ -141,6 +146,24 @@ function BotCard({
         ) : (
           <div className={classes.cardPlaceholder}>
             <IconRobot size="1em" stroke={1} />
+          </div>
+        )}
+
+        {/* YouTube Icon Badge */}
+        {bot.youtubeUrl && (
+          <div className={classes.youtubeBadge}>
+            <a
+              href={bot.youtubeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={classes.youtubeLink}
+            >
+              <img
+                src="/youtube-ico.svg"
+                alt="YouTube"
+                className={classes.youtubeIcon}
+              />
+            </a>
           </div>
         )}
 
@@ -168,12 +191,14 @@ function BotCard({
         <div
           className={cx(classes.ratingBadge, {
             [classes.ratingBadgeGolden]: bot.cardStyle === "golden",
+            [classes.ratingBadgeYoutube]: bot.cardStyle === "youtube",
           })}
         >
           <IconTrophy
             size={14}
             className={cx(classes.ratingIcon, {
               [classes.ratingIconGolden]: bot.cardStyle === "golden",
+              [classes.ratingIconYoutube]: bot.cardStyle === "youtube",
             })}
           />
           <span>{bot.rating}</span>
@@ -191,6 +216,7 @@ function BotCard({
         <div
           className={cx(classes.cardLevel, {
             [classes.cardLevelGolden]: bot.cardStyle === "golden",
+            [classes.cardLevelYoutube]: bot.cardStyle === "youtube",
           })}
         >
           <IconChessKing size={12} />

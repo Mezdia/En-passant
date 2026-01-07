@@ -22,20 +22,22 @@ export interface Bot {
   image?: string; // Path to bot image
   country?: string | string[]; // Country code(s) for flag (e.g., "us", "ru", or ["fr", "ir"])
   greeting?: string; // Custom greeting translation key
-  cardStyle?: "golden"; // Special card appearance style
+  cardStyle?: CardStyle; // Special card appearance style
+  youtubeUrl?: string; // YouTube channel URL for creators
 
   // New fields for advanced engine personalization
   personality?: Partial<BotPersonality>;
   openingPreferences?: string[]; // e.g. ["e2e4", "g1f3"]
 }
 
-export type CardStyle = "golden";
+export type CardStyle = "golden" | "youtube";
 
 export type BotCategory =
   | "Beginner"
   | "Intermediate"
   | "Advanced"
   | "Master"
+  | "PersianCreators"
   | "Champions"
   | "Musicians"
   | "TopPlayers"
@@ -47,6 +49,7 @@ export const BOT_CATEGORIES: BotCategory[] = [
   "Intermediate",
   "Advanced",
   "Master",
+  "PersianCreators",
   "Champions",
   "Musicians",
   "TopPlayers",
@@ -830,6 +833,42 @@ export const MASTER_BOTS: Bot[] = [
   },
 ];
 
+// ============================================================
+// PERSIAN CREATORS (1600-2200 Elo)
+// ============================================================
+export const PERSIAN_CREATORS_BOTS: Bot[] = [
+  {
+    id: "mohammad-shah-moradi",
+    nameKey: "Bots.Bot.MohammadShahMoradi.Name",
+    nameEnglish: "Mohammad Shah Moradi",
+    namePersian: "محمد شاه‌مرادی",
+    rating: 2158,
+    descriptionKey: "Bots.Bot.MohammadShahMoradi.Desc",
+    descriptionEnglish: "A Persian chess content creator and Candidate Master with a YouTube channel 'Enjoy Chess' featuring game analysis and educational content.",
+    descriptionPersian: "تولیدکننده محتوای شطرنج پارسی و نامزد استاد با کانال یوتیوب «Enjoy Chess» شامل تحلیل بازی‌ها و محتوای آموزشی.",
+    category: "PersianCreators",
+    image: "/bots/persiancreators/mohammad-shah-moradi-bot.png",
+    country: "ir",
+    cardStyle: "youtube",
+    youtubeUrl: "https://www.youtube.com/@enjoychess",
+  },
+  {
+    id: "behrang-mehdiabadi",
+    nameKey: "Bots.Bot.BehrangMehdiabadi.Name",
+    nameEnglish: "Behrang Mehdiabadi",
+    namePersian: "بهرنگ مهدی‌آبادی",
+    rating: 1948,
+    descriptionKey: "Bots.Bot.BehrangMehdiabadi.Desc",
+    descriptionEnglish: "A Persian chess instructor with YouTube channel 'Chess with Behrang' teaching tactics, techniques, and analysis, also leading a Lichess academy.",
+    descriptionPersian: "مربی شطرنج پارسی با کانال یوتیوب «Chess with Behrang» آموزش تاکتیک‌ها، تکنیک‌ها و تحلیل، همچنین رهبری آکادمی در Lichess.",
+    category: "PersianCreators",
+    image: "/bots/persiancreators/behrang-mehdiabadi-bot.png",
+    country: "ir",
+    cardStyle: "youtube",
+    youtubeUrl: "https://www.youtube.com/@Chess_with_Behrang",
+  },
+];
+
 export const OTHER_BOTS: Bot[] = [
   // Champions, Musicians, TopPlayers...
   // Leaving these empty for now in this update to save space, but logically they would be here.
@@ -843,6 +882,7 @@ export function getAllBots(): Bot[] {
     ...INTERMEDIATE_BOTS,
     ...ADVANCED_BOTS,
     ...MASTER_BOTS,
+    ...PERSIAN_CREATORS_BOTS,
   ];
 }
 
@@ -856,6 +896,8 @@ export function getBotsByCategory(category: BotCategory): Bot[] {
       return ADVANCED_BOTS;
     case "Master":
       return MASTER_BOTS;
+    case "PersianCreators":
+      return PERSIAN_CREATORS_BOTS;
     default:
       return [];
   }

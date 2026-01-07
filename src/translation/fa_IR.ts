@@ -175,6 +175,7 @@ export const fa_IR = {
     "Bots.Category.Creators": "سازندگان",
     "Bots.Category.TopPlayers": "بازیکنان برتر",
     "Bots.Category.Personalities": "شخصیت‌ها",
+    "Bots.Category.PersianCreators": "سازندگان پارسی",
     "Bots.Category.Engine": "انجین",
     "Bots.Category.Engine.Dev": "در حال توسعه",
     "Bots.Category.Custom": "سفارشی",
