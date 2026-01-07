@@ -1103,6 +1103,51 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
             default: return '';
         }
     }, [gameState.endReason, t]);
+    
+    // Helper function to get piece symbol from move
+    const getPieceSymbol = (move: string): string => {
+        if (!move) return '';
+        
+        // Check for piece prefix (K, Q, R, B, N)
+        const piecePrefix = move[0];
+        if (['K', 'Q', 'R', 'B', 'N'].includes(piecePrefix)) {
+            return piecePrefix;
+        }
+        
+        // Check for pawn moves with capture (like exd5)
+        if (move.length >= 4 && move.includes('x')) {
+            return 'P';
+        }
+        
+        // Check for castling
+        if (move === 'O-O' || move === 'O-O-O' || move === '0-0' || move === '0-0-0') {
+            return 'K';
+        }
+        
+        // Default to pawn for regular pawn moves
+        return 'P';
+    };
+    
+    // Helper function to format move with piece symbol
+    const formatMoveWithSymbol = (move: string, isWhite: boolean): React.ReactNode => {
+        const pieceSymbol = getPieceSymbol(move);
+        const pieceUnicode: Record<string, string> = {
+            'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙'
+        };
+        
+        const blackPieceUnicode: Record<string, string> = {
+            'K': '♚', 'Q': '♛', 'R': '♜', 'B': '♝', 'N': '♞', 'P': '♟'
+        };
+        
+        const symbol = isWhite ? pieceUnicode[pieceSymbol] || '♙' : blackPieceUnicode[pieceSymbol] || '♟';
+        
+        return (
+            <span className={classes.moveWithSymbol}>
+                <span className={classes.pieceSymbol}>{symbol}</span>
+                <span className={isWhite ? classes.moveWhite : classes.moveBlack}>{move}</span>
+            </span>
+        );
+    };
 
     // Format duration
     const formatDuration = (seconds: number) => {
@@ -1117,25 +1162,28 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
     // Render move feedback badge
     const renderMoveFeedback = useCallback(() => {
         if (!customSettings.moveFeedback || !moveFeedback.type) return null;
-
+    
         const feedbackConfig: Record<MoveQuality, { color: string; icon: string; text: string }> = {
-            'brilliant': { color: 'cyan', icon: '💎', text: t("Annotate.Brilliant") },
-            'good': { color: 'green', icon: '✅', text: t("Annotate.Good") },
-            'ok': { color: 'yellow', icon: '⚠️', text: 'OK' },
-            'mistake': { color: 'orange', icon: '❌', text: t("Annotate.Mistake") },
-            'blunder': { color: 'red', icon: '💥', text: t("Annotate.Blunder") }
+            'brilliant': { color: 'cyan', icon: '/movefeedbackico/Brilliantmove.svg', text: t("Annotate.Brilliant") },
+            'good': { color: 'green', icon: '/movefeedbackico/Goodmove.svg', text: t("Annotate.Good") },
+            'ok': { color: 'yellow', icon: '/movefeedbackico/Bookmove.svg', text: 'OK' },
+            'mistake': { color: 'orange', icon: '/movefeedbackico/Mistakemove.svg', text: t("Annotate.Mistake") },
+            'blunder': { color: 'red', icon: '/movefeedbackico/Blundermove.svg', text: t("Annotate.Blunder") }
         };
-
+    
         const config = feedbackConfig[moveFeedback.type];
-
+    
         return (
-            <Badge 
-                color={config.color} 
-                variant="filled" 
+            <Badge
+                color={config.color}
+                variant="filled"
                 size="lg"
                 className={classes.moveFeedbackBadge}
+                leftSection={
+                    <img src={config.icon} alt={config.text} style={{ width: '16px', height: '16px' }} />
+                }
             >
-                {config.icon} {config.text}
+                {config.text}
             </Badge>
         );
     }, [customSettings.moveFeedback, moveFeedback.type, t]);
@@ -1346,9 +1394,8 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                                 const isWhiteMove = index % 2 === 0;
                                 return (
                                     <div key={index} className={classes.moveItem}>
-                                        <span className={classes.moveNumber}>{moveNumber}.</span>
-                                        {isWhiteMove && <span className={classes.moveWhite}>{move}</span>}
-                                        {!isWhiteMove && <span className={classes.moveBlack}>{move}</span>}
+                                        {index % 2 === 0 && <span className={classes.moveNumber}>{moveNumber}.</span>}
+                                        {formatMoveWithSymbol(move, isWhiteMove)}
                                     </div>
                                 );
                             })}

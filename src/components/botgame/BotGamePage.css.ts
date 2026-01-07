@@ -362,6 +362,21 @@ export const moveBlack = style({
     fontWeight: 500,
 });
 
+export const moveWithSymbol = style({
+    display: 'flex',
+    alignItems: 'center',
+    gap: vars.spacing.xs,
+});
+
+export const pieceSymbol = style({
+    fontSize: vars.fontSizes.sm,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: '16px',
+    minHeight: '16px',
+});
+
 export const controlPanel = style({
     display: "flex",
     gap: vars.spacing.sm,
