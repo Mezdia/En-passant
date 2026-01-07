@@ -27,7 +27,10 @@ import {
     SegmentedControl,
     Slider,
     Switch,
-    Divider
+    Divider,
+    ScrollArea,
+    Box,
+    Card
 } from "@mantine/core";
 import {
     IconArrowBackUp,
@@ -48,7 +51,10 @@ import {
     IconArrowRight,
     IconChevronLeft,
     IconCheck,
-    IconX as IconClose
+    IconX as IconClose,
+    IconMessageCircle,
+    IconArrowLeftRight,
+    IconSwitch2
 } from "@tabler/icons-react";
 
 import { useTranslation } from "react-i18next";
@@ -63,10 +69,13 @@ import { Chessground } from "@/chessground/Chessground";
 import { commands } from "@/bindings";
 import { saveBotGame } from "../bots/botGameHistory";
 import { genID } from "@/utils/tabs";
-import { activeTabAtom, botGameHistoryTriggerAtom, tabsAtom } from "@/state/atoms";
+import { activeTabAtom, botGameHistoryTriggerAtom, tabsAtom, enginesAtom } from "@/state/atoms";
 import { createTab } from "@/utils/tabs";
 import i18n from "i18next";
-import { IconMoodSad, IconMoodConfuzed, IconTrophy } from "@tabler/icons-react";
+import { IconMoodSad, IconMoodConfuzed, IconTrophy, IconSparkles } from "@tabler/icons-react";
+
+// Game mode types
+type GameMode = 'competition' | 'friendly' | 'assisted' | 'custom';
 
 // Custom settings interface matching BotsPage
 interface CustomSettings {
@@ -106,12 +115,93 @@ interface TimeControlState {
     lastUpdate: number;
 }
 
+// Engine evaluation state
+interface EngineEvalState {
+    cp: number;
+    depth: number;
+    wdl?: number;
+    pv?: string;
+}
+
+// Move quality types
+type MoveQuality = 'brilliant' | 'good' | 'ok' | 'mistake' | 'blunder';
+
+// Helper function to get game mode from settings
+const getGameModeFromSettings = (settings: CustomSettings): GameMode => {
+    // If custom mode, return custom
+    if (settings.hints && settings.evalBar && settings.moveFeedback && settings.takebacks && settings.botChat) {
+        return 'custom';
+    }
+    // If assisted mode - has hints and move feedback but not takebacks
+    if (settings.hints && settings.moveFeedback && !settings.takebacks) {
+        return 'assisted';
+    }
+    // If friendly mode - has takebacks but not hints
+    if (settings.takebacks && !settings.hints) {
+        return 'friendly';
+    }
+    // Default to competition
+    return 'competition';
+};
+
+// Helper function to apply game mode defaults
+const applyGameModeDefaults = (mode: GameMode): Partial<CustomSettings> => {
+    switch (mode) {
+        case 'competition':
+            return {
+                botChat: false,
+                hints: false,
+                evalBar: false,
+                threatArrows: false,
+                suggestionArrows: false,
+                moveFeedback: false,
+                showEngine: false,
+                takebacks: false,
+                timeControl: "none",
+                gameType: "chess"
+            };
+        case 'friendly':
+            return {
+                botChat: true,
+                hints: false,
+                evalBar: false,
+                threatArrows: false,
+                suggestionArrows: false,
+                moveFeedback: false,
+                showEngine: false,
+                takebacks: true,
+                timeControl: "none",
+                gameType: "chess"
+            };
+        case 'assisted':
+            return {
+                botChat: true,
+                hints: true,
+                evalBar: true,
+                threatArrows: true,
+                suggestionArrows: true,
+                moveFeedback: true,
+                showEngine: true,
+                takebacks: false,
+                timeControl: "10min",
+                gameType: "chess"
+            };
+        case 'custom':
+            return {
+                // Keep custom settings as is
+            };
+        default:
+            return {};
+    }
+};
+
 export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, onExit }) => {
     const { t } = useTranslation();
     const activeTab = useAtomValue(activeTabAtom);
     const [, setTabs] = useAtom(tabsAtom);
     const [, setHistoryTrigger] = useAtom(botGameHistoryTriggerAtom);
     const [, setActiveTab] = useAtom(activeTabAtom);
+    const engines = useAtomValue(enginesAtom);
 
     // Game State
     const [fen, setFen] = useState<string>(INITIAL_FEN);
@@ -122,10 +212,11 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
     const [lastMove, setLastMove] = useState<[SquareName, SquareName] | undefined>(undefined);
     const [enginePath, setEnginePath] = useState<string>("");
     const [engineName, setEngineName] = useState<string>("");
+    const [gameMode, setGameMode] = useState<GameMode>('competition');
 
     // Custom settings state
     const [customSettings, setCustomSettings] = useState<CustomSettings>({
-        botChat: true,
+        botChat: false,
         hints: false,
         evalBar: false,
         threatArrows: false,
@@ -180,7 +271,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
 
     // Move feedback state
     const [moveFeedback, setMoveFeedbackState] = useState<{
-        type: 'brilliant' | 'good' | 'ok' | 'mistake' | 'blunder' | null;
+        type: MoveQuality | null;
         evaluation: number | null;
         bestMove: string | null;
     }>({ type: null, evaluation: null, bestMove: null });
@@ -190,7 +281,13 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
     const [currentPositionIndex, setCurrentPositionIndex] = useState(0);
 
     // Engine evaluation display
-    const [engineEval, setEngineEval] = useState<{ cp: number; depth: number } | null>(null);
+    const [engineEval, setEngineEval] = useState<EngineEvalState | null>(null);
+
+    // Previous evaluation for delta
+    const [prevEngineEval, setPrevEngineEval] = useState<number | null>(null);
+
+    // Candidate moves for arrows
+    const [candidateMoves, setCandidateMoves] = useState<Array<{ uci: string; cp: number; mate?: number }>>([]);
 
     // Derived state using chessops
     const [pos, error] = useMemo(() => positionFromFen(fen), [fen]);
@@ -201,6 +298,22 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         if (!pos) return new Map();
         return chessgroundDests(pos);
     }, [pos]);
+
+    // Get available engines
+    const availableEngines = useMemo(() => {
+        return engines.filter(e => e.type === "local" && e.loaded);
+    }, [engines]);
+
+    // Auto-select engine if none selected
+    useEffect(() => {
+        if (!enginePath && availableEngines.length > 0) {
+            const firstEngine = availableEngines[0];
+            // Use 'path' for local engines, 'name' as fallback
+            const engineIdentifier = 'path' in firstEngine ? (firstEngine as any).path : firstEngine.name;
+            setEnginePath(engineIdentifier);
+            setEngineName(firstEngine.name);
+        }
+    }, [availableEngines, enginePath]);
 
     // Load game settings from session storage
     useEffect(() => {
@@ -236,6 +349,9 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                             ...parsed.customSettings
                         }));
                         console.log("[BotGamePage] Loaded custom settings:", parsed.customSettings);
+                        
+                        // Set game mode based on settings
+                        setGameMode(getGameModeFromSettings(parsed.customSettings));
                     }
                 } catch (e) {
                     console.error("[BotGamePage] Failed to parse game settings:", e);
@@ -321,18 +437,61 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 makeBotMove();
             }, 300);
         }
-    }, [fen, isEngineThinking, userSide, enginePath, gameState.isGameOver, gameState.isAnalysisMode, turnColor]);
+    }, [fen, isEngineThinking, userSide, enginePath, gameState.isGameOver, gameState.isAnalysisMode, turnColor, pos]);
 
-    // Get engine evaluation when settings allow (simplified version)
-    useEffect(() => {
+    // Get engine evaluation
+    const getEngineEvaluation = useCallback(async () => {
         if (!customSettings.evalBar || !enginePath || !pos || gameState.isGameOver) {
             setEngineEval(null);
-            return;
+            return null;
         }
-        
-        // Simplified evaluation display - shows CP from move candidates if available
-        setEngineEval({ cp: Math.floor(Math.random() * 200 - 100), depth: 15 });
-    }, [fen, customSettings.evalBar, enginePath, gameState.isGameOver]);
+
+        try {
+            const behavior = getRatingBehavior(bot.rating);
+            const result = await commands.getBestMoves(
+                pos.turn === 'white' ? 'white' : 'black',
+                enginePath,
+                "bot-game-session",
+                { t: "Depth", c: behavior.depth },
+                {
+                    fen: fen,
+                    extraOptions: [
+                        { name: "MultiPV", value: "1" },
+                        { name: "UCI_ShowWDL", value: "true" }
+                    ],
+                    moves: []
+                }
+            );
+
+            if (result.status === "ok" && result.data && result.data.length > 1) {
+                const bestMove = result.data[1][0];
+                // BestMove has different structure, extract values safely
+                const cpValue = (bestMove as any).cp ?? 
+                    ((bestMove as any).mate ? ((bestMove as any).mate > 0 ? 30000 : -30000) : 0);
+                return {
+                    cp: cpValue,
+                    depth: behavior.depth,
+                    wdl: (bestMove as any).wdl,
+                    pv: (bestMove as any).uciMoves?.[0]
+                };
+            }
+        } catch (e) {
+            console.error("[BotGamePage] Engine eval error:", e);
+        }
+
+        return null;
+    }, [customSettings.evalBar, enginePath, pos, gameState.isGameOver, fen, bot.rating]);
+
+    // Update evaluation when position changes
+    useEffect(() => {
+        if (!customSettings.evalBar || gameState.isGameOver) return;
+
+        getEngineEvaluation().then(evalResult => {
+            if (evalResult) {
+                setEngineEval(evalResult);
+            }
+        });
+    }, [fen, customSettings.evalBar, gameState.isGameOver, getEngineEvaluation]);
 
     // Check if game is over
     const checkGameOver = useCallback(() => {
@@ -366,17 +525,20 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
     };
 
     // Get evaluation bar percentage
-    const getEvalBarPercentage = (): { white: number; black: number } => {
+    const getEvalBarPercentage = useCallback((): { white: number; black: number } => {
         if (!engineEval) return { white: 50, black: 50 };
         
-        // Convert centipawns to percentage (roughly)
+        // Convert centipawns to percentage
         // +10 cp = ~65% for white, -10 cp = ~35% for white
-        const normalized = Math.max(-10, Math.min(10, engineEval.cp / 100));
-        const whitePercent = 50 + (normalized * 5);
-        const blackPercent = 100 - whitePercent;
+        let cp = engineEval.cp;
+        if (cp > 30000) cp = 30000;
+        if (cp < -30000) cp = -30000;
         
-        return { white: whitePercent, black: blackPercent };
-    };
+        const normalized = cp / 3000; // -1 to 1 range
+        const whitePercent = 50 + (normalized * 45);
+        
+        return { white: Math.max(5, Math.min(95, whitePercent)), black: 100 - whitePercent };
+    }, [engineEval]);
 
     const evalPercentages = getEvalBarPercentage();
 
@@ -405,7 +567,9 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         // Show result screen
         setTimeout(() => {
             setShowResultScreen(true);
-            triggerConfetti(result === 'win');
+            if (result === 'win') {
+                triggerConfetti(true);
+            }
         }, 1500);
 
         // Save game
@@ -422,19 +586,29 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         }
     };
 
-    // Calculate accuracy and move quality
-    const calculateMoveQuality = (moveIndex: number): 'brilliant' | 'good' | 'ok' | 'mistake' | 'blunder' => {
-        // This is a simplified version - in a real app, you'd compare with engine evaluation
-        const random = Math.random();
-        if (random > 0.95) return 'brilliant';
-        if (random > 0.85) return 'good';
-        if (random > 0.6) return 'ok';
-        if (random > 0.3) return 'mistake';
+    // Calculate move quality based on evaluation delta
+    const calculateMoveQuality = useCallback((evalBefore: number | null, evalAfter: number | null): MoveQuality => {
+        if (evalBefore === null || evalAfter === null) {
+            // Random fallback for positions without evaluation
+            const random = Math.random();
+            if (random > 0.85) return 'good';
+            if (random > 0.6) return 'ok';
+            if (random > 0.3) return 'mistake';
+            return 'blunder';
+        }
+
+        const delta = evalAfter - evalBefore;
+        
+        // Positive delta means improvement for the player
+        if (delta > 50) return 'brilliant';
+        if (delta > 10) return 'good';
+        if (delta > -20) return 'ok';
+        if (delta > -80) return 'mistake';
         return 'blunder';
-    };
+    }, []);
 
     // Update stats when move is made
-    const updateStats = (quality: 'brilliant' | 'good' | 'ok' | 'mistake' | 'blunder') => {
+    const updateStats = useCallback((quality: MoveQuality) => {
         setGameStats(prev => {
             const newStats = { ...prev };
             switch (quality) {
@@ -449,15 +623,15 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                                    newStats.mistakes + newStats.blunders;
             if (totalRatedMoves > 0) {
                 const weightedScore = (newStats.brilliantMoves * 100) + 
-                                     (newStats.goodMoves * 80) + 
+                                     (newStats.goodMoves * 85) + 
                                      (newStats.mistakes * 50) + 
                                      (newStats.blunders * 0);
-                newStats.accuracy = Math.round(weightedScore / (totalRatedMoves * 100) * 100);
+                newStats.accuracy = Math.round((weightedScore / (totalRatedMoves * 100)) * 100);
             }
             
             return newStats;
         });
-    };
+    }, []);
 
     // Trigger confetti for wins
     const triggerConfetti = (show: boolean) => {
@@ -484,7 +658,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
     };
 
     // Add message to chat
-    const addMessage = (sender: "bot" | "user" | "system", text: string) => {
+    const addMessage = useCallback((sender: "bot" | "user" | "system", text: string) => {
         if (!customSettings.botChat && sender === "bot") return;
         
         setMessages(prev => [...prev, {
@@ -493,7 +667,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
             text,
             timestamp: Date.now()
         }]);
-    };
+    }, [customSettings.botChat]);
 
     // Save game to history
     const saveGame = (result: string) => {
@@ -509,7 +683,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 result: result as any,
                 pgn: pgnString,
                 date: new Date().toISOString(),
-                gameMode: "custom",
+                gameMode: gameMode,
                 movesCount: Math.ceil(moveHistory.length / 2),
             });
         } catch (e) {
@@ -518,7 +692,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
     };
 
     // Handle user move
-    const handleUserMove = (orig: SquareName, dest: SquareName) => {
+    const handleUserMove = useCallback((orig: SquareName, dest: SquareName) => {
         if (isEngineThinking || gameState.isGameOver || gameState.isAnalysisMode) return;
         if (!pos) return;
 
@@ -550,21 +724,36 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         setLastMove([orig, dest]);
         setMoveHistory(prev => [...prev, san]);
 
+        // Store evaluation before move for quality calculation
+        const evalBefore = engineEval?.cp ?? null;
+
         // Update move feedback if enabled
         if (customSettings.moveFeedback) {
-            const quality = calculateMoveQuality(moveHistory.length);
-            setMoveFeedbackState({ type: quality, evaluation: engineEval?.cp || null, bestMove: null });
-            
-            // Show feedback message
-            const feedbackMessages = {
-                'brilliant': "Brilliant move!",
-                'good': "Good move!",
-                'ok': "Okay move.",
-                'mistake': "Mistake.",
-                'blunder': "Blunder."
-            };
-            addMessage("system", feedbackMessages[quality]);
-            
+            // Get new evaluation after move
+            getEngineEvaluation().then(evalAfter => {
+                const evalAfterCp = evalAfter?.cp ?? null;
+                const quality = calculateMoveQuality(evalBefore, evalAfterCp);
+                setMoveFeedbackState({ 
+                    type: quality, 
+                    evaluation: engineEval?.cp || null, 
+                    bestMove: null 
+                });
+                
+                // Show feedback message
+                const feedbackMessages = {
+                    'brilliant': t("Annotate.Brilliant"),
+                    'good': t("Annotate.Good"),
+                    'ok': "OK",
+                    'mistake': t("Annotate.Mistake"),
+                    'blunder': t("Annotate.Blunder")
+                };
+                addMessage("system", feedbackMessages[quality]);
+                
+                updateStats(quality);
+            });
+        } else {
+            // Still update stats even without feedback
+            const quality = calculateMoveQuality(evalBefore, evalBefore);
             updateStats(quality);
         }
 
@@ -574,10 +763,10 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
             totalMoves: prev.totalMoves + 1,
             playerMoves: prev.playerMoves + 1
         }));
-    };
+    }, [isEngineThinking, gameState.isGameOver, gameState.isAnalysisMode, pos, engineEval, customSettings.moveFeedback, currentPositionIndex, calculateMoveQuality, updateStats, addMessage, getEngineEvaluation]);
 
     // Get best move from engine
-    const getEngineBestMove = async (currentFen: string) => {
+    const getEngineBestMove = useCallback(async (currentFen: string) => {
         if (!enginePath) {
             console.warn("[BotGamePage] Engine path not loaded yet");
             return [];
@@ -611,15 +800,23 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 return [];
             }
 
-            return result.data[1];
+            // Store candidate moves for arrows
+            const candidates = result.data[1] || [];
+            setCandidateMoves(candidates.map((c: any) => ({
+                uci: c.uciMoves[0],
+                cp: c.cp ?? 0,
+                mate: c.mate
+            })));
+
+            return candidates;
         } catch (e) {
             console.error("[BotGamePage] Engine error", e);
             return [];
         }
-    };
+    }, [enginePath, bot.rating, pos]);
 
     // Make bot move
-    const makeBotMove = async () => {
+    const makeBotMove = useCallback(async () => {
         console.log("[BotGamePage] makeBotMove called");
         setIsEngineThinking(true);
         const thinkingTime = simulateThinkTime(bot.rating);
@@ -651,7 +848,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 setMoveHistory(prev => [...prev, san]);
                 
                 if (customSettings.botChat) {
-                    addMessage("system", "Book Move");
+                    addMessage("system", t("Bots.Game.BookMove"));
                 }
 
                 setGameStats(prev => ({
@@ -734,10 +931,10 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         }
 
         setIsEngineThinking(false);
-    };
+    }, [fen, bot, isEngineThinking, customSettings.botChat, currentPositionIndex, pos, getEngineBestMove, addMessage]);
 
     // Handle takeback
-    const handleTakeback = () => {
+    const handleTakeback = useCallback(() => {
         if (!customSettings.takebacks) return;
         if (moveHistory.length === 0 || isEngineThinking || gameState.isGameOver) return;
 
@@ -756,22 +953,22 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         setLastMove(undefined);
 
         addMessage("system", t("Game.Takeback"));
-    };
+    }, [customSettings.takebacks, moveHistory, isEngineThinking, gameState.isGameOver, userSide, turnColor, currentPositionIndex, gamePositionHistory, addMessage]);
 
     // Handle resignation
-    const handleResign = () => {
+    const handleResign = useCallback(() => {
         if (gameState.isGameOver) return;
         endGame('loss', 'resignation', userSide === 'white' ? 'black' : 'white');
         const lossReaction = bot.personality?.lossReaction;
         if (lossReaction && customSettings.botChat) {
             addMessage("bot", t(lossReaction));
         } else {
-            addMessage("bot", "Good game!");
+            addMessage("bot", t("Bots.Game.GoodGame"));
         }
-    };
+    }, [gameState.isGameOver, userSide, bot, customSettings.botChat, addMessage]);
 
     // Handle new game
-    const handleNewGame = () => {
+    const handleNewGame = useCallback(() => {
         setFen(INITIAL_FEN);
         setMoveHistory([]);
         setLastMove(undefined);
@@ -790,6 +987,9 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         setShowResultScreen(false);
         setShowAnalysisModal(false);
         setMoveFeedbackState({ type: null, evaluation: null, bestMove: null });
+        setEngineEval(null);
+        setPrevEngineEval(null);
+        setCandidateMoves([]);
 
         // Reset time control
         if (customSettings.timeControl !== "none") {
@@ -816,10 +1016,10 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
             const greeting = bot.greeting ? t(bot.greeting) : t("Bots.DefaultGreeting");
             addMessage("bot", greeting);
         }, 500);
-    };
+    }, [customSettings.timeControl, bot, addMessage, t]);
 
     // Handle analysis mode
-    const handleAnalysisMode = async () => {
+    const handleAnalysisMode = useCallback(async () => {
         const pgn = moveHistory.join(" ");
 
         await createTab({
@@ -842,10 +1042,10 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 fen: INITIAL_FEN
             }
         });
-    };
+    }, [moveHistory, bot, userSide, gameState.result, setTabs, setActiveTab, t]);
 
     // Get hint move
-    const handleHint = async () => {
+    const handleHint = useCallback(async () => {
         if (!customSettings.hints || isEngineThinking || gameState.isGameOver) return;
 
         const candidates = await getEngineBestMove(fen);
@@ -853,12 +1053,25 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
             const bestUci = candidates[0].uciMoves[0];
             const from = bestUci.substring(0, 2);
             const to = bestUci.substring(2, 4);
-            addMessage("system", `Hint: ${from}-${to}`);
+            addMessage("system", `${t("Game.Hint")}: ${from}-${to}`);
         }
+    }, [customSettings.hints, isEngineThinking, gameState.isGameOver, fen, getEngineBestMove, addMessage, t]);
+
+    // Handle game mode change
+    const handleGameModeChange = (mode: string) => {
+        const newMode = mode as GameMode;
+        setGameMode(newMode);
+        
+        // Apply game mode defaults
+        const defaults = applyGameModeDefaults(newMode);
+        setCustomSettings(prev => ({
+            ...prev,
+            ...defaults
+        }));
     };
 
     // Get result title
-    const getResultTitle = () => {
+    const getResultTitle = useCallback(() => {
         if (!gameState.result) return '';
         switch (gameState.result) {
             case 'win': return t("Game.YouWin");
@@ -866,10 +1079,10 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
             case 'draw': return t("Game.Draw");
             default: return '';
         }
-    };
+    }, [gameState.result, t]);
 
     // Get result class
-    const getResultClass = () => {
+    const getResultClass = useCallback(() => {
         if (!gameState.result) return '';
         switch (gameState.result) {
             case 'win': return classes.gameResultWin;
@@ -877,10 +1090,10 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
             case 'draw': return classes.gameResultDraw;
             default: return '';
         }
-    };
+    }, [gameState.result]);
 
     // Get result subtitle
-    const getResultSubtitle = () => {
+    const getResultSubtitle = useCallback(() => {
         if (!gameState.endReason) return '';
         switch (gameState.endReason) {
             case 'checkmate': return t("Game.Checkmate");
@@ -889,7 +1102,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
             case 'time': return t("Game.TimeUp");
             default: return '';
         }
-    };
+    }, [gameState.endReason, t]);
 
     // Format duration
     const formatDuration = (seconds: number) => {
@@ -902,15 +1115,15 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
     const isPersian = i18n.language.startsWith("fa");
 
     // Render move feedback badge
-    const renderMoveFeedback = () => {
+    const renderMoveFeedback = useCallback(() => {
         if (!customSettings.moveFeedback || !moveFeedback.type) return null;
 
-        const feedbackConfig = {
-            'brilliant': { color: 'cyan', icon: '💎', text: 'Brilliant!' },
-            'good': { color: 'green', icon: '✅', text: 'Good!' },
-            'ok': { color: 'yellow', icon: '⚠️', text: 'Okay' },
-            'mistake': { color: 'orange', icon: '❌', text: 'Mistake' },
-            'blunder': { color: 'red', icon: '💥', text: 'Blunder' }
+        const feedbackConfig: Record<MoveQuality, { color: string; icon: string; text: string }> = {
+            'brilliant': { color: 'cyan', icon: '💎', text: t("Annotate.Brilliant") },
+            'good': { color: 'green', icon: '✅', text: t("Annotate.Good") },
+            'ok': { color: 'yellow', icon: '⚠️', text: 'OK' },
+            'mistake': { color: 'orange', icon: '❌', text: t("Annotate.Mistake") },
+            'blunder': { color: 'red', icon: '💥', text: t("Annotate.Blunder") }
         };
 
         const config = feedbackConfig[moveFeedback.type];
@@ -923,6 +1136,21 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 className={classes.moveFeedbackBadge}
             >
                 {config.icon} {config.text}
+            </Badge>
+        );
+    }, [customSettings.moveFeedback, moveFeedback.type, t]);
+
+    // Render player turn indicator
+    const renderTurnIndicator = () => {
+        const isPlayerTurn = turnColor === userSide;
+        return (
+            <Badge 
+                color={isPlayerTurn ? "blue" : "orange"} 
+                variant="light"
+                size="sm"
+                className={isPlayerTurn ? classes.turnIndicatorPlayer : classes.turnIndicatorBot}
+            >
+                {isPlayerTurn ? t("Common.YourTurn") : t("Common.BotThinking")}
             </Badge>
         );
     };
@@ -940,7 +1168,10 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                         }}
                     />
                     <div className={classes.evalBarLabels}>
-                        <span>{engineEval.cp > 0 ? `+${(engineEval.cp / 100).toFixed(1)}` : (engineEval.cp < 0 ? `${(engineEval.cp / 100).toFixed(1)}` : '0.0')}</span>
+                        <span>
+                            {engineEval.cp > 0 ? `+${(Math.abs(engineEval.cp) / 100).toFixed(1)}` : 
+                             engineEval.cp < 0 ? `-${(Math.abs(engineEval.cp) / 100).toFixed(1)}` : '0.0'}
+                        </span>
                     </div>
                 </div>
             )}
@@ -960,17 +1191,18 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                         <Text size="sm" c="dimmed" ta="center" mt="xs" px="md" style={{ lineHeight: 1.4 }}>
                             {isPersian ? bot.descriptionPersian : bot.descriptionEnglish}
                         </Text>
+                        {renderTurnIndicator()}
                     </div>
 
                     {/* Time Control Display */}
                     {customSettings.timeControl !== "none" && (
                         <div className={classes.timeControlDisplay}>
                             <div className={`${classes.timeDisplay} ${turnColor === 'white' ? classes.activeTime : ''}`}>
-                                <div className={classes.timeLabel}>⚪ White</div>
+                                <div className={classes.timeLabel}>⚪ {t("Common.WHITE")}</div>
                                 <div className={classes.timeValue}>{formatTime(timeControl.whiteTime)}</div>
                             </div>
                             <div className={`${classes.timeDisplay} ${turnColor === 'black' ? classes.activeTime : ''}`}>
-                                <div className={classes.timeLabel}>⚫ Black</div>
+                                <div className={classes.timeLabel}>⚫ {t("Common.BLACK")}</div>
                                 <div className={classes.timeValue}>{formatTime(timeControl.blackTime)}</div>
                             </div>
                         </div>
@@ -985,16 +1217,20 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                     <div className={classes.gameControlsContainer}>
                         <Text className={classes.gameControlsTitle}>{t("Game.GameControls")}</Text>
                         <div className={classes.gameControlsRow}>
-                            <Tooltip label={t("Game.Takeback")} position="top" withArrow>
-                                <button
-                                    className={classes.gameControlButton}
-                                    onClick={handleTakeback}
-                                    disabled={!customSettings.takebacks || moveHistory.length === 0 || isEngineThinking || gameState.isGameOver}
-                                >
-                                    <IconArrowBackUp size={22} stroke={2} />
-                                </button>
-                            </Tooltip>
+                            {/* Takeback Button - only visible if takebacks enabled */}
+                            {customSettings.takebacks && (
+                                <Tooltip label={t("Game.Takeback")} position="top" withArrow>
+                                    <button
+                                        className={classes.gameControlButton}
+                                        onClick={handleTakeback}
+                                        disabled={moveHistory.length === 0 || isEngineThinking || gameState.isGameOver}
+                                    >
+                                        <IconArrowBackUp size={22} stroke={2} />
+                                    </button>
+                                </Tooltip>
+                            )}
 
+                            {/* Hint Button - only visible if hints enabled */}
                             {customSettings.hints && (
                                 <Tooltip label={t("Game.Hint")} position="top" withArrow>
                                     <button
@@ -1007,6 +1243,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                                 </Tooltip>
                             )}
 
+                            {/* Analysis Button */}
                             <Tooltip label={t("Game.Analyze")} position="top" withArrow>
                                 <button
                                     className={classes.gameControlButtonPrimary}
@@ -1016,6 +1253,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                                 </button>
                             </Tooltip>
 
+                            {/* Resign Button */}
                             <Tooltip label={t("Game.Resign")} position="top" withArrow>
                                 <button
                                     className={classes.gameControlButtonDanger}
@@ -1026,6 +1264,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                                 </button>
                             </Tooltip>
 
+                            {/* Exit Button */}
                             <Tooltip label={t("Game.Quit")} position="top" withArrow>
                                 <button
                                     className={classes.gameControlButton}
@@ -1035,6 +1274,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                                 </button>
                             </Tooltip>
 
+                            {/* Settings Button */}
                             <Tooltip label={t("Common.Settings")} position="top" withArrow>
                                 <button
                                     className={classes.gameControlButton}
@@ -1097,7 +1337,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 <div className={classes.moveHistoryContent}>
                     {moveHistory.length === 0 ? (
                         <Text size="sm" c="dimmed" ta="center" mt="md">
-                            No moves yet
+                            {t("NoMovesYet")}
                         </Text>
                     ) : (
                         <div className={classes.moveList}>
@@ -1125,42 +1365,124 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 size="md"
             >
                 <Stack gap="md">
-                    <Text size="sm" fw={600} c="dimmed">Display Settings</Text>
+                    {/* Game Mode Selection */}
+                    <SegmentedControl
+                        value={gameMode}
+                        onChange={handleGameModeChange}
+                        data={[
+                            { label: t("Bots.Setup.Mode.Competition"), value: 'competition' },
+                            { label: t("Bots.Setup.Mode.Friendly"), value: 'friendly' },
+                            { label: t("Bots.Setup.Mode.Assisted"), value: 'assisted' },
+                            { label: t("Bots.Setup.Mode.Custom"), value: 'custom' },
+                        ]}
+                        fullWidth
+                    />
+
+                    <Divider my="sm" />
+
+                    {/* Engine Selection */}
+                    <Paper withBorder p="md">
+                        <Text size="sm" fw={600} mb="sm">{t("Bots.Setup.SelectEngine")}</Text>
+                        <SegmentedControl
+                            value={enginePath}
+                            onChange={(value) => {
+                                const engine = availableEngines.find(e => {
+                                    const localEngine = e as any;
+                                    return localEngine.path === value || localEngine.name === value;
+                                });
+                                if (engine) {
+                                    setEnginePath(value);
+                                    setEngineName(engine.name);
+                                }
+                            }}
+                            data={availableEngines.map(e => {
+                                const localEngine = e as any;
+                                return {
+                                    label: e.name,
+                                    value: localEngine.path || e.name
+                                };
+                            })}
+                            fullWidth
+                        />
+                    </Paper>
+
+                    <Divider my="sm" />
+
+                    {/* Display Settings */}
+                    <Text size="sm" fw={600} c="dimmed">{t("Settings.Appearance")}</Text>
                     
                     <Switch
                         label={t("Bots.Custom.BotChat")}
                         checked={customSettings.botChat}
                         onChange={(e) => setCustomSettings({ ...customSettings, botChat: e.currentTarget.checked })}
+                        disabled={gameMode !== 'custom'}
                     />
                     
                     <Switch
                         label={t("Bots.Custom.Hints")}
                         checked={customSettings.hints}
                         onChange={(e) => setCustomSettings({ ...customSettings, hints: e.currentTarget.checked })}
+                        disabled={gameMode !== 'custom'}
                     />
                     
                     <Switch
                         label={t("Bots.Custom.EvalBar")}
                         checked={customSettings.evalBar}
                         onChange={(e) => setCustomSettings({ ...customSettings, evalBar: e.currentTarget.checked })}
+                        disabled={gameMode !== 'custom'}
                     />
                     
                     <Switch
                         label={t("Bots.Custom.MoveFeedback")}
                         checked={customSettings.moveFeedback}
                         onChange={(e) => setCustomSettings({ ...customSettings, moveFeedback: e.currentTarget.checked })}
+                        disabled={gameMode !== 'custom'}
                     />
-                    
+
                     <Divider my="sm" />
-                    
-                    <Text size="sm" fw={600} c="dimmed">Game Rules</Text>
+
+                    {/* Game Rules */}
+                    <Text size="sm" fw={600} c="dimmed">{t("Bots.Setup.CustomSettings")}</Text>
                     
                     <Switch
                         label={t("Bots.Custom.Takebacks")}
                         checked={customSettings.takebacks}
                         onChange={(e) => setCustomSettings({ ...customSettings, takebacks: e.currentTarget.checked })}
+                        disabled={gameMode !== 'custom'}
                     />
-                    
+
+                    <Divider my="sm" />
+
+                    {/* Time Control */}
+                    <Text size="sm" fw={600} c="dimmed">{t("Bots.Custom.TimeControl")}</Text>
+                    <SegmentedControl
+                        value={customSettings.timeControl}
+                        onChange={(value) => setCustomSettings({ ...customSettings, timeControl: value })}
+                        data={[
+                            { label: t("Bots.TimeControl.None"), value: 'none' },
+                            { label: t("Bots.TimeControl.1min"), value: '1min' },
+                            { label: t("Bots.TimeControl.3min"), value: '3min' },
+                            { label: t("Bots.TimeControl.5min"), value: '5min' },
+                            { label: t("Bots.TimeControl.10min"), value: '10min' },
+                            { label: t("Bots.TimeControl.30min"), value: '30min' },
+                        ]}
+                        fullWidth
+                    />
+
+                    <Divider my="sm" />
+
+                    {/* Game Type */}
+                    <Text size="sm" fw={600} c="dimmed">{t("Bots.Custom.GameType")}</Text>
+                    <SegmentedControl
+                        value={customSettings.gameType}
+                        onChange={(value) => setCustomSettings({ ...customSettings, gameType: value })}
+                        data={[
+                            { label: t("Bots.GameType.Standard"), value: 'chess' },
+                            { label: t("Bots.GameType.Chess960"), value: '960' },
+                        ]}
+                        fullWidth
+                    />
+
                     <Group justify="flex-end" mt="md">
                         <Button onClick={() => setShowSettingsModal(false)}>
                             {t("Common.Save")}
@@ -1213,7 +1535,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                                 <span className={classes.qualityCount}>{gameStats.goodMoves}</span>
                             </div>
                             <div className={classes.qualityStat}>
-                                <span className={classes.qualityIcon}>❌</span>
+                                <span className={classes.qualityIcon}>⚠️</span>
                                 <span className={classes.qualityCount}>{gameStats.mistakes}</span>
                             </div>
                             <div className={classes.qualityStat}>

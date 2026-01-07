@@ -84,6 +84,8 @@ export const fa_IR = {
     "Game.GameDuration": "مدت بازی",
     "Game.Accuracy": "دقت",
     "Game.AnalysisDescription": "حالت تحلیل را برای بررسی دقیق‌تر بازی فعال کنید.",
+    "Game.MoveHistory": "تاریخچه حرکات",
+    "BookMove": "حرکت از کتاب بازی",
 
     "GoMode.Time": "زمان",
     "GoMode.Depth": "عمق",
@@ -229,6 +231,11 @@ export const fa_IR = {
 
     "Bots.Game.VsPrefix": "در مقابل",
     "Bots.Game.Greeting": "سلام، من {{name}} هستم!",
+    "Bots.Game.GoodGame": "بازی خوبی بود!",
+    "Bots.Game.BookMove": "حرکت از کتاب",
+    "Bots.DefaultGreeting": "سلام! بیایید بازی کنیم!",
+
+    "NoMovesYet": "هنوز حرکتی انجام نشده",
 
     "Bots.Bot.Martin.Name": "مارتین",
     "Bots.Bot.Martin.Desc":

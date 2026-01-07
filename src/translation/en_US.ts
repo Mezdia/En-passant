@@ -84,6 +84,12 @@ export const en_US = {
     "Game.GameDuration": "Game Duration",
     "Game.Accuracy": "Accuracy",
     "Game.AnalysisDescription": "Enable analysis mode to review the game in detail.",
+    "Game.MoveHistory": "Move History",
+    "NoMovesYet": "No moves yet",
+    "BookMove": "Opening book move",
+    "Bots.Game.BookMove": "Book move",
+    "Bots.DefaultGreeting": "Hi! Let's play!",
+    "Bots.Game.GoodGame": "Good game!",
 
     "GoMode.Time": "Time",
     "GoMode.Depth": "Depth",
