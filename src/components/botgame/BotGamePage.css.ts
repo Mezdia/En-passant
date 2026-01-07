@@ -2,7 +2,7 @@
 import { vars } from "@/styles/theme";
 import { keyframes, style } from "@vanilla-extract/css";
 
-// Animations - Following the existing pattern
+// Animations
 const slideInFromBottom = keyframes({
     "0%": {
         opacity: 0,
@@ -115,7 +115,7 @@ export const boardArea = style({
 });
 
 export const sidebar = style({
-    width: "350px",
+    width: "320px",
     height: "100%",
     display: "flex",
     flexDirection: "column",
@@ -178,24 +178,75 @@ export const botImage = style({
     }
 });
 
+// Evaluation Bar
 export const evalBarContainer = style({
     position: "absolute",
     left: vars.spacing.sm,
     top: "50%",
     transform: "translateY(-50%)",
     height: "60vh",
-    width: "16px",
+    width: "20px",
     backgroundColor: vars.colors.dark[6],
     borderRadius: vars.radius.sm,
     overflow: "hidden",
     display: "flex",
-    flexDirection: "column-reverse",
+    flexDirection: "column",
+    zIndex: 5,
 });
 
 export const evalBarFill = style({
     width: "100%",
-    backgroundColor: vars.colors.white,
     transition: "height 0.5s ease-out",
+});
+
+export const evalBarLabels = style({
+    position: "absolute",
+    bottom: vars.spacing.sm,
+    left: 0,
+    right: 0,
+    textAlign: "center",
+    fontSize: "10px",
+    fontWeight: 700,
+    color: vars.colors.white,
+    textShadow: "0 1px 2px rgba(0,0,0,0.8)",
+});
+
+// Time Control Display
+export const timeControlDisplay = style({
+    display: "flex",
+    flexDirection: "column",
+    gap: vars.spacing.xs,
+    padding: vars.spacing.md,
+    backgroundColor: vars.colors.dark[7],
+    borderRadius: vars.radius.md,
+    border: `1px solid ${vars.colors.dark[6]}`,
+});
+
+export const timeDisplay = style({
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: `${vars.spacing.xs} ${vars.spacing.sm}`,
+    borderRadius: vars.radius.sm,
+    transition: "all 0.3s ease",
+    backgroundColor: vars.colors.dark[6],
+});
+
+export const activeTime = style({
+    backgroundColor: "var(--mantine-primary-color-light)",
+    boxShadow: `0 0 10px var(--mantine-primary-color-light)`,
+});
+
+export const timeLabel = style({
+    fontSize: vars.fontSizes.sm,
+    fontWeight: 600,
+});
+
+export const timeValue = style({
+    fontSize: vars.fontSizes.md,
+    fontWeight: 700,
+    fontFamily: "monospace",
+    color: vars.colors.white,
 });
 
 export const chatContainer = style({
@@ -206,7 +257,7 @@ export const chatContainer = style({
     borderRadius: vars.radius.lg,
     overflow: "hidden",
     marginTop: "auto",
-    maxHeight: "300px",
+    maxHeight: "250px",
     border: `1px solid ${vars.colors.dark[6]}`,
 });
 
@@ -250,6 +301,67 @@ export const moveHistory = style({
     overflow: "hidden",
 });
 
+// Move History Sidebar
+export const moveHistorySidebar = style({
+    width: "200px",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    backgroundColor: vars.colors.dark[8],
+    borderRight: `1px solid ${vars.colors.dark[6]}`,
+    zIndex: 10,
+});
+
+export const moveHistoryHeader = style({
+    padding: vars.spacing.md,
+    borderBottom: `1px solid ${vars.colors.dark[6]}`,
+    backgroundColor: vars.colors.dark[7],
+});
+
+export const moveHistoryContent = style({
+    flex: 1,
+    overflowY: "auto",
+    padding: vars.spacing.sm,
+});
+
+export const moveList = style({
+    display: "flex",
+    flexDirection: "column",
+    gap: vars.spacing.xs,
+});
+
+export const moveItem = style({
+    display: "flex",
+    alignItems: "center",
+    gap: vars.spacing.xs,
+    fontSize: vars.fontSizes.sm,
+    padding: vars.spacing.xs,
+    borderRadius: vars.radius.sm,
+    transition: "background-color 0.2s ease",
+
+    selectors: {
+        "&:hover": {
+            backgroundColor: vars.colors.dark[6],
+        }
+    }
+});
+
+export const moveNumber = style({
+    color: vars.colors.dark[2],
+    fontSize: vars.fontSizes.xs,
+    minWidth: "24px",
+});
+
+export const moveWhite = style({
+    color: vars.colors.gray[3],
+    fontWeight: 500,
+});
+
+export const moveBlack = style({
+    color: vars.colors.white,
+    fontWeight: 500,
+});
+
 export const controlPanel = style({
     display: "flex",
     gap: vars.spacing.sm,
@@ -264,7 +376,13 @@ export const capturedPieces = style({
     minHeight: 24,
 });
 
-// Game Result Overlay - Following Mantine design patterns
+// Move Feedback Badge
+export const moveFeedbackBadge = style({
+    marginTop: vars.spacing.sm,
+    animation: `${bounceIn} 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)`,
+});
+
+// Game Result Overlay
 export const gameResultOverlay = style({
     position: "fixed",
     top: 0,
@@ -342,7 +460,7 @@ export const gameResultSubtitle = style({
 
 export const gameResultStats = style({
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+    gridTemplateColumns: "repeat(3, 1fr)",
     gap: vars.spacing.md,
     marginBottom: vars.spacing["2xl"],
     animation: `${slideInFromBottom} 0.8s ease-out 0.6s both`,
@@ -377,6 +495,35 @@ export const gameResultStatValue = style({
     fontWeight: 800,
     color: vars.colors.white,
     marginTop: vars.spacing.xs,
+});
+
+// Quality Stats
+export const qualityStats = style({
+    display: "flex",
+    justifyContent: "center",
+    gap: vars.spacing.lg,
+    marginBottom: vars.spacing["2xl"],
+    padding: vars.spacing.md,
+    backgroundColor: vars.colors.dark[7],
+    borderRadius: vars.radius.lg,
+    animation: `${fadeIn} 1s ease-out 0.7s both`,
+});
+
+export const qualityStat = style({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: vars.spacing.xs,
+});
+
+export const qualityIcon = style({
+    fontSize: vars.fontSizes.lg,
+});
+
+export const qualityCount = style({
+    fontSize: vars.fontSizes.md,
+    fontWeight: 700,
+    color: vars.colors.white,
 });
 
 export const gameResultActions = style({
@@ -482,7 +629,6 @@ export const iconButton = style({
     }
 });
 
-// Game Controls - Following the existing patterns
 export const gameControlsContainer = style({
     display: "flex",
     flexDirection: "column",
@@ -506,6 +652,7 @@ export const gameControlsRow = style({
     display: "flex",
     gap: vars.spacing.sm,
     flexWrap: "wrap",
+    justifyContent: "center",
 });
 
 export const gameControlButton = style([
@@ -559,7 +706,6 @@ export const gameControlButtonPrimary = style([
     }
 ]);
 
-// Thinking indicator - Following the app pattern
 export const thinkingIndicator = style({
     display: "flex",
     alignItems: "center",
@@ -593,7 +739,6 @@ export const thinkingDot = style({
     }
 });
 
-// Analysis mode overlay
 export const analysisModeOverlay = style({
     position: "fixed",
     top: 0,
@@ -651,7 +796,6 @@ export const loadingSpinner = style({
     animation: "spin 1s linear infinite",
 });
 
-// Confetti animation
 export const winConfetti = style({
     position: "fixed",
     top: 0,
@@ -671,7 +815,6 @@ export const confettiPiece = style({
     opacity: 0,
 });
 
-// Turn indicator
 export const turnIndicator = style({
     padding: `${vars.spacing.xs} ${vars.spacing.sm}`,
     borderRadius: vars.radius.md,
@@ -700,7 +843,6 @@ export const turnIndicatorBot = style([
     }
 ]);
 
-// Victory/Defeat message styling
 export const victoryMessage = style({
     background: `linear-gradient(135deg, ${vars.colors.green[8]}, ${vars.colors.green[6]})`,
     color: vars.colors.white,
@@ -732,7 +874,6 @@ export const drawMessage = style({
     textAlign: "center",
 });
 
-// Add shimmer keyframes for the card
 const shimmer = keyframes({
     "0%": { transform: "translateX(-100%)" },
     "100%": { transform: "translateX(100%)" }

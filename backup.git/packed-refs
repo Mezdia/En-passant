@@ -1,0 +1,4 @@
+# pack-refs with: peeled fully-peeled sorted 
+e71144ea2c7099ff582412de5c607c67e79de683 refs/heads/Mezdia
+b7c5317291be768ec25d67792a357f689c369ba3 refs/heads/master
+e71144ea2c7099ff582412de5c607c67e79de683 refs/tags/v0.12.1

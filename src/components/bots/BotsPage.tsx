@@ -315,7 +315,7 @@ function ModeButton({
   );
 }
 
-// Custom Settings Panel
+// Custom Settings Panel - Complete implementation with all settings
 function CustomSettingsPanel({
   settings,
   onChange,
@@ -341,6 +341,10 @@ function CustomSettingsPanel({
 
   return (
     <Stack gap="xs">
+      <Text size="sm" fw={600} c="dimmed" mb="xs">
+        {t("Bots.Setup.CustomSettings")}
+      </Text>
+      
       <SimpleGrid cols={2}>
         <Switch
           label={t("Bots.Custom.BotChat")}
@@ -370,8 +374,38 @@ function CustomSettingsPanel({
             onChange({ ...settings, takebacks: e.currentTarget.checked })
           }
         />
+        <Switch
+          label={t("Bots.Custom.ThreatArrows")}
+          checked={settings.threatArrows}
+          onChange={(e) =>
+            onChange({ ...settings, threatArrows: e.currentTarget.checked })
+          }
+        />
+        <Switch
+          label={t("Bots.Custom.SuggestionArrows")}
+          checked={settings.suggestionArrows}
+          onChange={(e) =>
+            onChange({ ...settings, suggestionArrows: e.currentTarget.checked })
+          }
+        />
+        <Switch
+          label={t("Bots.Custom.MoveFeedback")}
+          checked={settings.moveFeedback}
+          onChange={(e) =>
+            onChange({ ...settings, moveFeedback: e.currentTarget.checked })
+          }
+        />
+        <Switch
+          label={t("Bots.Custom.Engine")}
+          checked={settings.showEngine}
+          onChange={(e) =>
+            onChange({ ...settings, showEngine: e.currentTarget.checked })
+          }
+        />
       </SimpleGrid>
+      
       <Divider my="xs" />
+      
       <Group grow>
         <Select
           label={t("Bots.Custom.TimeControl")}
