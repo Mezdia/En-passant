@@ -1389,13 +1389,21 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                         </Text>
                     ) : (
                         <div className={classes.moveList}>
-                            {moveHistory.map((move, index) => {
-                                const moveNumber = Math.floor(index / 2) + 1;
-                                const isWhiteMove = index % 2 === 0;
+                            {Array.from({ length: Math.ceil(moveHistory.length / 2) }).map((_, moveIndex) => {
+                                const moveNumber = moveIndex + 1;
+                                const whiteMove = moveHistory[moveIndex * 2];
+                                const blackMove = moveHistory[moveIndex * 2 + 1];
+                                
                                 return (
-                                    <div key={index} className={classes.moveItem}>
-                                        {index % 2 === 0 && <span className={classes.moveNumber}>{moveNumber}.</span>}
-                                        {formatMoveWithSymbol(move, isWhiteMove)}
+                                    <div key={moveIndex} className={classes.movePairItem}>
+                                        <span className={classes.moveNumber}>{moveNumber}.</span>
+                                        <div className={classes.movePairContent}>
+                                            {whiteMove && formatMoveWithSymbol(whiteMove, true)}
+                                            {blackMove && (
+                                                <span className={classes.moveSeparator}> </span>
+                                            )}
+                                            {blackMove && formatMoveWithSymbol(blackMove, false)}
+                                        </div>
                                     </div>
                                 );
                             })}

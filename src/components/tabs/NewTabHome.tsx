@@ -9,10 +9,9 @@ import ImportModal from "./ImportModal";
 import { generateChess960Fen } from "@/utils/chess";
 import { defaultTree } from "@/utils/treeReducer";
 import {
-  IconChess,
-  IconDice,
-  IconFileImport,
-  IconPuzzle,
+ IconChess,
+ IconFileImport,
+ IconPuzzle,
 } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import Chessboard from "../icons/Chessboard";
@@ -47,7 +46,7 @@ export default function NewTabHome({ id }: { id: string }) {
       },
     },
     {
-      icon: <IconDice size={60} />,
+      icon: <img src="/ico/chess960-ico-white.svg" alt="Chess960" style={{ width: 60, height: 60 }} />,
       title: t("Home.Card.Chess960.Title"),
       description: t("Home.Card.Chess960.Desc"),
       buttons: [

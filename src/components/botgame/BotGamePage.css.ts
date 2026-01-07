@@ -377,6 +377,34 @@ export const pieceSymbol = style({
     minHeight: '16px',
 });
 
+export const movePairItem = style({
+    display: 'flex',
+    alignItems: 'center',
+    gap: vars.spacing.xs,
+    fontSize: vars.fontSizes.sm,
+    padding: vars.spacing.xs,
+    borderRadius: vars.radius.sm,
+    transition: 'background-color 0.2s ease',
+    
+    selectors: {
+        '&:hover': {
+            backgroundColor: vars.colors.dark[6],
+        }
+    }
+});
+
+export const movePairContent = style({
+    display: 'flex',
+    alignItems: 'center',
+    gap: vars.spacing.xs,
+    flexWrap: 'wrap',
+});
+
+export const moveSeparator = style({
+    color: vars.colors.dark[3],
+    fontSize: vars.fontSizes.sm,
+});
+
 export const controlPanel = style({
     display: "flex",
     gap: vars.spacing.sm,
