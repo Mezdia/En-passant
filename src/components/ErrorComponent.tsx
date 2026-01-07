@@ -61,7 +61,7 @@ export default function ErrorComponent({
           Github
         </Anchor>{" "}
         or on the{" "}
-        <Anchor href="https://discord.com/invite/tdYzfDbSSW" target="_blank">
+        <Anchor href="https://discord.com/" target="_blank">
           Discord server
         </Anchor>
       </Text>
