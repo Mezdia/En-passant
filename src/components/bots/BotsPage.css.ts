@@ -147,6 +147,12 @@ export const individualFlag = style({
   borderRadius: "2px",
   overflow: "hidden",
   backgroundColor: "rgba(255, 255, 255, 0.1)",
+  // Fix height to match flag aspect ratio (flags are typically 3:2 aspect ratio)
+  // Width is 1.5rem * var(--mantine-scale) = 24px, so height should be 24px * 2/3 = 16px
+  height: "calc(1.5rem * var(--mantine-scale) * 0.666)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 });
 
 // Flags container for settings panel
@@ -161,6 +167,12 @@ export const individualFlagSmall = style({
   borderRadius: "2px",
   overflow: "hidden",
   backgroundColor: "rgba(255, 255, 255, 0.1)",
+  // Make flags larger - increase width to 24px (1.5rem) and maintain 3:2 aspect ratio
+  width: "calc(1.5rem * var(--mantine-scale))",
+  height: "calc(1.5rem * var(--mantine-scale) * 0.666)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 });
 
 // Rating badge

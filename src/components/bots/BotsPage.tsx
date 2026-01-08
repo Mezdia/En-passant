@@ -510,13 +510,13 @@ function BotSettingsPanel({
                             key={index}
                             className={classes.individualFlagSmall}
                           >
-                            <FlagComponent w={20} />
+                            <FlagComponent w={24} h={16} />
                           </div>
                         ),
                     )
                   ) : (
                     <div className={classes.individualFlagSmall}>
-                      {flagData && React.createElement(flagData, { w: 20 })}
+                      {flagData && React.createElement(flagData, { w: 24, h: 16 })}
                     </div>
                   )}
                 </div>
