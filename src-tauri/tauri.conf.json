@@ -1,0 +1,85 @@
+{
+  "bundle": {
+    "active": true,
+    "category": "BoardGame",
+    "copyright": "",
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "linux": {
+      "deb": {
+        "depends": []
+      },
+      "appimage": {
+        "bundleMediaFramework": true
+      }
+    },
+    "publisher": "Mezdia",
+    "shortDescription": "Ultimate Chess Toolkit",
+    "longDescription": "",
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": "-"
+    },
+    "resources": [],
+    "targets": "all",
+    "createUpdaterArtifacts": "v1Compatible"
+  },
+  "build": {
+    "beforeDevCommand": "npm run start-vite",
+    "beforeBuildCommand": "npm run build-vite",
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
+  },
+  "productName": "En-passant",
+  "mainBinaryName": "en-passant",
+  "identifier": "ir.enpassant.app",
+  "plugins": {
+    "cli": {
+      "args": [
+        {
+          "name": "file",
+          "index": 1,
+          "takesValue": true
+        }
+      ]
+    },
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDdGOTBFNjg2MzFGM0RDODUKUldTRjNQTXhodWFRZjc2MTNVeXRONGJkRjdGUXlCeW1MSlZESUczT0U4eE5hKzBmY3M2S0U2L0oK",
+      "endpoints": [
+        "https://www.enpassant.ir/updates"
+      ]
+    }
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "title": "En-passant",
+        "visible": false,
+        "decorations": true
+      }
+    ],
+    "security": {
+      "assetProtocol": {
+        "scope": [
+          "**"
+        ],
+        "enable": true
+      },
+      "csp": null
+    }
+  }
+}
