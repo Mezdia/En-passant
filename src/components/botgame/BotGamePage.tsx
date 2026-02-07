@@ -6,10 +6,12 @@ import {
     parseSquare,
     type SquareName
 } from "chessops";
-import { positionFromFen } from "@/utils/chessops";
+import { positionFromFen, swapMove } from "@/utils/chessops";
 import { makeSan } from "chessops/san";
 import { chessgroundDests } from "chessops/compat";
 import { INITIAL_FEN, makeFen } from "chessops/fen";
+import type { DrawShape } from "chessground/draw";
+import { generateChess960Fen } from "@/utils/chess";
 
 import {
     Button,
@@ -72,6 +74,7 @@ import { selectMoveByRating, getBlunderConfig } from "../bots/blunderInjection";
 import { getBookMove } from "../bots/openingBook";
 import { BotChatPanel, ChatMessage } from "./BotChatPanel";
 import * as classes from "./BotGamePage.css";
+import { arrowColors } from "../panels/analysis/BestMoves";
 
 import { Chessground } from "@/chessground/Chessground";
 import { commands } from "@/bindings";
@@ -80,6 +83,9 @@ import { genID } from "@/utils/tabs";
 import { activeTabAtom, botGameHistoryTriggerAtom, tabsAtom, enginesAtom } from "@/state/atoms";
 import { createTab } from "@/utils/tabs";
 import i18n from "i18next";
+import { type LocalEngine, getBestMoves as localGetBestMoves } from "@/utils/engines";
+import { normalizeScore } from "@/utils/score";
+import { useThrottledEffect } from "@/utils/misc";
 
 // Game mode types
 type GameMode = 'competition' | 'friendly' | 'assisted' | 'custom';
@@ -133,66 +139,77 @@ interface EngineEvalState {
 // Move quality types
 type MoveQuality = 'brilliant' | 'good' | 'ok' | 'mistake' | 'blunder';
 
+const MODE_DEFAULTS: Record<
+    Exclude<GameMode, "custom">,
+    CustomSettings
+> = {
+    competition: {
+        botChat: false,
+        hints: false,
+        evalBar: false,
+        threatArrows: false,
+        suggestionArrows: false,
+        moveFeedback: false,
+        showEngine: false,
+        takebacks: false,
+        timeControl: "none",
+        gameType: "chess"
+    },
+    friendly: {
+        botChat: true,
+        hints: true,
+        evalBar: false,
+        threatArrows: false,
+        suggestionArrows: false,
+        moveFeedback: false,
+        showEngine: false,
+        takebacks: true,
+        timeControl: "none",
+        gameType: "chess"
+    },
+    assisted: {
+        botChat: true,
+        hints: true,
+        evalBar: true,
+        threatArrows: true,
+        suggestionArrows: true,
+        moveFeedback: true,
+        showEngine: true,
+        takebacks: true,
+        timeControl: "10min",
+        gameType: "chess"
+    }
+};
+
+const settingsEqual = (a: CustomSettings, b: CustomSettings) =>
+    a.botChat === b.botChat &&
+    a.hints === b.hints &&
+    a.evalBar === b.evalBar &&
+    a.threatArrows === b.threatArrows &&
+    a.suggestionArrows === b.suggestionArrows &&
+    a.moveFeedback === b.moveFeedback &&
+    a.showEngine === b.showEngine &&
+    a.takebacks === b.takebacks &&
+    a.timeControl === b.timeControl &&
+    a.gameType === b.gameType;
+
 // Helper function to get game mode from settings
 const getGameModeFromSettings = (settings: CustomSettings): GameMode => {
-    // If custom mode, return custom
-    if (settings.hints && settings.evalBar && settings.moveFeedback && settings.takebacks && settings.botChat) {
-        return 'custom';
-    }
-    // If assisted mode - has hints and move feedback but not takebacks
-    if (settings.hints && settings.moveFeedback && !settings.takebacks) {
-        return 'assisted';
-    }
-    // If friendly mode - has takebacks but not hints
-    if (settings.takebacks && !settings.hints) {
-        return 'friendly';
-    }
-    // Default to competition
-    return 'competition';
+    if (settingsEqual(settings, MODE_DEFAULTS.competition)) return "competition";
+    if (settingsEqual(settings, MODE_DEFAULTS.friendly)) return "friendly";
+    if (settingsEqual(settings, MODE_DEFAULTS.assisted)) return "assisted";
+    return "custom";
 };
 
 // Helper function to apply game mode defaults
 const applyGameModeDefaults = (mode: GameMode): Partial<CustomSettings> => {
     switch (mode) {
         case 'competition':
-            return {
-                botChat: false,
-                hints: false,
-                evalBar: false,
-                threatArrows: false,
-                suggestionArrows: false,
-                moveFeedback: false,
-                showEngine: false,
-                takebacks: false,
-                timeControl: "none",
-                gameType: "chess"
-            };
+            return MODE_DEFAULTS.competition;
         case 'friendly':
-            return {
-                botChat: true,
-                hints: false,
-                evalBar: false,
-                threatArrows: false,
-                suggestionArrows: false,
-                moveFeedback: false,
-                showEngine: false,
-                takebacks: true,
-                timeControl: "none",
-                gameType: "chess"
-            };
+            return MODE_DEFAULTS.friendly;
         case 'assisted':
-            return {
-                botChat: true,
-                hints: true,
-                evalBar: true,
-                threatArrows: true,
-                suggestionArrows: true,
-                moveFeedback: true,
-                showEngine: true,
-                takebacks: false,
-                timeControl: "10min",
-                gameType: "chess"
-            };
+            return MODE_DEFAULTS.assisted;
         case 'custom':
             return {
                 // Keep custom settings as is
@@ -211,6 +228,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
     const engines = useAtomValue(enginesAtom);
 
     // Game State
+    const [startFen, setStartFen] = useState<string>(INITIAL_FEN);
     const [fen, setFen] = useState<string>(INITIAL_FEN);
     const [userSide, setUserSide] = useState<"white" | "black">("white");
     const [isEngineThinking, setIsEngineThinking] = useState(false);
@@ -294,7 +312,8 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
     const [prevEngineEval, setPrevEngineEval] = useState<number | null>(null);
 
     // Candidate moves for arrows
-    const [candidateMoves, setCandidateMoves] = useState<Array<{ uci: string; cp: number; mate?: number }>>([]);
+    const [suggestionMoves, setSuggestionMoves] = useState<Array<{ uci: string; cp: number; mate?: number }>>([]);
+    const [threatMoves, setThreatMoves] = useState<Array<{ uci: string; cp: number; mate?: number }>>([]);
 
     // Derived state using chessops
     const [pos, error] = useMemo(() => positionFromFen(fen), [fen]);
@@ -311,6 +330,24 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         return engines.filter(e => e.type === "local" && e.loaded);
     }, [engines]);
 
+    const analysisEngine = useMemo(() => {
+        const localEngines = engines.filter((e): e is LocalEngine => e.type === "local");
+        if (localEngines.length === 0) return null;
+        if (enginePath) {
+            return localEngines.find((e) => e.path === enginePath) ?? localEngines[0];
+        }
+        return localEngines[0];
+    }, [engines, enginePath]);
+
+    const sessionId = useMemo(() => {
+        return activeTab ? `bot-game-${activeTab}` : "bot-game";
+    }, [activeTab]);
+
+    const moveTabId = `${sessionId}-move`;
+    const evalTabId = `${sessionId}-eval`;
+    const suggestionTabId = `${sessionId}-suggest`;
+    const threatTabId = `${sessionId}-threat`;
+
     // Auto-select engine if none selected
     useEffect(() => {
         if (!enginePath && availableEngines.length > 0) {
@@ -321,6 +358,18 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
             setEngineName(firstEngine.name);
         }
     }, [availableEngines, enginePath]);
+
+    // Keep engine name in sync with path
+    useEffect(() => {
+        if (!enginePath) return;
+        const matching = availableEngines.find((e) => {
+            const localEngine = e as any;
+            return localEngine.path === enginePath || e.name === enginePath;
+        });
+        if (matching) {
+            setEngineName(matching.name);
+        }
+    }, [enginePath, availableEngines]);
 
     // Load game settings from session storage
     useEffect(() => {
@@ -338,6 +387,9 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                     if (parsed.engineName) {
                         setEngineName(parsed.engineName);
                     }
+                    if (parsed.gameMode) {
+                        setGameMode(parsed.gameMode as GameMode);
+                    }
                     if (parsed.playSide) {
                         let side: "white" | "black" = "white";
                         if (parsed.playSide === "random") {
@@ -351,14 +403,25 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                     
                     // Load custom settings
                     if (parsed.customSettings) {
+                        const normalizedSettings = {
+                            ...parsed.customSettings,
+                            gameType:
+                                parsed.customSettings.gameType === "960"
+                                    ? "chess960"
+                                    : parsed.customSettings.gameType,
+                        };
                         setCustomSettings(prev => ({
                             ...prev,
-                            ...parsed.customSettings
+                            ...normalizedSettings
                         }));
-                        console.log("[BotGamePage] Loaded custom settings:", parsed.customSettings);
+                        console.log("[BotGamePage] Loaded custom settings:", normalizedSettings);
                         
-                        // Set game mode based on settings
-                        setGameMode(getGameModeFromSettings(parsed.customSettings));
+                        // Set game mode based on settings (or use provided gameMode)
+                        setGameMode(parsed.gameMode || getGameModeFromSettings(normalizedSettings));
+                    } else if (parsed.gameMode) {
+                        // Apply defaults for non-custom modes
+                        const defaults = applyGameModeDefaults(parsed.gameMode as GameMode);
+                        setCustomSettings(prev => ({ ...prev, ...defaults }));
                     }
                 } catch (e) {
                     console.error("[BotGamePage] Failed to parse game settings:", e);
@@ -366,6 +429,93 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
             }
         }
     }, [activeTab]);
+
+    useEffect(() => {
+        if (moveHistory.length > 0 || currentPositionIndex > 0) return;
+        if ((customSettings.gameType === "chess960" || customSettings.gameType === "960") && startFen === INITIAL_FEN) {
+            const newStartFen = generateChess960Fen();
+            setStartFen(newStartFen);
+            setFen(newStartFen);
+            setGamePositionHistory([newStartFen]);
+            setCurrentPositionIndex(0);
+        }
+        if (customSettings.gameType === "chess" && startFen !== INITIAL_FEN) {
+            setStartFen(INITIAL_FEN);
+            setFen(INITIAL_FEN);
+            setGamePositionHistory([INITIAL_FEN]);
+            setCurrentPositionIndex(0);
+        }
+    }, [customSettings.gameType, moveHistory.length, currentPositionIndex, startFen]);
+
+    const createStartFen = useCallback((gameType: string) => {
+        return gameType === "chess960" || gameType === "960"
+            ? generateChess960Fen()
+            : INITIAL_FEN;
+    }, []);
+
+    // Add message to chat
+    const addMessage = useCallback((sender: "bot" | "user" | "system", text: string) => {
+        if (!customSettings.botChat && sender === "bot") return;
+        
+        setMessages(prev => [...prev, {
+            id: Math.random().toString(36),
+            sender,
+            text,
+            timestamp: Date.now()
+        }]);
+    }, [customSettings.botChat]);
+
+    const resetGameState = useCallback((newStartFen: string) => {
+        setStartFen(newStartFen);
+        setFen(newStartFen);
+        setMoveHistory([]);
+        setLastMove(undefined);
+        setMessages([]);
+        setGamePositionHistory([newStartFen]);
+        setCurrentPositionIndex(0);
+        setGameState({
+            isGameOver: false,
+            result: null,
+            endReason: null,
+            winner: null,
+            moveCount: 0,
+            isAnalysisMode: false,
+            gameStartTime: Date.now()
+        });
+        setShowResultScreen(false);
+        setShowAnalysisModal(false);
+        setMoveFeedbackState({ type: null, evaluation: null, bestMove: null });
+        setEngineEval(null);
+        setPrevEngineEval(null);
+        setSuggestionMoves([]);
+        setThreatMoves([]);
+
+        // Reset time control
+        if (customSettings.timeControl !== "none") {
+            const times: Record<string, number> = {
+                "1min": 60,
+                "3min": 180,
+                "5min": 300,
+                "10min": 600,
+                "30min": 1800,
+            };
+            const seconds = times[customSettings.timeControl] || 0;
+            setTimeControlState({
+                whiteTime: seconds,
+                blackTime: seconds,
+                isActive: true,
+                lastUpdate: Date.now()
+            });
+        } else {
+            setTimeControlState(prev => ({ ...prev, isActive: false }));
+        }
+
+        // Re-initialize bot greeting
+        setTimeout(() => {
+            const greeting = bot.greeting ? t(bot.greeting) : t("Bots.DefaultGreeting");
+            addMessage("bot", greeting);
+        }, 300);
+    }, [customSettings.timeControl, bot, addMessage, t]);
 
     // Initialize time control
     useEffect(() => {
@@ -384,6 +534,8 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 isActive: true,
                 lastUpdate: Date.now()
             });
+        } else {
+            setTimeControlState(prev => ({ ...prev, isActive: false }));
         }
     }, [customSettings.timeControl]);
 
@@ -447,58 +599,95 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
     }, [fen, isEngineThinking, userSide, enginePath, gameState.isGameOver, gameState.isAnalysisMode, turnColor, pos]);
 
     // Get engine evaluation
-    const getEngineEvaluation = useCallback(async () => {
-        if (!customSettings.evalBar || !enginePath || !pos || gameState.isGameOver) {
+    const buildAnalysisOptions = useCallback(() => {
+        if (!analysisEngine) return [];
+        const baseOptions = (analysisEngine.settings || []).map((s) => ({
+            name: s.name,
+            value: s.value?.toString() ?? "",
+        }));
+        if (
+            (customSettings.gameType === "chess960" || customSettings.gameType === "960") &&
+            !baseOptions.find((o) => o.name === "UCI_Chess960")
+        ) {
+            baseOptions.push({ name: "UCI_Chess960", value: "true" });
+        }
+        return baseOptions;
+    }, [analysisEngine, customSettings.gameType]);
+
+    const getAnalysisGoMode = useCallback(() => {
+        if (analysisEngine?.go && analysisEngine.go.t !== "Infinite") {
+            return analysisEngine.go;
+        }
+        const behavior = getRatingBehavior(bot.rating);
+        return { t: "Depth", c: behavior.depth } as const;
+    }, [analysisEngine, bot.rating]);
+
+    const getEngineEvaluation = useCallback(async (targetFen?: string, targetPos?: typeof pos) => {
+        if (!analysisEngine || gameState.isGameOver) {
+            setEngineEval(null);
+            return null;
+        }
+        const fenToUse = targetFen ?? fen;
+        const posToUse = targetPos ?? pos;
+        if (!posToUse) {
             setEngineEval(null);
             return null;
         }
 
         try {
-            const behavior = getRatingBehavior(bot.rating);
-            const result = await commands.getBestMoves(
-                pos.turn === 'white' ? 'white' : 'black',
-                enginePath,
-                "bot-game-session",
-                { t: "Depth", c: behavior.depth },
+            const result = await localGetBestMoves(
+                analysisEngine,
+                evalTabId,
+                getAnalysisGoMode(),
                 {
-                    fen: fen,
-                    extraOptions: [
-                        { name: "MultiPV", value: "1" },
-                        { name: "UCI_ShowWDL", value: "true" }
-                    ],
-                    moves: []
-                }
+                    fen: fenToUse,
+                    moves: [],
+                    extraOptions: buildAnalysisOptions(),
+                },
             );
-
-            if (result.status === "ok" && result.data && result.data.length > 1) {
-                const bestMove = result.data[1][0];
-                // BestMove has different structure, extract values safely
-                const cpValue = (bestMove as any).cp ?? 
-                    ((bestMove as any).mate ? ((bestMove as any).mate > 0 ? 30000 : -30000) : 0);
-                return {
-                    cp: cpValue,
-                    depth: behavior.depth,
-                    wdl: (bestMove as any).wdl,
-                    pv: (bestMove as any).uciMoves?.[0]
-                };
+            if (result) {
+                const [, bestMoves] = result;
+                if (bestMoves.length > 0) {
+                    const best = bestMoves[0];
+                    const cpValue = normalizeScore(best.score.value, posToUse.turn);
+                    return {
+                        cp: cpValue,
+                        depth: best.depth,
+                        wdl: best.score.wdl ?? undefined,
+                        pv: best.uciMoves?.[0]
+                    };
+                }
             }
         } catch (e) {
             console.error("[BotGamePage] Engine eval error:", e);
         }
 
         return null;
-    }, [customSettings.evalBar, enginePath, pos, gameState.isGameOver, fen, bot.rating]);
+    }, [analysisEngine, gameState.isGameOver, fen, pos, evalTabId, buildAnalysisOptions, getAnalysisGoMode]);
 
-    // Update evaluation when position changes
-    useEffect(() => {
-        if (!customSettings.evalBar || gameState.isGameOver) return;
-
-        getEngineEvaluation().then(evalResult => {
-            if (evalResult) {
-                setEngineEval(evalResult);
+    // Update evaluation when position changes (analysis-style)
+    useThrottledEffect(
+        () => {
+            if ((!customSettings.evalBar && !customSettings.showEngine && !customSettings.moveFeedback) || gameState.isGameOver) {
+                setEngineEval(null);
+                return;
             }
-        });
-    }, [fen, customSettings.evalBar, gameState.isGameOver, getEngineEvaluation]);
+            getEngineEvaluation().then(evalResult => {
+                if (evalResult) {
+                    setEngineEval(evalResult);
+                }
+            });
+        },
+        100,
+        [
+            fen,
+            customSettings.evalBar,
+            customSettings.showEngine,
+            customSettings.moveFeedback,
+            gameState.isGameOver,
+            getEngineEvaluation,
+        ],
+    );
 
     // Check if game is over
     const checkGameOver = useCallback(() => {
@@ -664,18 +853,6 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         }, 5000);
     };
 
-    // Add message to chat
-    const addMessage = useCallback((sender: "bot" | "user" | "system", text: string) => {
-        if (!customSettings.botChat && sender === "bot") return;
-        
-        setMessages(prev => [...prev, {
-            id: Math.random().toString(36),
-            sender,
-            text,
-            timestamp: Date.now()
-        }]);
-    }, [customSettings.botChat]);
-
     // Save game to history
     const saveGame = (result: string) => {
         try {
@@ -737,7 +914,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         // Update move feedback if enabled
         if (customSettings.moveFeedback) {
             // Get new evaluation after move
-            getEngineEvaluation().then(evalAfter => {
+            getEngineEvaluation(newFen, pos).then(evalAfter => {
                 const evalAfterCp = evalAfter?.cp ?? null;
                 const quality = calculateMoveQuality(evalBefore, evalAfterCp);
                 setMoveFeedbackState({ 
@@ -750,7 +927,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 const feedbackMessages = {
                     'brilliant': t("Annotate.Brilliant"),
                     'good': t("Annotate.Good"),
-                    'ok': "OK",
+                    'ok': t("Common.Ok"),
                     'mistake': t("Annotate.Mistake"),
                     'blunder': t("Annotate.Blunder")
                 };
@@ -773,13 +950,14 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
     }, [isEngineThinking, gameState.isGameOver, gameState.isAnalysisMode, pos, engineEval, customSettings.moveFeedback, currentPositionIndex, calculateMoveQuality, updateStats, addMessage, getEngineEvaluation]);
 
     // Get best move from engine
-    const getEngineBestMove = useCallback(async (currentFen: string) => {
+    const getEngineBestMove = useCallback(async (currentFen: string, tabId: string, turnOverride?: "white" | "black") => {
         if (!enginePath) {
             console.warn("[BotGamePage] Engine path not loaded yet");
             return [];
         }
 
         const behavior = getRatingBehavior(bot.rating);
+        const turnForSearch = turnOverride ?? (pos?.turn === "white" ? "white" : "black");
 
         try {
             const options = [
@@ -787,13 +965,16 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 { name: "Skill Level", value: "20" },
                 { name: "UCI_LimitStrength", value: "false" },
             ];
+            if (customSettings.gameType === "chess960" || customSettings.gameType === "960") {
+                options.push({ name: "UCI_Chess960", value: "true" });
+            }
 
             console.log("[BotGamePage] Calling getBestMoves with engine:", enginePath);
 
             const result = await commands.getBestMoves(
-                pos?.turn === 'white' ? 'white' : 'black',
+                turnForSearch,
                 enginePath,
-                "bot-game-session",
+                tabId,
                 { t: "Depth", c: behavior.depth },
                 {
                     fen: currentFen,
@@ -807,20 +988,93 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 return [];
             }
 
-            // Store candidate moves for arrows
-            const candidates = result.data[1] || [];
-            setCandidateMoves(candidates.map((c: any) => ({
-                uci: c.uciMoves[0],
-                cp: c.cp ?? 0,
-                mate: c.mate
-            })));
-
-            return candidates;
+            return result.data[1] || [];
         } catch (e) {
             console.error("[BotGamePage] Engine error", e);
             return [];
         }
-    }, [enginePath, bot.rating, pos]);
+    }, [enginePath, bot.rating, pos, customSettings.gameType]);
+
+    const updateCandidateMoves = useCallback(async () => {
+        if (!analysisEngine || !pos || gameState.isGameOver) return;
+        if (!customSettings.suggestionArrows && !customSettings.threatArrows) {
+            setSuggestionMoves([]);
+            setThreatMoves([]);
+            return;
+        }
+
+        const analysisOptions = buildAnalysisOptions();
+        const goMode = getAnalysisGoMode();
+
+        if (customSettings.suggestionArrows && turnColor === userSide) {
+            const result = await localGetBestMoves(
+                analysisEngine,
+                suggestionTabId,
+                goMode,
+                { fen, moves: [], extraOptions: analysisOptions },
+            );
+            const moves = result?.[1] ?? [];
+            setSuggestionMoves(
+                moves.map((m) => ({
+                    uci: m.uciMoves[0],
+                    cp: normalizeScore(m.score.value, pos.turn),
+                    mate: m.score.value.type === "mate" ? m.score.value.value : undefined,
+                })),
+            );
+        } else {
+            setSuggestionMoves([]);
+        }
+
+        if (customSettings.threatArrows) {
+            const threatFen = swapMove(fen);
+            const threatTurn = turnColor === "white" ? "black" : "white";
+            const result = await localGetBestMoves(
+                analysisEngine,
+                threatTabId,
+                goMode,
+                { fen: threatFen, moves: [], extraOptions: analysisOptions },
+            );
+            const moves = result?.[1] ?? [];
+            setThreatMoves(
+                moves.map((m) => ({
+                    uci: m.uciMoves[0],
+                    cp: normalizeScore(m.score.value, threatTurn),
+                    mate: m.score.value.type === "mate" ? m.score.value.value : undefined,
+                })),
+            );
+        } else {
+            setThreatMoves([]);
+        }
+    }, [
+        analysisEngine,
+        pos,
+        gameState.isGameOver,
+        customSettings.suggestionArrows,
+        customSettings.threatArrows,
+        turnColor,
+        userSide,
+        fen,
+        suggestionTabId,
+        threatTabId,
+        buildAnalysisOptions,
+        getAnalysisGoMode,
+    ]);
+
+    // Update suggestion/threat arrows when position changes
+    useThrottledEffect(
+        () => {
+            if (isEngineThinking) return;
+            updateCandidateMoves();
+        },
+        150,
+        [
+            fen,
+            customSettings.suggestionArrows,
+            customSettings.threatArrows,
+            isEngineThinking,
+            updateCandidateMoves,
+        ],
+    );
 
     // Make bot move
     const makeBotMove = useCallback(async () => {
@@ -870,7 +1124,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
 
         // 2. Engine Search
         console.log("[BotGamePage] No book move, calling engine...");
-        const candidates = await getEngineBestMove(fen);
+        const candidates = await getEngineBestMove(fen, moveTabId);
         console.log("[BotGamePage] Engine candidates:", candidates);
 
         if (!candidates || candidates.length === 0) {
@@ -938,7 +1192,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         }
 
         setIsEngineThinking(false);
-    }, [fen, bot, isEngineThinking, customSettings.botChat, currentPositionIndex, pos, getEngineBestMove, addMessage]);
+    }, [fen, bot, isEngineThinking, customSettings.botChat, currentPositionIndex, pos, getEngineBestMove, addMessage, moveTabId]);
 
     // Handle takeback
     const handleTakeback = useCallback(() => {
@@ -976,58 +1230,14 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
 
     // Handle new game
     const handleNewGame = useCallback(() => {
-        setFen(INITIAL_FEN);
-        setMoveHistory([]);
-        setLastMove(undefined);
-        setMessages([]);
-        setGamePositionHistory([INITIAL_FEN]);
-        setCurrentPositionIndex(0);
-        setGameState({
-            isGameOver: false,
-            result: null,
-            endReason: null,
-            winner: null,
-            moveCount: 0,
-            isAnalysisMode: false,
-            gameStartTime: Date.now()
-        });
-        setShowResultScreen(false);
-        setShowAnalysisModal(false);
-        setMoveFeedbackState({ type: null, evaluation: null, bestMove: null });
-        setEngineEval(null);
-        setPrevEngineEval(null);
-        setCandidateMoves([]);
-
-        // Reset time control
-        if (customSettings.timeControl !== "none") {
-            const times: Record<string, number> = {
-                "1min": 60,
-                "3min": 180,
-                "5min": 300,
-                "10min": 600,
-                "30min": 1800,
-            };
-            const seconds = times[customSettings.timeControl] || 0;
-            setTimeControlState({
-                whiteTime: seconds,
-                blackTime: seconds,
-                isActive: true,
-                lastUpdate: Date.now()
-            });
-        } else {
-            setTimeControlState(prev => ({ ...prev, isActive: false }));
-        }
-
-        // Re-initialize bot greeting
-        setTimeout(() => {
-            const greeting = bot.greeting ? t(bot.greeting) : t("Bots.DefaultGreeting");
-            addMessage("bot", greeting);
-        }, 500);
-    }, [customSettings.timeControl, bot, addMessage]);
+        const newStartFen = createStartFen(customSettings.gameType);
+        resetGameState(newStartFen);
+    }, [customSettings.gameType, createStartFen, resetGameState]);
 
     // Handle analysis mode
     const handleAnalysisMode = useCallback(async () => {
         const pgn = moveHistory.join(" ");
+        const is960 = customSettings.gameType === "chess960" || customSettings.gameType === "960";
 
         await createTab({
             tab: {
@@ -1046,10 +1256,11 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 result: gameState.result === 'win' ? (userSide === 'white' ? '1-0' : '0-1') :
                     gameState.result === 'loss' ? (userSide === 'white' ? '0-1' : '1-0') : '1/2-1/2',
                 date: new Date().toISOString(),
-                fen: INITIAL_FEN
+                fen: is960 ? startFen : INITIAL_FEN,
+                variant: is960 ? "Chess960" : undefined,
             }
         });
-    }, [moveHistory, bot, userSide, gameState.result, setTabs, setActiveTab]);
+    }, [moveHistory, bot, userSide, gameState.result, setTabs, setActiveTab, customSettings.gameType, startFen]);
 
     // Get hint move
     const handleHint = useCallback(async () => {
@@ -1075,6 +1286,14 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
             ...prev,
             ...defaults
         }));
+    };
+
+    const handleGameTypeChange = (value: string) => {
+        const normalizedValue = value === "960" ? "chess960" : value;
+        if (normalizedValue === customSettings.gameType) return;
+        setCustomSettings({ ...customSettings, gameType: normalizedValue });
+        const newStartFen = createStartFen(normalizedValue);
+        resetGameState(newStartFen);
     };
 
     // Get result title
@@ -1163,7 +1382,6 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const isRTL = i18n.language === 'fa_IR';
     const isPersian = i18n.language.startsWith("fa");
 
     // Render move feedback badge
@@ -1173,7 +1391,7 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         const feedbackConfig: Record<MoveQuality, { color: string; icon: string; text: string }> = {
             'brilliant': { color: 'cyan', icon: '/movefeedbackico/Brilliantmove.svg', text: t("Annotate.Brilliant") },
             'good': { color: 'green', icon: '/movefeedbackico/Goodmove.svg', text: t("Annotate.Good") },
-            'ok': { color: 'yellow', icon: '/movefeedbackico/Bookmove.svg', text: 'OK' },
+            'ok': { color: 'yellow', icon: '/movefeedbackico/Bookmove.svg', text: t("Common.Ok") },
             'mistake': { color: 'orange', icon: '/movefeedbackico/Mistakemove.svg', text: t("Annotate.Mistake") },
             'blunder': { color: 'red', icon: '/movefeedbackico/Blundermove.svg', text: t("Annotate.Blunder") }
         };
@@ -1209,26 +1427,64 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         );
     };
 
+    const formatEvalScore = (cp: number | null) => {
+        if (cp == null) return "--";
+        const value = Math.abs(cp) / 100;
+        return cp >= 0 ? `+${value.toFixed(2)}` : `-${value.toFixed(2)}`;
+    };
+
+    const autoShapes = useMemo((): DrawShape[] => {
+        if ((!suggestionMoves || suggestionMoves.length === 0) && (!threatMoves || threatMoves.length === 0)) return [];
+
+        const shapes: DrawShape[] = [];
+        const showSuggestions = customSettings.suggestionArrows && turnColor === userSide;
+        const showThreats = customSettings.threatArrows;
+        const getSquares = (uci: string) => {
+            const move = parseUci(uci);
+            if (!move || !("from" in move) || !("to" in move)) return null;
+            const from = makeSquare(move.from);
+            const to = makeSquare(move.to);
+            if (!from || !to) return null;
+            return { from, to };
+        };
+
+        if (showSuggestions) {
+            suggestionMoves.slice(0, 3).forEach((candidate, index) => {
+                const squares = getSquares(candidate.uci);
+                if (!squares) return;
+                shapes.push({
+                    orig: squares.from,
+                    dest: squares.to,
+                    brush: arrowColors[index]?.strong || "green",
+                    modifiers: {
+                        lineWidth: index === 0 ? 10 : 6,
+                    },
+                });
+            });
+        }
+
+        if (showThreats) {
+            const threat = threatMoves[0];
+            if (threat) {
+                const squares = getSquares(threat.uci);
+                if (squares) {
+                    shapes.push({
+                        orig: squares.from,
+                        dest: squares.to,
+                        brush: "red",
+                        modifiers: {
+                            lineWidth: 9,
+                        },
+                    });
+                }
+            }
+        }
+
+        return shapes;
+    }, [suggestionMoves, threatMoves, customSettings.suggestionArrows, customSettings.threatArrows, turnColor, userSide]);
+
     return (
         <div className={classes.pageContainer}>
-            {/* Evaluation Bar */}
-            {customSettings.evalBar && engineEval && (
-                <div className={classes.evalBarContainer}>
-                    <div 
-                        className={classes.evalBarFill}
-                        style={{ 
-                            height: `${evalPercentages.white}%`,
-                            backgroundColor: evalPercentages.white > 50 ? '#22c55e' : '#ef4444'
-                        }}
-                    />
-                    <div className={classes.evalBarLabels}>
-                        <span>
-                            {engineEval.cp > 0 ? `+${(Math.abs(engineEval.cp) / 100).toFixed(1)}` : 
-                             engineEval.cp < 0 ? `-${(Math.abs(engineEval.cp) / 100).toFixed(1)}` : '0.0'}
-                        </span>
-                    </div>
-                </div>
-            )}
 
             {/* Left Sidebar */}
             <Paper className={classes.sidebar} withBorder radius={0}>
@@ -1303,6 +1559,41 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                                     {t("Bots.Custom.BotChat")}
                                 </Text>
                                 <BotChatPanel messages={messages} botName={bot.nameEnglish} />
+                            </Paper>
+                        )}
+
+                        {/* Engine Info Panel */}
+                        {customSettings.showEngine && (
+                            <Paper withBorder p="md" radius="md">
+                                <Stack gap="xs">
+                                    <Text size="xs" fw={600} c="dimmed" tt="uppercase">
+                                        {t("Common.Engine")}
+                                    </Text>
+                                    <Group justify="space-between">
+                                        <Text size="sm" fw={600}>
+                                            {engineName || t("Bots.NoEngine")}
+                                        </Text>
+                                        <Badge variant="light" color="cyan">
+                                            {t("GoMode.Depth")}: {engineEval?.depth ?? "--"}
+                                        </Badge>
+                                    </Group>
+                                    <Group justify="space-between">
+                                        <Text size="sm" c="dimmed">
+                                            {t("Bots.Engine.Evaluation")}
+                                        </Text>
+                                        <Text size="sm" fw={600}>
+                                            {formatEvalScore(engineEval?.cp ?? null)}
+                                        </Text>
+                                    </Group>
+                                    <Group justify="space-between" align="flex-start">
+                                        <Text size="sm" c="dimmed">
+                                            {t("Bots.Engine.PV")}
+                                        </Text>
+                                        <Text size="sm" fw={600} style={{ textAlign: "right" }}>
+                                            {engineEval?.pv ?? "--"}
+                                        </Text>
+                                    </Group>
+                                </Stack>
                             </Paper>
                         )}
 
@@ -1412,25 +1703,51 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
 
             {/* Board Area */}
             <div className={classes.boardArea}>
-                <div style={{ width: "70vh", height: "70vh" }}>
-                    <Chessground
-                        fen={fen}
-                        orientation={userSide}
-                        turnColor={turnColor}
-                        check={pos?.isCheck()}
-                        lastMove={lastMove}
-                        movable={{
-                            free: false,
-                            color: isEngineThinking || gameState.isGameOver || gameState.isAnalysisMode ? undefined : userSide,
-                            dests: dests,
-                            events: {
-                                after: (orig, dest) => handleUserMove(orig as SquareName, dest as SquareName),
-                            },
-                        }}
-                        animation={{ enabled: true }}
-                        draggable={{ enabled: !gameState.isGameOver && !gameState.isAnalysisMode }}
-                        selectable={{ enabled: true }}
-                    />
+                <div className={classes.boardShell}>
+                    {/* Evaluation Bar */}
+                    {customSettings.evalBar && engineEval && (
+                        <div className={classes.evalBarContainer}>
+                            <div 
+                                className={classes.evalBarFill}
+                                style={{ 
+                                    height: `${evalPercentages.white}%`,
+                                    backgroundColor: evalPercentages.white > 50 ? '#22c55e' : '#ef4444'
+                                }}
+                            />
+                            <div className={classes.evalBarLabels}>
+                                <span>
+                                    {engineEval.cp > 0 ? `+${(Math.abs(engineEval.cp) / 100).toFixed(1)}` : 
+                                     engineEval.cp < 0 ? `-${(Math.abs(engineEval.cp) / 100).toFixed(1)}` : '0.0'}
+                                </span>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className={classes.boardFrame}>
+                        <Chessground
+                            fen={fen}
+                            orientation={userSide}
+                            turnColor={turnColor}
+                            check={pos?.isCheck()}
+                            lastMove={lastMove}
+                            movable={{
+                                free: false,
+                                color: isEngineThinking || gameState.isGameOver || gameState.isAnalysisMode ? undefined : userSide,
+                                dests: dests,
+                                events: {
+                                    after: (orig, dest) => handleUserMove(orig as SquareName, dest as SquareName),
+                                },
+                            }}
+                            drawable={{
+                                enabled: customSettings.suggestionArrows || customSettings.threatArrows,
+                                visible: true,
+                                autoShapes: autoShapes,
+                            }}
+                            animation={{ enabled: true }}
+                            draggable={{ enabled: !gameState.isGameOver && !gameState.isAnalysisMode }}
+                            selectable={{ enabled: true }}
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -1565,7 +1882,16 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                                     disabled={gameMode !== 'custom'}
                                 />
                             </Group>
-                            
+
+                            <Group justify="space-between" wrap="nowrap">
+                                <Text size="sm">{t("Bots.Custom.Engine")}</Text>
+                                <Switch
+                                    checked={customSettings.showEngine}
+                                    onChange={(e) => setCustomSettings({ ...customSettings, showEngine: e.currentTarget.checked })}
+                                    disabled={gameMode !== 'custom'}
+                                />
+                            </Group>
+
                             <Group justify="space-between" wrap="nowrap">
                                 <Text size="sm">{t("Bots.Custom.MoveFeedback")}</Text>
                                 <Switch
@@ -1574,6 +1900,22 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                                     disabled={gameMode !== 'custom'}
                                 />
                             </Group>
+
+                            <Divider />
+
+                            <Text size="sm" fw={600} c="dimmed">{t("Bots.Custom.SuggestionArrows")}</Text>
+                            <Switch
+                                checked={customSettings.suggestionArrows}
+                                onChange={(e) => setCustomSettings({ ...customSettings, suggestionArrows: e.currentTarget.checked })}
+                                disabled={gameMode !== 'custom'}
+                            />
+
+                            <Text size="sm" fw={600} c="dimmed">{t("Bots.Custom.ThreatArrows")}</Text>
+                            <Switch
+                                checked={customSettings.threatArrows}
+                                onChange={(e) => setCustomSettings({ ...customSettings, threatArrows: e.currentTarget.checked })}
+                                disabled={gameMode !== 'custom'}
+                            />
                         </Stack>
                     </Tabs.Panel>
 
@@ -1612,10 +1954,10 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                             <Text size="sm" fw={600} c="dimmed">{t("Bots.Custom.GameType")}</Text>
                             <SegmentedControl
                                 value={customSettings.gameType}
-                                onChange={(value) => setCustomSettings({ ...customSettings, gameType: value })}
+                                onChange={handleGameTypeChange}
                                 data={[
                                     { label: t("Bots.GameType.Standard"), value: 'chess' },
-                                    { label: t("Bots.GameType.Chess960"), value: '960' },
+                                    { label: t("Bots.GameType.Chess960"), value: 'chess960' },
                                 ]}
                                 fullWidth
                             />

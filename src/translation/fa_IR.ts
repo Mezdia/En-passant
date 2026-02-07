@@ -79,6 +79,7 @@ export const fa_IR = {
     "Common.YourTurn": "نوبت شماست",
     "Common.BotThinking": "بات در حال فکر",
     "Common.IsThinking": "در حال فکر کردن",
+    "Common.Ok": "باشه",
     "Common.Back": "بازگشت",
     "Game.GameControls": "کنترل‌های بازی",
     "Game.GameDuration": "مدت بازی",
@@ -234,6 +235,9 @@ export const fa_IR = {
     "Bots.Game.GoodGame": "بازی خوبی بود!",
     "Bots.Game.BookMove": "حرکت از کتاب",
     "Bots.DefaultGreeting": "سلام! بیایید بازی کنیم!",
+    "Bots.Chat.Started": "بازی با {{bot}} شروع شد",
+    "Bots.Engine.Evaluation": "نوار ارزیابی",
+    "Bots.Engine.PV": "بهترین خط",
 
     "NoMovesYet": "هنوز حرکتی انجام نشده",
 

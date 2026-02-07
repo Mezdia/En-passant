@@ -79,6 +79,7 @@ export const en_US = {
     "Common.YourTurn": "Your Turn",
     "Common.BotThinking": "Bot Thinking",
     "Common.IsThinking": "is thinking",
+    "Common.Ok": "OK",
     "Common.Back": "Back",
     "Game.GameControls": "Game Controls",
     "Game.GameDuration": "Game Duration",
@@ -90,6 +91,7 @@ export const en_US = {
     "Bots.Game.BookMove": "Book move",
     "Bots.DefaultGreeting": "Hi! Let's play!",
     "Bots.Game.GoodGame": "Good game!",
+    "Bots.Chat.Started": "Game started vs {{bot}}",
 
     "GoMode.Time": "Time",
     "GoMode.Depth": "Depth",
@@ -233,6 +235,8 @@ export const en_US = {
 
     "Bots.GameType.Standard": "Standard",
     "Bots.GameType.Chess960": "Chess960",
+    "Bots.Engine.Evaluation": "Evaluation",
+    "Bots.Engine.PV": "Best line",
 
     "Bots.Game.VsPrefix": "vs",
     "Bots.Game.Greeting": "Hi, I'm {{name}}!",
