@@ -206,7 +206,7 @@ export function AccountCard({
                     <IconRefresh size="1rem" />
                   </ActionIcon>
                 </Tooltip>
-                <Tooltip label="Download games">
+                <Tooltip label={t("Accounts.DownloadGames", "Download games")}>
                   <ActionIcon
                     disabled={loading}
                     onClick={async () => {
@@ -269,16 +269,16 @@ export function AccountCard({
               <div>
                 <Text fw="bold">{total}</Text>
                 <Text size="xs" c="dimmed">
-                  Games
+                  {t("Accounts.Games", "Games")}
                 </Text>
               </div>
 
               <div>
-                <Tooltip label={`${downloadedGames} games`}>
+                <Tooltip label={`${downloadedGames} ${t("Accounts.Games", "games")}`}>
                   <Text fw="bold">{percentage}%</Text>
                 </Tooltip>
                 <Text size="xs" c="dimmed">
-                  Downloaded
+                  {t("Accounts.Downloaded", "Downloaded")}
                 </Text>
               </div>
             </Group>
@@ -301,7 +301,7 @@ export function AccountCard({
       <Accordion.Panel p={0}>
         <Group grow>{items}</Group>
         <Text mt="xs" size="xs" c="dimmed" ta="right">
-          ({`last update: ${new Date(updatedAt).toLocaleDateString()}`})
+          ({`${t("Accounts.LastUpdate", "Last update")}: ${new Date(updatedAt).toLocaleDateString()}`})
         </Text>
       </Accordion.Panel>
     </Accordion.Item>
