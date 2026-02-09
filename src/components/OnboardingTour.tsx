@@ -20,8 +20,9 @@ interface OnboardingTourProps {
 }
 
 export function OnboardingTour({ opened, onClose }: OnboardingTourProps) {
-  const { t, i18n } = useTranslation();
-  const isRtl = i18n.dir() === "rtl";
+  const { t } = useTranslation();
+  const isRtl =
+    typeof document !== "undefined" && document.documentElement.dir === "rtl";
   const driverObj = useRef<ReturnType<typeof driver> | null>(null);
   const [showWelcome, setShowWelcome] = useState(true);
 

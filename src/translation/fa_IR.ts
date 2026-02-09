@@ -307,12 +307,15 @@ export const fa_IR = {
     "Home.Card.Chess960.Random": "تصادفی",
     "Home.Card.Chess960.Custom": "چیدمان دستی",
     "Home.Card.Chess960.Customize.Title": "چیدمان دستی",
+    "Home.Card.Chess960.Customize.Subtitle": "چیدمان اولیه را شخصی‌سازی کنید",
     "Home.Card.Chess960.Customize.Back": "بازگشت",
     "Home.Card.Chess960.Customize.Randomize": "تصادفی",
     "Home.Card.Chess960.Customize.Standard": "استاندارد",
     "Home.Card.Chess960.Customize.Play": "بازی",
     "Home.Card.Chess960.Customize.Analysis": "تحلیل",
     "Home.Card.Chess960.Customize.SideToMove": "نوبت حرکت",
+    "Home.Card.Chess960.Customize.Setup": "چیدمان",
+    "Home.Card.Chess960.Customize.Pieces": "مهره‌ها",
     "Home.Card.Chess960.Customize.White": "سفید",
     "Home.Card.Chess960.Customize.Black": "سیاه",
 
@@ -693,6 +696,6 @@ export const fa_IR = {
     "Onboarding.Buttons.Next": "بعدی",
     "Onboarding.Buttons.Later": "بعداً یادآوری کن",
     "Onboarding.Buttons.Close": "رد کردن برای همیشه",
-    "Onboarding.Buttons.Finish": "شروع تور",
+    "Onboarding.Buttons.Finish": "پایان تور",
   },
 };

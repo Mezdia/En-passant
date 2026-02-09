@@ -26,10 +26,16 @@
   font-style: normal;
 }
 
+html,
+body {
+  font-family: "Source Sans 3", "Segoe UI Variable Text", "Segoe UI",
+    "Noto Sans", sans-serif;
+}
+
 html[lang="fa_IR"], html[lang="fa_IR"] body {
   font-family: 'Vazirmatn', sans-serif !important;
 }
 
-html[lang="ar_SA"] {
-  font-family: 'Vazirmatn', sans-serif;
+html[lang="ar_SA"], html[lang="ar_SA"] body {
+  font-family: 'Vazirmatn', sans-serif !important;
 }

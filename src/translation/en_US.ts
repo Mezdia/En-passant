@@ -306,12 +306,15 @@ export const en_US = {
     "Home.Card.Chess960.Random": "Random",
     "Home.Card.Chess960.Custom": "Custom Setup",
     "Home.Card.Chess960.Customize.Title": "Custom Setup",
+    "Home.Card.Chess960.Customize.Subtitle": "Customize your starting position",
     "Home.Card.Chess960.Customize.Back": "Back",
     "Home.Card.Chess960.Customize.Randomize": "Randomize",
     "Home.Card.Chess960.Customize.Standard": "Standard",
     "Home.Card.Chess960.Customize.Play": "Play",
     "Home.Card.Chess960.Customize.Analysis": "Analysis",
     "Home.Card.Chess960.Customize.SideToMove": "Side to move",
+    "Home.Card.Chess960.Customize.Setup": "Setup",
+    "Home.Card.Chess960.Customize.Pieces": "Pieces",
     "Home.Card.Chess960.Customize.White": "White",
     "Home.Card.Chess960.Customize.Black": "Black",
 
@@ -694,6 +697,6 @@ export const en_US = {
     "Onboarding.Buttons.Next": "Next",
     "Onboarding.Buttons.Later": "Remind Later",
     "Onboarding.Buttons.Close": "Skip Forever",
-    "Onboarding.Buttons.Finish": "Start Tour",
+    "Onboarding.Buttons.Finish": "Finish Tour",
   },
 };

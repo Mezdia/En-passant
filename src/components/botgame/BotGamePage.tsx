@@ -132,7 +132,7 @@ interface TimeControlState {
 interface EngineEvalState {
     cp: number;
     depth: number;
-    wdl?: number;
+    wdl?: [number, number, number];
     pv?: string;
 }
 
@@ -1266,14 +1266,14 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
     const handleHint = useCallback(async () => {
         if (!customSettings.hints || isEngineThinking || gameState.isGameOver) return;
 
-        const candidates = await getEngineBestMove(fen);
+        const candidates = await getEngineBestMove(fen, moveTabId);
         if (candidates && candidates.length > 0) {
             const bestUci = candidates[0].uciMoves[0];
             const from = bestUci.substring(0, 2);
             const to = bestUci.substring(2, 4);
             addMessage("system", `${t("Game.Hint")}: ${from}-${to}`);
         }
-    }, [customSettings.hints, isEngineThinking, gameState.isGameOver, fen, getEngineBestMove, addMessage]);
+    }, [customSettings.hints, isEngineThinking, gameState.isGameOver, fen, getEngineBestMove, addMessage, moveTabId]);
 
     // Handle game mode change
     const handleGameModeChange = (mode: string) => {
