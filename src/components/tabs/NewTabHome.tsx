@@ -11,6 +11,7 @@ import { defaultTree } from "@/utils/treeReducer";
 import {
  IconChess,
  IconFileImport,
+ IconHistory,
  IconPuzzle,
 } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
@@ -114,6 +115,21 @@ export default function NewTabHome({ id }: { id: string }) {
           if (!tab) return prev;
           tab.name = "Puzzle Training";
           tab.type = "puzzles";
+          return [...prev];
+        });
+      },
+    },
+    {
+      icon: <IconHistory size={60} />,
+      title: t("Home.Card.GameHistory.Title"),
+      description: t("Home.Card.GameHistory.Desc"),
+      label: t("Home.Card.GameHistory.Button"),
+      onClick: () => {
+        setTabs((prev) => {
+          const tab = prev.find((t) => t.value === id);
+          if (!tab) return prev;
+          tab.name = t("Home.Card.GameHistory.Title");
+          tab.type = "history";
           return [...prev];
         });
       },

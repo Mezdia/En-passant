@@ -17,8 +17,10 @@ import { type Tab, genID, tabSchema } from "@/utils/tabs";
 import type { MantineColor } from "@mantine/core";
 
 import type { OpponentSettings } from "@/components/boards/BoardGame";
+import { getBotGameHistory, type BotGameRecord } from "@/components/bots/botGameHistory";
 import { positionFromFen, swapMove } from "@/utils/chessops";
 import type { SuccessDatabaseInfo } from "@/utils/db";
+import { getGameHistory, type GameHistoryRecord } from "@/utils/gameHistory";
 import { getWinChance, normalizeScore } from "@/utils/score";
 import { parseUci } from "chessops";
 import { INITIAL_FEN, makeFen } from "chessops/fen";
@@ -535,11 +537,14 @@ export const enableAllAtom = atom(null, (get, set, value: boolean) => {
     set(atom, { ...get(atom), enabled: value });
   }
 });
-// Bot Game History
-import { getBotGameHistory, type BotGameRecord } from '@/components/bots/botGameHistory';
-
 export const botGameHistoryTriggerAtom = atom(0); // Used to force reload
 export const botGameHistoryAtom = atom<BotGameRecord[]>((get) => {
   get(botGameHistoryTriggerAtom);
   return getBotGameHistory();
+});
+
+export const gameHistoryTriggerAtom = atom(0); // Used to force reload
+export const gameHistoryAtom = atom<GameHistoryRecord[]>((get) => {
+  get(gameHistoryTriggerAtom);
+  return getGameHistory();
 });

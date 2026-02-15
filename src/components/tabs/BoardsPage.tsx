@@ -15,6 +15,7 @@ import { match } from "ts-pattern";
 import BoardAnalysis from "../boards/BoardAnalysis";
 import BoardGame from "../boards/BoardGame";
 import { TreeStateProvider } from "../common/TreeStateContext";
+import GameHistoryPage from "../history/GameHistoryPage";
 import Puzzles from "../puzzles/Puzzles";
 import { BoardTab } from "./BoardTab";
 import ConfirmChangesModal from "./ConfirmChangesModal";
@@ -168,7 +169,13 @@ export default function BoardsPage() {
           width: "100%",
         }}
       >
-        <ScrollArea h="3.75rem" px="md" pt="sm" scrollbarSize={8}>
+        <ScrollArea
+          h="3.75rem"
+          px="md"
+          pt="sm"
+          scrollbarSize={8}
+          style={{ position: "relative", zIndex: 5 }}
+        >
           <DragDropContext
             onDragEnd={({ destination, source }) =>
               destination?.index !== undefined &&
@@ -338,6 +345,7 @@ function TabSwitch({
         <Puzzles id={tab.value} />
       </TreeStateProvider>
     ))
+    .with("history", () => <GameHistoryPage />)
     .with("bot-game", () => {
       const sessionData = sessionStorage.getItem(`gameSettings_${tab.value}`);
       const botGameInfo = sessionData ? JSON.parse(sessionData) : null;

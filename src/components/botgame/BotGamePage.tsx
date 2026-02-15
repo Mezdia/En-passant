@@ -869,6 +869,11 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                 date: new Date().toISOString(),
                 gameMode: gameMode,
                 movesCount: Math.ceil(moveHistory.length / 2),
+                accuracy: gameStats.accuracy,
+                engineName: engineName || undefined,
+                enginePath: enginePath || undefined,
+                timeControl: customSettings.timeControl || undefined,
+                variant: customSettings.gameType || undefined,
             });
         } catch (e) {
             console.error("Failed to save game", e);
