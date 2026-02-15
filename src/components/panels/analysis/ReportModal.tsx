@@ -1,7 +1,9 @@
 import { type GoMode, commands } from "@/bindings";
 import { TreeStateContext } from "@/components/common/TreeStateContext";
-import { enginesAtom, referenceDbAtom } from "@/state/atoms";
+import { enginesAtom, gameHistoryTriggerAtom, referenceDbAtom } from "@/state/atoms";
+import { getGameStats } from "@/utils/chess";
 import type { LocalEngine } from "@/utils/engines";
+import { updateGameHistoryByTab } from "@/utils/gameHistory";
 import { unwrap } from "@/utils/unwrap";
 import {
   Button,
@@ -54,6 +56,7 @@ function ReportModal({
   const addAnalysis = useStore(store, (s) => s.addAnalysis);
 
   const [reportSettings, setReportSettings] = useAtom(reportSettingsAtom);
+  const [, setGameHistoryTrigger] = useAtom(gameHistoryTriggerAtom);
 
   const form = useForm({
     initialValues: reportSettings,
@@ -110,6 +113,12 @@ function ReportModal({
       .then((analysis) => {
         const analysisData = unwrap(analysis);
         addAnalysis(analysisData);
+        const stats = getGameStats(store.getState().root);
+        updateGameHistoryByTab(tab, {
+          whiteAccuracy: stats.whiteAccuracy,
+          blackAccuracy: stats.blackAccuracy,
+        });
+        setGameHistoryTrigger((prev) => prev + 1);
       })
       .finally(() => setInProgress(false));
   }

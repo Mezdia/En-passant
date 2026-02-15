@@ -141,14 +141,16 @@ export default function App() {
 
   // Update HTML lang and dir attributes when language changes to support font switching
   useEffect(() => {
-    const updateLang = () => {
-      const currentLang = localStorage.getItem("lang") || "en_US";
+    const updateLang = (nextLang?: string) => {
+      const currentLang = nextLang || i18n.language || localStorage.getItem("lang") || "en_US";
+      const isRtlLang =
+        currentLang.startsWith("fa") || currentLang.startsWith("ar");
       document.documentElement.lang = currentLang;
-      document.documentElement.dir = i18n.dir(currentLang);
+      document.documentElement.dir = isRtlLang ? "ltr" : i18n.dir(currentLang);
       setLang(currentLang);
     };
 
-    updateLang();
+    updateLang(i18n.language);
     i18n.on("languageChanged", updateLang);
     return () => {
       i18n.off("languageChanged", updateLang);
@@ -165,7 +167,10 @@ export default function App() {
         defaultColorScheme="dark"
         theme={{
           primaryColor,
-          fontFamily: lang === "fa_IR" ? "Vazirmatn, sans-serif" : "serif",
+          fontFamily:
+            lang.startsWith("fa") || lang.startsWith("ar")
+              ? "Vazirmatn, sans-serif"
+              : "\"Source Sans 3\", \"Segoe UI Variable Text\", \"Segoe UI\", \"Noto Sans\", sans-serif",
           components: {
             ActionIcon: ActionIcon.extend({
               defaultProps: {

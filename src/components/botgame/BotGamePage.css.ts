@@ -7,8 +7,13 @@ export const pageContainer = style({
     height: "100%",
     display: "flex",
     flexDirection: "row",
-    backgroundColor: "var(--mantine-color-body)",
     overflow: "hidden",
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.gray[0],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[9],
+    },
 });
 
 // Board area - center content
@@ -22,15 +27,46 @@ export const boardArea = style({
     position: "relative",
 });
 
+export const boardShell = style({
+    display: "flex",
+    alignItems: "stretch",
+    gap: vars.spacing.sm,
+    height: "min(78vh, 80vw)",
+});
+
+export const boardFrame = style({
+    width: "min(78vh, 80vw)",
+    height: "min(78vh, 80vw)",
+    padding: vars.spacing.sm,
+    borderRadius: vars.radius.lg,
+    border: "1px solid",
+    boxShadow: vars.shadows.md,
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.white,
+        borderColor: vars.colors.gray[3],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[7],
+        borderColor: vars.colors.dark[5],
+    },
+});
+
 // Left sidebar - using Paper style like Analysis panel
 export const sidebar = style({
     width: "320px",
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    backgroundColor: vars.colors.dark[8],
-    borderRight: `1px solid ${vars.colors.dark[6]}`,
     zIndex: 10,
+    borderRight: "1px solid",
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.white,
+        borderRightColor: vars.colors.gray[2],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[8],
+        borderRightColor: vars.colors.dark[6],
+    },
 });
 
 export const sidebarContent = style({
@@ -49,9 +85,16 @@ export const botProfile = style({
     alignItems: "center",
     textAlign: "center",
     padding: vars.spacing.lg,
-    backgroundColor: vars.colors.dark[7],
     borderRadius: vars.radius.md,
-    border: `1px solid ${vars.colors.dark[6]}`,
+    border: "1px solid",
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.white,
+        borderColor: vars.colors.gray[2],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[7],
+        borderColor: vars.colors.dark[6],
+    },
 });
 
 export const botImage = style({
@@ -59,23 +102,34 @@ export const botImage = style({
     height: "64px",
     borderRadius: vars.radius.md,
     objectFit: "cover",
-    border: `2px solid ${vars.colors.dark[5]}`,
+    border: "2px solid",
+    [vars.lightSelector]: {
+        borderColor: vars.colors.gray[3],
+    },
+    [vars.darkSelector]: {
+        borderColor: vars.colors.dark[5],
+    },
 });
 
 // Evaluation bar - minimal design
 export const evalBarContainer = style({
-    position: "absolute",
-    left: vars.spacing.sm,
-    top: "50%",
-    transform: "translateY(-50%)",
-    height: "60vh",
+    position: "relative",
+    height: "100%",
     width: "16px",
-    backgroundColor: vars.colors.dark[6],
+    border: "1px solid",
     borderRadius: vars.radius.sm,
     overflow: "hidden",
     display: "flex",
     flexDirection: "column",
     zIndex: 5,
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.gray[2],
+        borderColor: vars.colors.gray[3],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[6],
+        borderColor: vars.colors.dark[5],
+    },
 });
 
 export const evalBarFill = style({
@@ -91,7 +145,12 @@ export const evalBarLabels = style({
     textAlign: "center",
     fontSize: "10px",
     fontWeight: 600,
-    color: vars.colors.white,
+    [vars.lightSelector]: {
+        color: vars.colors.dark[7],
+    },
+    [vars.darkSelector]: {
+        color: vars.colors.white,
+    },
 });
 
 // Time control display - clean cards like Analysis panel
@@ -100,9 +159,16 @@ export const timeControlDisplay = style({
     flexDirection: "column",
     gap: vars.spacing.xs,
     padding: vars.spacing.md,
-    backgroundColor: vars.colors.dark[7],
     borderRadius: vars.radius.md,
-    border: `1px solid ${vars.colors.dark[6]}`,
+    border: "1px solid",
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.white,
+        borderColor: vars.colors.gray[2],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[7],
+        borderColor: vars.colors.dark[6],
+    },
 });
 
 export const timeDisplay = style({
@@ -111,8 +177,14 @@ export const timeDisplay = style({
     alignItems: "center",
     padding: `${vars.spacing.xs} ${vars.spacing.sm}`,
     borderRadius: vars.radius.sm,
-    backgroundColor: vars.colors.dark[6],
+    border: "1px solid transparent",
     transition: "background-color 0.2s ease",
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.gray[1],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[6],
+    },
 });
 
 export const activeTime = style({
@@ -131,7 +203,12 @@ export const timeValue = style({
     fontSize: vars.fontSizes.md,
     fontWeight: 700,
     fontFamily: "monospace",
-    color: vars.colors.white,
+    [vars.lightSelector]: {
+        color: vars.colors.dark[8],
+    },
+    [vars.darkSelector]: {
+        color: vars.colors.white,
+    },
 });
 
 // Chat container - clean Paper style
@@ -139,11 +216,18 @@ export const chatContainer = style({
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    backgroundColor: vars.colors.dark[7],
     borderRadius: vars.radius.md,
     overflow: "hidden",
     maxHeight: "200px",
-    border: `1px solid ${vars.colors.dark[6]}`,
+    border: "1px solid",
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.white,
+        borderColor: vars.colors.gray[2],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[7],
+        borderColor: vars.colors.dark[6],
+    },
 });
 
 export const chatMessages = style({
@@ -165,13 +249,23 @@ export const messageBubble = style({
 
 export const botMessage = style({
     alignSelf: "flex-start",
-    backgroundColor: vars.colors.dark[6],
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.gray[1],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[6],
+    },
 });
 
 export const systemMessage = style({
     alignSelf: "center",
     backgroundColor: "transparent",
-    color: vars.colors.dark[2],
+    [vars.lightSelector]: {
+        color: vars.colors.gray[6],
+    },
+    [vars.darkSelector]: {
+        color: vars.colors.dark[2],
+    },
     fontSize: vars.fontSizes.xs,
     fontStyle: "italic",
 });
@@ -182,15 +276,29 @@ export const moveHistorySidebar = style({
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    backgroundColor: vars.colors.dark[8],
-    borderLeft: `1px solid ${vars.colors.dark[6]}`,
     zIndex: 10,
+    borderLeft: "1px solid",
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.white,
+        borderLeftColor: vars.colors.gray[2],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[8],
+        borderLeftColor: vars.colors.dark[6],
+    },
 });
 
 export const moveHistoryHeader = style({
     padding: vars.spacing.md,
-    borderBottom: `1px solid ${vars.colors.dark[6]}`,
-    backgroundColor: vars.colors.dark[7],
+    borderBottom: "1px solid",
+    [vars.lightSelector]: {
+        borderBottomColor: vars.colors.gray[2],
+        backgroundColor: vars.colors.gray[0],
+    },
+    [vars.darkSelector]: {
+        borderBottomColor: vars.colors.dark[6],
+        backgroundColor: vars.colors.dark[7],
+    },
 });
 
 export const moveHistoryContent = style({
@@ -216,25 +324,45 @@ export const moveItem = style({
 
     selectors: {
         "&:hover": {
-            backgroundColor: vars.colors.dark[6],
+            [vars.lightSelector]: {
+                backgroundColor: vars.colors.gray[1],
+            },
+            [vars.darkSelector]: {
+                backgroundColor: vars.colors.dark[6],
+            },
         }
     }
 });
 
 export const moveNumber = style({
-    color: vars.colors.dark[2],
+    [vars.lightSelector]: {
+        color: vars.colors.gray[6],
+    },
+    [vars.darkSelector]: {
+        color: vars.colors.dark[2],
+    },
     fontSize: vars.fontSizes.xs,
     minWidth: "24px",
     fontWeight: 500,
 });
 
 export const moveWhite = style({
-    color: vars.colors.gray[3],
+    [vars.lightSelector]: {
+        color: vars.colors.gray[7],
+    },
+    [vars.darkSelector]: {
+        color: vars.colors.gray[3],
+    },
     fontWeight: 500,
 });
 
 export const moveBlack = style({
-    color: vars.colors.white,
+    [vars.lightSelector]: {
+        color: vars.colors.dark[9],
+    },
+    [vars.darkSelector]: {
+        color: vars.colors.white,
+    },
     fontWeight: 500,
 });
 
@@ -264,7 +392,12 @@ export const movePairItem = style({
 
     selectors: {
         "&:hover": {
-            backgroundColor: vars.colors.dark[6],
+            [vars.lightSelector]: {
+                backgroundColor: vars.colors.gray[1],
+            },
+            [vars.darkSelector]: {
+                backgroundColor: vars.colors.dark[6],
+            },
         }
     }
 });
@@ -277,7 +410,12 @@ export const movePairContent = style({
 });
 
 export const moveSeparator = style({
-    color: vars.colors.dark[3],
+    [vars.lightSelector]: {
+        color: vars.colors.gray[6],
+    },
+    [vars.darkSelector]: {
+        color: vars.colors.dark[3],
+    },
     fontSize: vars.fontSizes.sm,
     margin: "0 4px",
 });
@@ -303,14 +441,21 @@ export const gameResultOverlay = style({
 });
 
 export const gameResultCard = style({
-    backgroundColor: vars.colors.dark[8],
     borderRadius: vars.radius.lg,
     padding: vars.spacing.xl,
     textAlign: "center",
     maxWidth: "480px",
     width: "90%",
-    border: `1px solid ${vars.colors.dark[6]}`,
     boxShadow: vars.shadows.xl,
+    border: "1px solid",
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.white,
+        borderColor: vars.colors.gray[2],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[8],
+        borderColor: vars.colors.dark[6],
+    },
 });
 
 export const gameResultTitle = style({
@@ -333,7 +478,12 @@ export const gameResultDraw = style({
 
 export const gameResultSubtitle = style({
     fontSize: vars.fontSizes.md,
-    color: vars.colors.dark[2],
+    [vars.lightSelector]: {
+        color: vars.colors.gray[6],
+    },
+    [vars.darkSelector]: {
+        color: vars.colors.dark[2],
+    },
     marginBottom: vars.spacing.xl,
 });
 
@@ -346,25 +496,42 @@ export const gameResultStats = style({
 });
 
 export const gameResultStat = style({
-    backgroundColor: vars.colors.dark[7],
     padding: vars.spacing.md,
     borderRadius: vars.radius.md,
-    border: `1px solid ${vars.colors.dark[6]}`,
+    border: "1px solid",
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.gray[0],
+        borderColor: vars.colors.gray[2],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[7],
+        borderColor: vars.colors.dark[6],
+    },
 });
 
 export const gameResultStatLabel = style({
     fontSize: vars.fontSizes.xs,
-    color: vars.colors.dark[2],
     textTransform: "uppercase",
     letterSpacing: "0.5px",
     fontWeight: 600,
+    [vars.lightSelector]: {
+        color: vars.colors.gray[6],
+    },
+    [vars.darkSelector]: {
+        color: vars.colors.dark[2],
+    },
 });
 
 export const gameResultStatValue = style({
     fontSize: vars.fontSizes.lg,
     fontWeight: 700,
-    color: vars.colors.white,
     marginTop: vars.spacing.xs,
+    [vars.lightSelector]: {
+        color: vars.colors.dark[8],
+    },
+    [vars.darkSelector]: {
+        color: vars.colors.white,
+    },
 });
 
 // Quality stats - clean flex layout
@@ -374,9 +541,16 @@ export const qualityStats = style({
     gap: vars.spacing.lg,
     marginBottom: vars.spacing.xl,
     padding: vars.spacing.md,
-    backgroundColor: vars.colors.dark[7],
     borderRadius: vars.radius.md,
-    border: `1px solid ${vars.colors.dark[6]}`,
+    border: "1px solid",
+    [vars.lightSelector]: {
+        backgroundColor: vars.colors.gray[0],
+        borderColor: vars.colors.gray[2],
+    },
+    [vars.darkSelector]: {
+        backgroundColor: vars.colors.dark[7],
+        borderColor: vars.colors.dark[6],
+    },
 });
 
 export const qualityStat = style({
@@ -393,7 +567,12 @@ export const qualityIcon = style({
 export const qualityCount = style({
     fontSize: vars.fontSizes.md,
     fontWeight: 700,
-    color: vars.colors.white,
+    [vars.lightSelector]: {
+        color: vars.colors.dark[8],
+    },
+    [vars.darkSelector]: {
+        color: vars.colors.white,
+    },
 });
 
 // Game result actions - Mantine Button style
@@ -443,8 +622,6 @@ export const gameResultPrimaryButton = style([
 export const gameResultSecondaryButton = style([
     gameResultButton,
     {
-        backgroundColor: vars.colors.dark[6],
-        color: vars.colors.white,
         borderColor: vars.colors.dark[5],
 
         selectors: {

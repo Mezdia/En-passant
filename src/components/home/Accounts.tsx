@@ -19,11 +19,13 @@ import { IconPlus } from "@tabler/icons-react";
 import { listen } from "@tauri-apps/api/event";
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import AccountCards from "../common/AccountCards";
 import GenericCard from "../common/GenericCard";
 import LichessLogo from "./LichessLogo";
 
 function Accounts() {
+  const { t } = useTranslation();
   const [, setSessions] = useAtom(sessionsAtom);
   const isListening = useRef(false);
   const [databases, setDatabases] = useState<DatabaseInfo[]>([]);
@@ -123,7 +125,7 @@ function Accounts() {
           rightSection={<IconPlus size="1rem" />}
           onClick={() => setOpen(true)}
         >
-          Add Account
+          {t("Accounts.AddAccount", "Add Account")}
         </Button>
       </Group>
       <AccountModal
@@ -149,6 +151,7 @@ function AccountModal({
   addLichess: (player: string, username: string, withLogin: boolean) => void;
   addChessCom: (player: string, username: string) => void;
 }) {
+  const { t } = useTranslation();
   const sessions = useAtomValue(sessionsAtom);
   const [username, setUsername] = useState("");
   const [player, setPlayer] = useState<string>("");
@@ -171,7 +174,7 @@ function AccountModal({
   }
 
   return (
-    <Modal opened={open} onClose={() => setOpen(false)} title="Add Account">
+    <Modal opened={open} onClose={() => setOpen(false)} title={t("Accounts.AccountModal.Title", "Add Account")}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -180,13 +183,13 @@ function AccountModal({
       >
         <Stack>
           <Autocomplete
-            label="Name"
+            label={t("Accounts.Name", "Name")}
             data={Array.from(players)}
             value={player}
             onChange={(value) => setPlayer(value)}
-            placeholder="Select player"
+            placeholder={t("Accounts.SelectPlayer", "Select player")}
           />
-          <InputWrapper label="Website" required>
+          <InputWrapper label={t("Accounts.Website", "Website")} required>
             <Group grow>
               <GenericCard
                 id={"lichess"}
@@ -195,7 +198,7 @@ function AccountModal({
                 Header={
                   <Group>
                     <LichessLogo />
-                    Lichess
+                    {t("Accounts.Lichess", "Lichess")}
                   </Group>
                 }
               />
@@ -211,7 +214,7 @@ function AccountModal({
                       src="/chesscom.png"
                       alt="chess.com"
                     />
-                    Chess.com
+                    {t("Accounts.ChessCom", "Chess.com")}
                   </Group>
                 }
               />
@@ -219,22 +222,22 @@ function AccountModal({
           </InputWrapper>
 
           <TextInput
-            label="Username"
-            placeholder="Enter your username"
+            label={t("Accounts.Username", "Username")}
+            placeholder={t("Accounts.EnterUsername", "Enter your username")}
             required
             value={username}
             onChange={(e) => setUsername(e.currentTarget.value)}
           />
           {website === "lichess" && (
             <Checkbox
-              label="Login with browser"
-              description="Allows faster game downloads"
+              label={t("Accounts.LoginWithBrowser", "Login with browser")}
+              description={t("Accounts.LoginWithBrowser.Desc", "Allows faster game downloads")}
               checked={withLogin}
               onChange={(e) => setWithLogin(e.currentTarget.checked)}
             />
           )}
           <Button mt="1rem" type="submit">
-            Add
+            {t("Accounts.Add", "Add")}
           </Button>
         </Stack>
       </form>

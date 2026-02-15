@@ -12,6 +12,11 @@ export const botGameRecordSchema = z.object({
     date: z.string(), // ISO string
     gameMode: z.string(),
     movesCount: z.number(),
+    accuracy: z.number().optional(),
+    engineName: z.string().optional(),
+    enginePath: z.string().optional(),
+    timeControl: z.string().optional(),
+    variant: z.string().optional(),
 });
 
 export type BotGameRecord = z.infer<typeof botGameRecordSchema>;

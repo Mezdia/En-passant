@@ -8,14 +8,17 @@ import {
   activeTabAtom,
   currentGameStateAtom,
   currentPlayersAtom,
+  gameHistoryTriggerAtom,
   enginesAtom,
   tabsAtom,
 } from "@/state/atoms";
-import { getMainLine } from "@/utils/chess";
+import { getMainLine, getPGN } from "@/utils/chess";
 import { positionFromFen } from "@/utils/chessops";
 import type { TimeControlField } from "@/utils/clock";
 import type { LocalEngine } from "@/utils/engines";
+import { saveGameHistory } from "@/utils/gameHistory";
 import { type GameHeaders, treeIteratorMainLine } from "@/utils/treeReducer";
+import { genID } from "@/utils/tabs";
 import {
   ActionIcon,
   Box,
@@ -53,6 +56,7 @@ import {
 import { match } from "ts-pattern";
 import { useTranslation } from "react-i18next";
 import { useStore } from "zustand";
+import dayjs from "dayjs";
 import GameInfo from "../common/GameInfo";
 import GameNotation from "../common/GameNotation";
 import MoveControls from "../common/MoveControls";
@@ -351,8 +355,10 @@ function BoardGame() {
   const appendMove = useStore(store, (s) => s.appendMove);
 
   const [, setTabs] = useAtom(tabsAtom);
+  const [, setGameHistoryTrigger] = useAtom(gameHistoryTriggerAtom);
 
   const boardRef = useRef(null);
+  const historySavedRef = useRef(false);
   const [gameState, setGameState] = useAtom(currentGameStateAtom);
 
   function changeToAnalysisMode() {
@@ -379,7 +385,106 @@ function BoardGame() {
     }
   }, [pos, setGameState]);
 
+  useEffect(() => {
+    if (gameState !== "gameOver") {
+      historySavedRef.current = false;
+    }
+  }, [gameState]);
+
   const [players, setPlayers] = useAtom(currentPlayersAtom);
+
+  useEffect(() => {
+    if (gameState !== "gameOver" || historySavedRef.current) return;
+    historySavedRef.current = true;
+
+    const whiteType = players.white.type === "engine" ? "engine" : "human";
+    const blackType = players.black.type === "engine" ? "engine" : "human";
+
+    const whiteName =
+      players.white.type === "human"
+        ? players.white.name || t("Common.Unknown")
+        : players.white.engine?.name || t("Common.Engine");
+    const blackName =
+      players.black.type === "human"
+        ? players.black.name || t("Common.Unknown")
+        : players.black.engine?.name || t("Common.Engine");
+
+    const whiteEngine =
+      players.white.type === "engine"
+        ? players.white.engine?.name || t("Common.Engine")
+        : undefined;
+    const blackEngine =
+      players.black.type === "engine"
+        ? players.black.engine?.name || t("Common.Engine")
+        : undefined;
+
+    const engineName =
+      whiteEngine && blackEngine
+        ? `${whiteEngine} ${t("Bots.Game.VsPrefix")} ${blackEngine}`
+        : whiteEngine || blackEngine;
+
+    let result = headers.result;
+    if (result === "*" && pos?.isEnd()) {
+      if (pos.isCheckmate()) {
+        result = pos.turn === "white" ? "0-1" : "1-0";
+      } else if (pos.isStalemate() || pos.isInsufficientMaterial()) {
+        result = "1/2-1/2";
+      }
+    }
+
+    const dateIso = new Date().toISOString();
+    const dateTag = dayjs(dateIso).format("YYYY.MM.DD");
+
+    const historyHeaders: GameHeaders = {
+      ...headers,
+      white: whiteName,
+      black: blackName,
+      result,
+      date: dateTag,
+    };
+
+    const pgn = getPGN(root, {
+      headers: historyHeaders,
+      comments: true,
+      extraMarkups: true,
+      glyphs: true,
+      variations: true,
+    });
+
+    saveGameHistory({
+      id: genID(),
+      tabId: activeTab ?? undefined,
+      source: "board",
+      type: engineName ? "engine" : "human",
+      date: dateIso,
+      result,
+      white: whiteName,
+      black: blackName,
+      whiteType,
+      blackType,
+      movesCount: Math.ceil(moves.length / 2),
+      pgn,
+      variant: historyHeaders.variant ?? undefined,
+      timeControl:
+        historyHeaders.time_control ??
+        historyHeaders.white_time_control ??
+        historyHeaders.black_time_control ??
+        undefined,
+      engineName: engineName ?? undefined,
+    });
+    setGameHistoryTrigger((prev) => prev + 1);
+  }, [
+    activeTab,
+    gameState,
+    headers,
+    moves.length,
+    players.black,
+    players.white,
+    pos,
+    root,
+    setGameHistoryTrigger,
+    t,
+  ]);
 
   useEffect(() => {
     if (pos && gameState === "playing") {

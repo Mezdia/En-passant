@@ -1,6 +1,7 @@
 import { Chessground } from "@/chessground/Chessground";
 import PiecesGrid from "@/components/boards/PiecesGrid";
 import { pieceSetAtom, tabsAtom } from "@/state/atoms";
+import { chessboard } from "@/styles/Chessboard.css";
 import { generateChess960Fen } from "@/utils/chess";
 import { chessopsError } from "@/utils/chessops";
 import type { Tab } from "@/utils/tabs";
@@ -12,17 +13,14 @@ import {
   Divider,
   Group,
   Paper,
+  ScrollArea,
   SegmentedControl,
   Stack,
+  Tabs,
   Text,
-  Title,
   Tooltip,
-  Transition,
-  rgba,
-  useMantineTheme,
 } from "@mantine/core";
 import {
-  IconAlertTriangle,
   IconAnalyze,
   IconArrowLeft,
   IconArrowsShuffle,
@@ -35,6 +33,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
+import * as classes from "./Chess960Custom.css";
 
 interface Chess960CustomProps {
   id: string;
@@ -43,7 +42,6 @@ interface Chess960CustomProps {
 
 export default function Chess960Custom({ id, onBack }: Chess960CustomProps) {
   const { t } = useTranslation();
-  const theme = useMantineTheme();
   const pieceSet = useAtomValue(pieceSetAtom);
   const [fen, setFen] = useState(
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
@@ -104,6 +102,8 @@ export default function Chess960Custom({ id, onBack }: Chess960CustomProps) {
 
   const isValid = validationResult.valid;
   const error = validationResult.error;
+  const errorMessage =
+    error === "Errors.InvalidTurn" ? "" : error ? t(error) : "";
 
   const handleRandomize = () => {
     setFen(generateChess960Fen());
@@ -203,376 +203,161 @@ export default function Chess960Custom({ id, onBack }: Chess960CustomProps) {
   };
 
   return (
-    <Box
-      h="100%"
-      w="100%"
-      p="md"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        backgroundColor: "var(--mantine-color-body)",
-        overflow: "hidden",
-      }}
-    >
+    <Box className={classes.page}>
       <Helmet>
         <link rel="stylesheet" href={`/pieces/${pieceSet}.css`} />
       </Helmet>
 
-      {/* Header - Vertical Layout */}
-      <Paper
-        shadow="sm"
-        radius="md"
-        p="md"
-        withBorder
-        style={{
-          backgroundColor: theme.colors.dark[7],
-          borderColor: theme.colors.dark[6],
-          flexShrink: 0,
-        }}
-      >
-        <Stack gap="sm" align="center">
-          {/* Back Button */}
-          <Tooltip label={t("Home.Card.Chess960.Customize.Back")}>
-            <ActionIcon
-              variant="filled"
-              size="lg"
-              radius="md"
-              onClick={onBack}
-              style={{
-                backgroundColor: "var(--mantine-primary-color-filled)",
-                color: "var(--mantine-primary-color-contrast)",
-                transition: "all 0.2s ease",
-              }}
-              styles={{
-                root: {
-                  "&:hover": {
-                    backgroundColor: "var(--mantine-primary-color-filled-hover)",
-                    transform: "translateY(-2px)",
-                  },
-                },
-              }}
-            >
-              <IconArrowLeft size={20} />
-            </ActionIcon>
-          </Tooltip>
-
-          {/* Title */}
-          <Box ta="center">
-            <Title order={3} c="white" fw={600} size="h4">
-              {t("Home.Card.Chess960.Customize.Title")}
-            </Title>
-            <Text size="xs" c="dimmed">
-              {t("Home.Card.Chess960.Customize.Subtitle", "Customize your starting position")}
-            </Text>
-          </Box>
-
-          {/* Action Buttons */}
-          <Group gap="sm" wrap="nowrap">
-            <Button
-              leftSection={<IconArrowsShuffle size={18} />}
-              variant="light"
-              color="cyan"
-              radius="md"
-              size="sm"
-              onClick={handleRandomize}
-              styles={{
-                root: {
-                  backgroundColor: "var(--mantine-primary-color-light)",
-                  color: "var(--mantine-primary-color-light-color)",
-                  border: "1px solid var(--mantine-primary-color-light-hover)",
-                  transition: "all 0.2s ease",
-                  "&:hover": {
-                    backgroundColor: "var(--mantine-primary-color-light-hover)",
-                    transform: "translateY(-1px)",
-                  },
-                },
-              }}
-            >
-              {t("Home.Card.Chess960.Customize.Randomize")}
-            </Button>
-            <Button
-              leftSection={<IconRefresh size={18} />}
-              variant="default"
-              radius="md"
-              size="sm"
-              onClick={handleStandard}
-              styles={{
-                root: {
-                  backgroundColor: theme.colors.dark[6],
-                  borderColor: theme.colors.dark[5],
-                  color: theme.colors.gray[5],
-                  transition: "all 0.2s ease",
-                  "&:hover": {
-                    backgroundColor: theme.colors.dark[5],
-                    borderColor: theme.colors.dark[4],
-                    color: "white",
-                    transform: "translateY(-1px)",
-                  },
-                },
-              }}
-            >
-              {t("Home.Card.Chess960.Customize.Standard")}
-            </Button>
-          </Group>
-        </Stack>
-      </Paper>
-
-      {/* Main Content */}
-      <Box
-        style={{
-          flex: 1,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "1.5rem",
-          minHeight: 0,
-          overflow: "hidden",
-        }}
-      >
-        {/* Pieces Sidebar */}
-        <Paper
-          shadow="md"
-          radius="lg"
-          withBorder
-          p="md"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: theme.colors.dark[7],
-            borderColor: theme.colors.dark[6],
-            minWidth: "120px",
-            maxWidth: "140px",
-            height: "100%",
-            maxHeight: "100%",
-            overflow: "hidden",
-          }}
-        >
-          <Text size="sm" fw={600} c="white" ta="center" mb="sm">
-            {t("Home.Card.Chess960.Customize.Pieces", "Pieces")}
-          </Text>
-          <Divider mb="sm" color={theme.colors.dark[6]} />
-          <Box style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
-            <Stack justify="center" align="center" gap="sm">
-              <PiecesGrid
-                fen={fen}
-                boardRef={boardRef}
-                onPut={handlePiecePut}
-                vertical={true}
-                orientation={boardOrientation}
-                size={44}
-              />
-            </Stack>
-          </Box>
-        </Paper>
-
-        {/* Board and Controls Container */}
-        <Stack gap="md" align="center" style={{ height: "100%", justifyContent: "center" }}>
-          {/* Board */}
-          <Paper
-            shadow="xl"
-            radius="xl"
-            p="xs"
-            withBorder
-            style={{
-              width: "min(55vh, 520px)",
-              aspectRatio: 1,
-              transition: "all 0.3s ease",
-              borderColor: error
-                ? theme.colors.red[6]
-                : theme.colors.dark[6],
-              backgroundColor: error
-                ? rgba(theme.colors.red[9], 0.2)
-                : theme.colors.dark[8],
-              boxShadow: error
-                ? `0 0 20px ${rgba(theme.colors.red[6], 0.3)}`
-                : undefined,
-            }}
-          >
-            <Box ref={boardRef} w="100%" h="100%" style={{ borderRadius: theme.radius.lg, overflow: "hidden" }}>
-              <Chessground
-                fen={fen}
-                setBoardFen={handleBoardFenChange}
-                orientation={boardOrientation}
-                coordinates={true}
-                movable={{
-                  free: true,
-                  color: "both",
-                }}
-                draggable={{
-                  enabled: true,
-                  deleteOnDropOff: true,
-                }}
-              />
-            </Box>
-          </Paper>
-
-          {/* Controls - Compact */}
-          <Paper
-            shadow="sm"
-            radius="md"
-            p="sm"
-            withBorder
-            style={{
-              backgroundColor: theme.colors.dark[7],
-              borderColor: theme.colors.dark[6],
-              width: "fit-content",
-            }}
-          >
-            <Stack align="center" gap="sm">
-              <Group gap="sm" align="center" wrap="nowrap">
-                <Text size="sm" fw={500} c="white">
-                  {t("Home.Card.Chess960.Customize.SideToMove")}:
-                </Text>
-                <SegmentedControl
-                  value={currentTurn}
-                  onChange={handleTurnChange}
-                  data={[
-                    {
-                      label: t("Home.Card.Chess960.Customize.White"),
-                      value: "white",
-                    },
-                    {
-                      label: t("Home.Card.Chess960.Customize.Black"),
-                      value: "black",
-                    },
-                  ]}
-                  size="sm"
-                  styles={{
-                    root: {
-                      backgroundColor: theme.colors.dark[6],
-                    },
-                    label: {
-                      color: theme.colors.gray[4],
-                      "&[data-active]": {
-                        color: "white",
-                      },
-                    },
-                    control: {
-                      "&[data-active]": {
-                        backgroundColor: "var(--mantine-primary-color-filled)",
-                      },
-                    },
+      <div className={classes.layout}>
+        <Box className={classes.boardPane}>
+          <Box className={classes.boardArea}>
+            <div className={classes.boardSizer}>
+              <Box
+                ref={boardRef}
+                className={`${chessboard} ${classes.boardInner}`}
+              >
+                <Chessground
+                  fen={fen}
+                  setBoardFen={handleBoardFenChange}
+                  orientation={boardOrientation}
+                  coordinates={true}
+                  movable={{
+                    free: true,
+                    color: "both",
+                  }}
+                  draggable={{
+                    enabled: true,
+                    deleteOnDropOff: true,
                   }}
                 />
-              </Group>
-
-              <Box h="1.5rem">
-                <Transition
-                  mounted={!!error}
-                  transition="slide-up"
-                  duration={200}
-                  timingFunction="ease"
-                >
-                  {(styles) => (
-                    <Paper
-                      style={styles}
-                      shadow="sm"
-                      px="md"
-                      py="xs"
-                      radius="md"
-                      withBorder
-                      styles={{
-                        root: {
-                          backgroundColor: rgba(theme.colors.red[9], 0.9),
-                          borderColor: theme.colors.red[6],
-                        },
-                      }}
-                    >
-                      <Group gap="xs" wrap="nowrap">
-                        <IconAlertTriangle
-                          size={16}
-                          color={theme.colors.red[4]}
-                        />
-                        <Text size="xs" c="red.4" fw={600}>
-                          {error === "Errors.InvalidTurn"
-                            ? ""
-                            : error
-                              ? t(error)
-                              : ""}
-                        </Text>
-                      </Group>
-                    </Paper>
-                  )}
-                </Transition>
               </Box>
+            </div>
+          </Box>
+        </Box>
+
+        <div className={classes.sideColumn}>
+          <Paper className={classes.sidePanel} withBorder p="xs">
+            <div className={classes.sideHeader}>
+              <Group gap="xs" wrap="nowrap">
+                <Tooltip label={t("Home.Card.Chess960.Customize.Back")}>
+                  <ActionIcon variant="default" size="lg" onClick={onBack}>
+                    <IconArrowLeft size={18} />
+                  </ActionIcon>
+                </Tooltip>
+                <div>
+                  <Text className={classes.sideTitle}>
+                    {t("Home.Card.Chess960.Customize.Title")}
+                  </Text>
+                  <Text className={classes.sideSubtitle}>
+                    {t("Home.Card.Chess960.Customize.Subtitle")}
+                  </Text>
+                </div>
+              </Group>
+            </div>
+            <Divider />
+            <Tabs
+              defaultValue="setup"
+              className={classes.tabsRoot}
+              keepMounted={false}
+            >
+              <Tabs.List grow>
+                <Tabs.Tab value="setup">
+                  {t("Home.Card.Chess960.Customize.Setup")}
+                </Tabs.Tab>
+                <Tabs.Tab value="pieces">
+                  {t("Home.Card.Chess960.Customize.Pieces")}
+                </Tabs.Tab>
+              </Tabs.List>
+
+              <Tabs.Panel value="setup" className={classes.tabPanel}>
+                <ScrollArea h="100%" offsetScrollbars>
+                  <Stack gap="sm" className={classes.tabSection}>
+                    <div className={classes.controlRow}>
+                      <Text size="sm" fw={600}>
+                        {t("Home.Card.Chess960.Customize.SideToMove")}
+                      </Text>
+                      <SegmentedControl
+                        value={currentTurn}
+                        onChange={handleTurnChange}
+                        data={[
+                          {
+                            label: t("Home.Card.Chess960.Customize.White"),
+                            value: "white",
+                          },
+                          {
+                            label: t("Home.Card.Chess960.Customize.Black"),
+                            value: "black",
+                          },
+                        ]}
+                        size="sm"
+                      />
+                    </div>
+
+                    <Group grow>
+                      <Button
+                        variant="default"
+                        leftSection={<IconArrowsShuffle size={16} />}
+                        onClick={handleRandomize}
+                      >
+                        {t("Home.Card.Chess960.Customize.Randomize")}
+                      </Button>
+                      <Button
+                        variant="default"
+                        leftSection={<IconRefresh size={16} />}
+                        onClick={handleStandard}
+                      >
+                        {t("Home.Card.Chess960.Customize.Standard")}
+                      </Button>
+                    </Group>
+                  </Stack>
+                </ScrollArea>
+              </Tabs.Panel>
+
+              <Tabs.Panel value="pieces" className={classes.tabPanel}>
+                <ScrollArea h="100%" offsetScrollbars>
+                  <Box className={classes.piecesArea}>
+                    <PiecesGrid
+                      fen={fen}
+                      boardRef={boardRef}
+                      onPut={handlePiecePut}
+                      vertical={true}
+                      orientation={boardOrientation}
+                      size={42}
+                    />
+                  </Box>
+                </ScrollArea>
+              </Tabs.Panel>
+            </Tabs>
+          </Paper>
+
+          <Paper className={classes.actionsPanel} withBorder p="xs">
+            <Stack gap="sm">
+              <Group grow>
+                <Button
+                  size="md"
+                  leftSection={<IconDeviceGamepad2 size={20} />}
+                  onClick={() => startGame("play")}
+                  disabled={!isValid}
+                >
+                  {t("Home.Card.Chess960.Customize.Play")}
+                </Button>
+                <Button
+                  size="md"
+                  leftSection={<IconAnalyze size={20} />}
+                  variant="default"
+                  onClick={() => startGame("analysis")}
+                  disabled={!isValid}
+                >
+                  {t("Home.Card.Chess960.Customize.Analysis")}
+                </Button>
+              </Group>
+              {errorMessage ? (
+                <Text className={classes.errorText}>{errorMessage}</Text>
+              ) : null}
             </Stack>
           </Paper>
-        </Stack>
-      </Box>
-
-      {/* Action Buttons */}
-      <Paper
-        shadow="sm"
-        radius="md"
-        p="md"
-        withBorder
-        style={{
-          backgroundColor: theme.colors.dark[7],
-          borderColor: theme.colors.dark[6],
-          flexShrink: 0,
-        }}
-      >
-        <Group justify="center" gap="xl">
-          <Button
-            size="md"
-            leftSection={<IconDeviceGamepad2 size={22} />}
-            radius="md"
-            onClick={() => startGame("play")}
-            disabled={!isValid}
-            styles={{
-              root: {
-                minWidth: "140px",
-                backgroundColor: "var(--mantine-primary-color-filled)",
-                color: "var(--mantine-primary-color-contrast)",
-                transition: "all 0.2s ease",
-                "&:hover:not(:disabled)": {
-                  backgroundColor: "var(--mantine-primary-color-filled-hover)",
-                  transform: "translateY(-2px)",
-                  boxShadow: theme.shadows.md,
-                },
-                "&:disabled": {
-                  opacity: 0.5,
-                  backgroundColor: theme.colors.dark[6],
-                  color: theme.colors.gray[5],
-                },
-              },
-            }}
-          >
-            {t("Home.Card.Chess960.Customize.Play")}
-          </Button>
-          <Button
-            size="md"
-            leftSection={<IconAnalyze size={22} />}
-            variant="default"
-            radius="md"
-            onClick={() => startGame("analysis")}
-            disabled={!isValid}
-            styles={{
-              root: {
-                minWidth: "140px",
-                backgroundColor: theme.colors.dark[6],
-                borderColor: theme.colors.dark[5],
-                color: "white",
-                transition: "all 0.2s ease",
-                "&:hover:not(:disabled)": {
-                  backgroundColor: theme.colors.dark[5],
-                  borderColor: theme.colors.dark[4],
-                  transform: "translateY(-2px)",
-                  boxShadow: theme.shadows.md,
-                },
-                "&:disabled": {
-                  opacity: 0.5,
-                  backgroundColor: theme.colors.dark[6],
-                  color: theme.colors.gray[5],
-                },
-              },
-            }}
-          >
-            {t("Home.Card.Chess960.Customize.Analysis")}
-          </Button>
-        </Group>
-      </Paper>
+        </div>
+      </div>
     </Box>
   );
 }

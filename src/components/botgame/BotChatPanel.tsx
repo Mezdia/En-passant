@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { ScrollArea } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import * as classes from "./BotGamePage.css";
 
 export interface ChatMessage {
@@ -17,6 +18,7 @@ interface BotChatPanelProps {
 
 export const BotChatPanel: React.FC<BotChatPanelProps> = ({ messages, botName }) => {
     const viewportRef = useRef<HTMLDivElement>(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         // Auto-scroll to bottom
@@ -30,7 +32,7 @@ export const BotChatPanel: React.FC<BotChatPanelProps> = ({ messages, botName })
             <ScrollArea className={classes.chatMessages} viewportRef={viewportRef}>
                 {messages.length === 0 && (
                     <div className={classes.systemMessage}>
-                        Game started vs {botName}
+                        {t("Bots.Chat.Started", { bot: botName })}
                     </div>
                 )}
 
