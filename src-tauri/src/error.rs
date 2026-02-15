@@ -78,8 +78,29 @@ pub enum Error {
     #[error("Players aren't the same. They have played against each other")]
     NotDistinctPlayers,
 
-    #[error("{0}")]
-    Other(String),
+    #[error("Game not found: {0}")]
+    GameNotFound(String),
+
+    #[error("Game not in progress")]
+    GameNotInProgress,
+
+    #[error("Not human's turn")]
+    NotHumanTurn,
+
+    #[error("Not engine's turn")]
+    NotEngineTurn,
+
+    #[error("Invalid color: {0}")]
+    InvalidColor(String),
+
+    #[error("Engine not initialized")]
+    EngineNotInitialized,
+
+    #[error("Engine disconnected")]
+    EngineDisconnected,
+
+    #[error("Analysis cancelled")]
+    AnalysisCancelled,
 }
 
 impl serde::Serialize for Error {

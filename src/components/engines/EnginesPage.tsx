@@ -29,6 +29,7 @@ import {
 } from "@mantine/core";
 import {
   IconCloud,
+  IconCopy,
   IconCpu,
   IconPhotoPlus,
   IconPlus,
@@ -59,11 +60,10 @@ export default function EnginesPage() {
 
   const [engines, setEngines] = useAtom(enginesAtom);
   const [opened, setOpened] = useState(false);
-  const _search: any = Route.useSearch();
-  const selected: number | undefined = _search?.selected;
+  const { selected } = Route.useSearch();
   const navigate = useNavigate();
   const setSelected = (v: number | null) => {
-    (navigate as any)({ search: { selected: v ?? undefined } });
+    navigate({ search: { selected: v ?? undefined } });
   };
 
   const selectedEngine = selected !== undefined ? engines[selected] : null;
@@ -100,7 +100,7 @@ export default function EnginesPage() {
               return (
                 <GenericCard
                   id={i}
-                  key={item.name}
+                  key={item.id}
                   isSelected={selected === i}
                   setSelected={setSelected}
                   error={undefined}
@@ -124,93 +124,84 @@ export default function EnginesPage() {
             </Box>
           </SimpleGrid>
         </ScrollArea>
-        <Paper withBorder p="md" h="100%">
-          {!selectedEngine || selected === undefined ? (
-            <Text ta="center">{t("Engines.Settings.NoEngine")}</Text>
-          ) : selectedEngine.type === "local" ? (
-            <EngineSettings selected={selected} setSelected={setSelected} />
-          ) : (
-            <Stack>
-              <Divider variant="dashed" label={t("Common.GeneralSettings")} />
+        {!selectedEngine || selected === undefined ? (
+          <Center h="100%">
+            <Text>{t("Engines.Settings.NoEngine")}</Text>
+          </Center>
+        ) : (
+          <Paper withBorder p="md" h="100%">
+            {selectedEngine.type === "local" ? (
+              <EngineSettings selected={selected} setSelected={setSelected} />
+            ) : (
+              <Stack>
+                <Divider variant="dashed" label={t("Common.GeneralSettings")} />
 
-              <TextInput
-                w="50%"
-                label={t("Common.Name")}
-                value={selectedEngine.name}
-                onChange={(e) => {
-                  setEngines(async (prev) => {
-                    const copy = [...(await prev)];
-                    copy[selected].name = e.currentTarget.value;
-                    return copy;
-                  });
-                }}
-              />
-
-              <Checkbox
-                label={t("Common.Enabled")}
-                checked={!!selectedEngine.loaded}
-                onChange={(e) => {
-                  const checked = e.currentTarget.checked;
-                  setEngines(async (prev) => {
-                    const copy = [...(await prev)];
-                    copy[selected].loaded = checked;
-                    return copy;
-                  });
-                }}
-              />
-
-              <Divider
-                variant="dashed"
-                label={t("Engines.Settings.AdvancedSettings")}
-              />
-              <Stack w="50%">
-                <Text fw="bold">{t("Engines.Settings.NumOfLines")}</Text>
-                <LinesSlider
-                  value={
-                    Number(
-                      selectedEngine.settings?.find(
-                        (setting) => setting.name === "MultiPV",
-                      )?.value,
-                    ) || 1
-                  }
-                  setValue={(v) => {
+                <TextInput
+                  w="50%"
+                  label={t("Common.Name")}
+                  value={selectedEngine.name}
+                  onChange={(e) => {
                     setEngines(async (prev) => {
                       const copy = [...(await prev)];
-                      const setting = copy[selected].settings?.find(
-                        (setting) => setting.name === "MultiPV",
-                      );
-                      if (setting) {
-                        setting.value = v;
-                      } else {
-                        copy[selected].settings?.push({
-                          name: "MultiPV",
-                          value: v,
-                        });
-                      }
+                      copy[selected].name = e.currentTarget.value;
                       return copy;
                     });
                   }}
                 />
-              </Stack>
 
-              <Group justify="right">
-                <Button
-                  color="red"
-                  onClick={() => {
-                    setEngines(async (prev) => {
-                      const copy = [...(await prev)];
-                      copy.splice(selected, 1);
-                      return copy;
-                    });
-                    setSelected(null);
-                  }}
-                >
-                  {t("Common.Remove")}
-                </Button>
-              </Group>
-            </Stack>
-          )}
-        </Paper>
+                <Divider
+                  variant="dashed"
+                  label={t("Engines.Settings.AdvancedSettings")}
+                />
+                <Stack w="50%">
+                  <Text fw="bold">{t("Engines.Settings.NumOfLines")}</Text>
+                  <LinesSlider
+                    value={
+                      Number(
+                        selectedEngine.settings?.find(
+                          (setting) => setting.name === "MultiPV",
+                        )?.value,
+                      ) || 1
+                    }
+                    setValue={(v) => {
+                      setEngines(async (prev) => {
+                        const copy = [...(await prev)];
+                        const setting = copy[selected].settings?.find(
+                          (setting) => setting.name === "MultiPV",
+                        );
+                        if (setting) {
+                          setting.value = v;
+                        } else {
+                          copy[selected].settings?.push({
+                            name: "MultiPV",
+                            value: v,
+                          });
+                        }
+                        return copy;
+                      });
+                    }}
+                  />
+                </Stack>
+
+                <Group justify="right">
+                  <Button
+                    color="red"
+                    onClick={() => {
+                      setEngines(async (prev) => {
+                        const copy = [...(await prev)];
+                        copy.splice(selected, 1);
+                        return copy;
+                      });
+                      setSelected(null);
+                    }}
+                  >
+                    {t("Common.Remove")}
+                  </Button>
+                </Group>
+              </Stack>
+            )}
+          </Paper>
+        )}
       </Group>
     </Stack>
   );
@@ -359,13 +350,6 @@ function EngineSettings({
                 }
               />
             </Group>
-            <Checkbox
-              label={t("Common.Enabled")}
-              checked={!!engine.loaded}
-              onChange={(e) =>
-                setEngine({ ...engine, loaded: e.currentTarget.checked })
-              }
-            />
           </Stack>
           <Center>
             {engine.image ? (
@@ -521,6 +505,25 @@ function EngineSettings({
             }
           >
             {t("Engines.Settings.Reset")}
+          </Button>
+          <Button
+            leftSection={<IconCopy size="1rem" />}
+            variant="default"
+            onClick={() => {
+              const duplicatedEngine: LocalEngine = {
+                ...engine,
+                id: crypto.randomUUID(),
+                name: `${engine.name} (Copy)`,
+              };
+              setEngines(async (prev) => {
+                const copy = [...(await prev)];
+                copy.splice(selected + 1, 0, duplicatedEngine);
+                return copy;
+              });
+              setSelected(selected + 1);
+            }}
+          >
+            {t("Common.Duplicate")}
           </Button>
           <Button color="red" onClick={() => toggleDeleteModal()}>
             {t("Common.Remove")}

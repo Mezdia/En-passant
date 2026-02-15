@@ -63,6 +63,7 @@ export function AccountCard({
   setDatabases,
   token,
 }: AccountCardProps) {
+  const { t } = useTranslation();
   const items = stats.map((stat) => {
     let color = "gray.5";
     let DiffIcon: React.FC<TablerIconsProps> = IconArrowRight;
@@ -97,7 +98,6 @@ export function AccountCard({
       </Card>
     );
   });
-  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
   const [gamesModalOpen, setGamesModalOpen] = useState(false);
@@ -122,7 +122,7 @@ export function AccountCard({
         null,
       ),
     );
-    events.downloadProgress.emit({
+    events.progressEvent.emit({
       id: `${type}_${title}`,
       progress: 100,
       finished: true,
@@ -130,7 +130,7 @@ export function AccountCard({
   }
 
   useEffect(() => {
-    const unlisten = events.downloadProgress.listen(async (e) => {
+    const unlisten = events.progressEvent.listen(async (e) => {
       if (e.payload.id === `${type}_${title}`) {
         setProgress(e.payload.progress);
         if (e.payload.finished) {
@@ -148,7 +148,8 @@ export function AccountCard({
 
   const downloadedGames =
     database?.type === "success" ? database.game_count : 0;
-  const percentage = ((downloadedGames / total) * 100).toFixed(2);
+  const percentage =
+    total === 0 ? "0.00" : ((downloadedGames / total) * 100).toFixed(2);
 
   async function getLastGameDate({
     database,
@@ -196,17 +197,17 @@ export function AccountCard({
                 </Text>
               </Group>
               <ActionIcon.Group>
-                <Tooltip label={t("GamesViewer.ViewGames", "View games")}>
+                <Tooltip label={t("Home.Accounts.ViewGames")}>
                   <ActionIcon onClick={() => setGamesModalOpen(true)}>
                     <IconEye size="1rem" />
                   </ActionIcon>
                 </Tooltip>
-                <Tooltip label={t("GamesViewer.UpdateStats", "Update stats")}>
+                <Tooltip label={t("Home.Accounts.UpdateStats")}>
                   <ActionIcon onClick={() => reload()}>
                     <IconRefresh size="1rem" />
                   </ActionIcon>
                 </Tooltip>
-                <Tooltip label={t("Accounts.DownloadGames", "Download games")}>
+                <Tooltip label={t("Home.Accounts.DownloadGames")}>
                   <ActionIcon
                     disabled={loading}
                     onClick={async () => {
@@ -232,6 +233,8 @@ export function AccountCard({
                       );
                       try {
                         await convert(p, lastGameDate);
+                        const dbPath = p.replace(".pgn", ".db3");
+                        await commands.deleteEmptyGames(dbPath);
                       } catch (e) {
                         console.error(e);
                       }
@@ -245,9 +248,7 @@ export function AccountCard({
                     )}
                   </ActionIcon>
                 </Tooltip>
-                <Tooltip
-                  label={t("GamesViewer.RemoveAccount", "Remove account")}
-                >
+                <Tooltip label={t("Home.Accounts.RemoveAccount")}>
                   <ActionIcon onClick={() => logout()}>
                     <IconX size="1rem" />
                   </ActionIcon>
@@ -269,16 +270,20 @@ export function AccountCard({
               <div>
                 <Text fw="bold">{total}</Text>
                 <Text size="xs" c="dimmed">
-                  {t("Accounts.Games", "Games")}
+                  {t("Common.Games")}
                 </Text>
               </div>
 
               <div>
-                <Tooltip label={`${downloadedGames} ${t("Accounts.Games", "games")}`}>
+                <Tooltip
+                  label={t("Home.Accounts.DownloadedGamesCount", {
+                    count: downloadedGames,
+                  })}
+                >
                   <Text fw="bold">{percentage}%</Text>
                 </Tooltip>
                 <Text size="xs" c="dimmed">
-                  {t("Accounts.Downloaded", "Downloaded")}
+                  {t("Home.Accounts.Downloaded")}
                 </Text>
               </div>
             </Group>
@@ -301,7 +306,12 @@ export function AccountCard({
       <Accordion.Panel p={0}>
         <Group grow>{items}</Group>
         <Text mt="xs" size="xs" c="dimmed" ta="right">
-          ({`${t("Accounts.LastUpdate", "Last update")}: ${new Date(updatedAt).toLocaleDateString()}`})
+          (
+          {t("Home.Accounts.LastUpdate", {
+            date: new Date(updatedAt).toLocaleDateString(),
+            interpolation: { escapeValue: false },
+          })}
+          )
         </Text>
       </Accordion.Panel>
     </Accordion.Item>

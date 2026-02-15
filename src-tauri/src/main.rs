@@ -5,23 +5,29 @@
 
 mod chess;
 mod db;
+mod engine;
 mod error;
+mod game;
 
 mod fs;
 mod lexer;
 mod oauth;
 mod opening;
 mod pgn;
+mod progress;
 mod puzzle;
+mod sound;
 
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::{fs::create_dir_all, path::Path};
 
-use chess::{BestMovesPayload, EngineProcess, ReportProgress};
+use chess::{BestMovesPayload, EngineProcess};
 use dashmap::DashMap;
 use db::{DatabaseProgress, GameQueryJs, NormalizedGame, PositionStats};
 use derivative::Derivative;
+use game::GameManager;
+use progress::{clear_progress, get_progress, ProgressEvent, ProgressStore};
 
 use log::LevelFilter;
 use oauth::AuthState;
@@ -32,19 +38,28 @@ use tauri::{Manager, Window};
 use tauri_plugin_log::{Target, TargetKind};
 
 use crate::chess::{
-    analyze_game, get_engine_config, get_engine_logs, kill_engine, kill_engines, stop_engine,
+    analyze_game, cancel_analysis, get_engine_config, get_engine_logs, kill_engine, kill_engines,
+    stop_engine,
 };
 use crate::db::{
     clear_games, convert_pgn, create_indexes, delete_database, delete_db_game, delete_empty_games,
     delete_indexes, export_to_pgn, get_player, get_players_game_info, get_tournaments,
-    search_position,
+    preload_reference_db, search_position, MmapSearchIndex,
+};
+use crate::game::{
+    abort_game, get_game_engine_logs, get_game_state, make_game_move, resign_game, start_game,
+    take_back_game_move, ClockUpdateEvent, GameMoveEvent, GameOverEvent,
 };
 
-use crate::fs::{set_file_as_executable, DownloadProgress};
+use crate::fs::set_file_as_executable;
 use crate::lexer::lex_pgn;
 use crate::oauth::authenticate;
 use crate::pgn::{count_pgn_games, delete_game, read_games, write_game};
-use crate::puzzle::{get_puzzle, get_puzzle_db_info};
+use crate::puzzle::{
+    delete_puzzle_database, get_puzzle, get_puzzle_db_info, get_puzzle_themes,
+    get_themes_for_puzzle,
+};
+use crate::sound::get_sound_server_port;
 use crate::{
     chess::get_best_moves,
     db::{
@@ -53,20 +68,8 @@ use crate::{
     fs::{download_file, file_exists, get_file_metadata},
     opening::{get_opening_from_fen, get_opening_from_name, search_opening_name},
 };
-use tokio::sync::{RwLock, Semaphore};
-
-pub type GameData = (
-    i32,
-    i32,
-    i32,
-    Option<String>,
-    Option<String>,
-    Vec<u8>,
-    Option<String>,
-    i32,
-    i32,
-    i32,
-);
+use std::sync::atomic::AtomicBool;
+use tokio::sync::Semaphore;
 
 #[derive(Derivative)]
 #[derivative(Default)]
@@ -76,13 +79,18 @@ pub struct AppState {
         diesel::r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::SqliteConnection>>,
     >,
     line_cache: DashMap<(GameQueryJs, PathBuf), (Vec<PositionStats>, Vec<NormalizedGame>)>,
-    db_cache: Mutex<Vec<GameData>>,
+    db_cache: Mutex<Option<MmapSearchIndex>>,
     #[derivative(Default(value = "Arc::new(Semaphore::new(2))"))]
     new_request: Arc<Semaphore>,
+    #[derivative(Default(value = "DashMap::new()"))]
+    search_collisions: DashMap<(GameQueryJs, PathBuf), Arc<tokio::sync::Mutex<()>>>,
     pgn_offsets: DashMap<String, Vec<u64>>,
 
     engine_processes: DashMap<(String, String), Arc<tokio::sync::Mutex<EngineProcess>>>,
+    analysis_cancel_flags: DashMap<String, Arc<AtomicBool>>,
     auth: AuthState,
+    game_manager: GameManager,
+    progress_state: ProgressStore,
 }
 
 const REQUIRED_DIRS: &[(BaseDirectory, &str)] = &[
@@ -91,7 +99,7 @@ const REQUIRED_DIRS: &[(BaseDirectory, &str)] = &[
     (BaseDirectory::AppData, "presets"),
     (BaseDirectory::AppData, "puzzles"),
     (BaseDirectory::AppData, "documents"),
-    (BaseDirectory::Document, "EnPassant"),
+    (BaseDirectory::Document, "EnCroissant"),
 ];
 
 const REQUIRED_FILES: &[(BaseDirectory, &str, &str)] =
@@ -114,6 +122,7 @@ fn main() {
             close_splashscreen,
             get_best_moves,
             analyze_game,
+            cancel_analysis,
             stop_engine,
             kill_engine,
             kill_engines,
@@ -153,13 +162,29 @@ fn main() {
             get_games,
             search_position,
             get_players,
-            get_puzzle_db_info
+            get_puzzle_db_info,
+            get_puzzle_themes,
+            get_themes_for_puzzle,
+            delete_puzzle_database,
+            start_game,
+            get_game_state,
+            make_game_move,
+            take_back_game_move,
+            resign_game,
+            abort_game,
+            get_game_engine_logs,
+            preload_reference_db,
+            get_progress,
+            clear_progress,
+            get_sound_server_port
         ))
         .events(tauri_specta::collect_events!(
             BestMovesPayload,
             DatabaseProgress,
-            DownloadProgress,
-            ReportProgress
+            ProgressEvent,
+            GameMoveEvent,
+            ClockUpdateEvent,
+            GameOverEvent
         ));
 
     #[cfg(debug_assertions)]
@@ -177,7 +202,7 @@ fn main() {
     let log_targets = [
         TargetKind::Stdout,
         TargetKind::LogDir {
-            file_name: Some(String::from("En-passant.log")),
+            file_name: Some(String::from("en-croissant.log")),
         },
     ];
 
@@ -223,6 +248,18 @@ fn main() {
             // set_shadow(&app.get_webview_window("main").unwrap(), true).unwrap();
 
             specta_builder.mount_events(app);
+
+            #[cfg(target_os = "linux")]
+            {
+                let sound_dir = app
+                    .path()
+                    .resolve("sound", BaseDirectory::Resource)
+                    .expect("failed to resolve sound resource directory");
+                let port = sound::start_sound_server(sound_dir);
+                app.manage(sound::SoundServerPort(port));
+            }
+            #[cfg(not(target_os = "linux"))]
+            app.manage(sound::SoundServerPort(0));
 
             #[cfg(desktop)]
             app.handle().plugin(tauri_plugin_cli::init())?;

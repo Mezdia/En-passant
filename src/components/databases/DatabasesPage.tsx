@@ -8,6 +8,7 @@ import { unwrap } from "@/utils/unwrap";
 import {
   Box,
   Button,
+  Center,
   Checkbox,
   Divider,
   Group,
@@ -26,7 +27,7 @@ import {
 } from "@mantine/core";
 import { useDebouncedValue, useToggle } from "@mantine/hooks";
 import { IconArrowRight, IconDatabase, IconPlus } from "@tabler/icons-react";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { open as openDialog, save } from "@tauri-apps/plugin-dialog";
 import { useAtom, useStore } from "jotai";
 import { useEffect, useMemo, useState } from "react";
@@ -138,7 +139,6 @@ export default function DatabasesPage() {
                     if (item.type === "error") return;
                     navigate({
                       to: "/databases/$databaseId",
-                      // @ts-ignore
                       params: {
                         databaseId: item.title,
                       },
@@ -196,28 +196,28 @@ export default function DatabasesPage() {
           </SimpleGrid>
         </ScrollArea>
 
-        <Paper withBorder p="md" h="100%">
-          {selectedDatabase === null ? (
-            <Text ta="center">No database selected</Text>
-          ) : (
+        {selectedDatabase === null ? (
+          <Center h="100%">
+            <Text>{t("Databases.NoSelection")}</Text>
+          </Center>
+        ) : (
+          <Paper withBorder p="md" h="100%">
             <ScrollArea h="100%" offsetScrollbars>
               <Stack>
                 {selectedDatabase.type === "error" ? (
                   <>
                     <Text fz="lg" fw="bold">
-                      There was an error loading this database
+                      {t("Databases.LoadError.Title")}
                     </Text>
 
                     <Text>
                       <Text td="underline" span>
-                        Reason:
+                        {t("Common.Reason")}:
                       </Text>
                       {` ${selectedDatabase.error}`}
                     </Text>
 
-                    <Text>
-                      Check if the file exists and that it is not corrupted.
-                    </Text>
+                    <Text>{t("Databases.LoadError.Description")}</Text>
                   </>
                 ) : (
                   <>
@@ -274,15 +274,11 @@ export default function DatabasesPage() {
                     <div>
                       {selectedDatabase.type === "success" && (
                         <Button
-                          onClick={() => {
-                            navigate({
-                              to: "/databases/$databaseId",
-                              params: {
-                                databaseId: selectedDatabase.title,
-                              },
-                            });
-                            setActiveDatabase(selectedDatabase);
-                          }}
+                          component={Link}
+                          to="/databases/$databaseId"
+                          params={{ databaseId: selectedDatabase.title }}
+                          //onClick={() => setStorageSelected(selectedDatabase)}
+                          onClick={() => setActiveDatabase(selectedDatabase)}
                           fullWidth
                           variant="default"
                           size="lg"
@@ -363,8 +359,8 @@ export default function DatabasesPage() {
                 </Group>
               </Stack>
             </ScrollArea>
-          )}
-        </Paper>
+          </Paper>
+        )}
       </Group>
     </Stack>
   );
@@ -452,7 +448,7 @@ function PlayerMerger({
       <Text fz="sm">{t("Databases.Settings.MergePlayers.Desc")}</Text>
       <Group grow>
         <PlayerSearchInput
-          label="Player 1"
+          label={t("Databases.Player.One")}
           file={selectedDatabase.file}
           setValue={setPlayer1}
         />
@@ -464,7 +460,7 @@ function PlayerMerger({
           {t("Databases.Settings.Merge")}
         </Button>
         <PlayerSearchInput
-          label="Player 2"
+          label={t("Databases.Player.Two")}
           file={selectedDatabase.file}
           setValue={setPlayer2}
         />

@@ -2,16 +2,26 @@ import { commands } from "@/bindings";
 import GameInfo from "@/components/common/GameInfo";
 import { TreeStateContext } from "@/components/common/TreeStateContext";
 import ConfirmChangesModal from "@/components/tabs/ConfirmChangesModal";
-import { currentTabAtom, missingMovesAtom } from "@/state/atoms";
+import { currentTabAtom } from "@/state/atoms";
 import { keyMapAtom } from "@/state/keybinds";
 import { parsePGN } from "@/utils/chess";
 import { formatNumber } from "@/utils/format";
 import { getTreeStats } from "@/utils/repertoire";
 import { getNodeAtPath } from "@/utils/treeReducer";
 import { unwrap } from "@/utils/unwrap";
-import { Accordion, Box, Group, ScrollArea, Stack, Text } from "@mantine/core";
+import {
+  Accordion,
+  ActionIcon,
+  Box,
+  Group,
+  ScrollArea,
+  Stack,
+  Text,
+  Tooltip,
+} from "@mantine/core";
 import { useToggle } from "@mantine/hooks";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { IconPlus } from "@tabler/icons-react";
+import { useAtom, useAtomValue } from "jotai";
 import { useContext, useMemo, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useTranslation } from "react-i18next";
@@ -21,7 +31,7 @@ import FileInfo from "./FileInfo";
 import GameSelector from "./GameSelector";
 import PgnInput from "./PgnInput";
 
-function InfoPanel() {
+function InfoPanel({ addGame }: { addGame?: () => void }) {
   const store = useContext(TreeStateContext)!;
   const root = useStore(store, (s) => s.root);
   const position = useStore(store, (s) => s.position);
@@ -36,8 +46,12 @@ function InfoPanel() {
   const stats = useMemo(() => getTreeStats(root), [root]);
 
   return (
-    <Stack h="100%">
-      <GameSelectorAccordion games={games} setGames={setGames} />
+    <Stack h="100%" pl="sm" pt="sm">
+      <GameSelectorAccordion
+        games={games}
+        setGames={setGames}
+        addGame={addGame}
+      />
       <ScrollArea offsetScrollbars>
         <FileInfo setGames={setGames} />
         <Stack>
@@ -75,15 +89,16 @@ function InfoPanel() {
 function GameSelectorAccordion({
   games,
   setGames,
+  addGame,
 }: {
   games: Map<number, string>;
   setGames: React.Dispatch<React.SetStateAction<Map<number, string>>>;
+  addGame?: () => void;
 }) {
   const store = useContext(TreeStateContext)!;
   const dirty = useStore(store, (s) => s.dirty);
   const setState = useStore(store, (s) => s.setState);
   const [currentTab, setCurrentTab] = useAtom(currentTabAtom);
-  const setMissingMoves = useSetAtom(missingMovesAtom);
 
   const [confirmChanges, toggleConfirmChanges] = useToggle();
   const [tempPage, setTempPage] = useState(0);
@@ -92,6 +107,7 @@ function GameSelectorAccordion({
   const currentName = games.get(gameNumber) || "Untitled";
 
   const keyMap = useAtomValue(keyMapAtom);
+  const { t } = useTranslation();
 
   useHotkeys(
     keyMap.NEXT_GAME.keys,
@@ -133,11 +149,6 @@ function GameSelectorAccordion({
         gameNumber: page,
       };
     });
-
-    setMissingMoves((prev) => ({
-      ...prev,
-      [currentTab?.value]: null,
-    }));
   }
 
   async function deleteGame(index: number) {
@@ -159,10 +170,29 @@ function GameSelectorAccordion({
           setPage(tempPage, true);
         }}
       />
-      <Accordion>
+      <Accordion pr="sm">
         <Accordion.Item value="game">
           <Accordion.Control>
-            {formatNumber(gameNumber + 1)}. {currentName}
+            <Group justify="space-between" wrap="nowrap" w="100%">
+              <Text truncate flex={1}>
+                {formatNumber(gameNumber + 1)}. {currentName}
+              </Text>
+              {addGame && (
+                <Tooltip label={t("Board.Action.AddGame")}>
+                  <ActionIcon
+                    size="sm"
+                    variant="subtle"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      addGame();
+                    }}
+                  >
+                    <IconPlus size="0.9rem" />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+            </Group>
           </Accordion.Control>
           <Accordion.Panel>
             <Box h="10rem">

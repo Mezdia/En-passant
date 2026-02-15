@@ -142,8 +142,6 @@ export const fr_FR = {
     "Home.Card.Chess960.Desc": "Jouez aux échecs aléatoires de Fischer",
     "Home.Card.Chess960.Button": "Jouer",
 
-    "Board.Action.TogglePawnStructureView":
-      "Basculer l'affichage de la structure de pions",
     "Board.Action.TakeSnapshot": "Prendre une capture d'écran",
     "Board.Action.AnalyzeGame": "Analyser la partie",
     "Board.Action.PlayFromHere": "Jouer à partir d'ici",

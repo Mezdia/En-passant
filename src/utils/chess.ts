@@ -1,5 +1,5 @@
 import { type Outcome, type Score, type Token, commands } from "@/bindings";
-import type { DrawShape } from "chessground/draw";
+import type { DrawShape } from "@lichess-org/chessground/draw";
 import {
   type Color,
   type Move,
@@ -192,7 +192,7 @@ export function getVariationLine(
   return moves;
 }
 
-function headersToPGN(game: GameHeaders): string {
+export function headersToPGN(game: GameHeaders): string {
   let headers = `[Event "${game.event || "?"}"]
 [Site "${game.site || "?"}"]
 [Date "${game.date || "????.??.??"}"]

@@ -5,11 +5,10 @@ import {
   IconCpu,
   IconDatabase,
   IconFiles,
-  IconRobot,
   IconSettings,
   IconUser,
 } from "@tabler/icons-react";
-import { Link, useMatchRoute } from "@tanstack/react-router";
+import { Link, useMatches } from "@tanstack/react-router";
 import cx from "clsx";
 import { useTranslation } from "react-i18next";
 import * as classes from "./Sidebar.css";
@@ -19,18 +18,18 @@ interface NavbarLinkProps {
   label: string;
   url: string;
   active?: boolean;
-  id?: string;
 }
 
-function NavbarLink({ url, icon: Icon, label, id }: NavbarLinkProps) {
-  const matcesRoute = useMatchRoute();
+function NavbarLink({ url, icon: Icon, label }: NavbarLinkProps) {
+  const matches = useMatches();
   return (
     <Tooltip label={label} position="right">
       <Link
         to={url}
-        id={id}
         className={cx(classes.link, {
-          [classes.active]: matcesRoute({ to: url, fuzzy: true }),
+          [classes.active]: matches.some(
+            (m) => m.id !== "__root__" && m.pathname === url,
+          ),
         })}
       >
         <Icon size="1.5rem" stroke={1.5} />
@@ -40,17 +39,15 @@ function NavbarLink({ url, icon: Icon, label, id }: NavbarLinkProps) {
 }
 
 const linksdata = [
-  { icon: IconChess, label: "Board", url: "/", id: "tour-nav-board" },
-  { icon: IconUser, label: "User", url: "/accounts", id: "tour-nav-user" },
-  { icon: IconFiles, label: "Files", url: "/files", id: "tour-nav-files" },
+  { icon: IconChess, label: "Board", url: "/" },
+  { icon: IconUser, label: "User", url: "/accounts" },
+  { icon: IconFiles, label: "Files", url: "/files" },
   {
     icon: IconDatabase,
     label: "Databases",
     url: "/databases",
-    id: "tour-nav-databases",
   },
-  { icon: IconRobot, label: "Bots", url: "/bots", id: "tour-nav-bots" },
-  { icon: IconCpu, label: "Engines", url: "/engines", id: "tour-nav-engines" },
+  { icon: IconCpu, label: "Engines", url: "/engines" },
 ];
 
 export function SideBar() {
@@ -73,7 +70,6 @@ export function SideBar() {
             icon={IconSettings}
             label={t("SideBar.Settings")}
             url="/settings"
-            id="tour-nav-settings"
           />
         </Stack>
       </AppShellSection>

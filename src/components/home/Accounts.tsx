@@ -26,7 +26,7 @@ import LichessLogo from "./LichessLogo";
 
 function Accounts() {
   const { t } = useTranslation();
-  const [, setSessions] = useAtom(sessionsAtom);
+  const [sessions, setSessions] = useAtom(sessionsAtom);
   const isListening = useRef(false);
   const [databases, setDatabases] = useState<DatabaseInfo[]>([]);
   useEffect(() => {
@@ -119,15 +119,21 @@ function Accounts() {
 
   return (
     <>
-      <AccountCards databases={databases} setDatabases={setDatabases} />
-      <Group>
-        <Button
-          rightSection={<IconPlus size="1rem" />}
-          onClick={() => setOpen(true)}
-        >
-          {t("Accounts.AddAccount", "Add Account")}
-        </Button>
-      </Group>
+      <AccountCards
+        databases={databases}
+        setDatabases={setDatabases}
+        onAddAccount={() => setOpen(true)}
+      />
+      {sessions.length > 0 && (
+        <Group>
+          <Button
+            rightSection={<IconPlus size="1rem" />}
+            onClick={() => setOpen(true)}
+          >
+            {t("Home.Accounts.Add")}
+          </Button>
+        </Group>
+      )}
       <AccountModal
         open={open}
         setOpen={setOpen}
@@ -174,7 +180,11 @@ function AccountModal({
   }
 
   return (
-    <Modal opened={open} onClose={() => setOpen(false)} title={t("Accounts.AccountModal.Title", "Add Account")}>
+    <Modal
+      opened={open}
+      onClose={() => setOpen(false)}
+      title={t("Home.Accounts.Add")}
+    >
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -183,13 +193,13 @@ function AccountModal({
       >
         <Stack>
           <Autocomplete
-            label={t("Accounts.Name", "Name")}
+            label={t("Common.Name")}
             data={Array.from(players)}
             value={player}
             onChange={(value) => setPlayer(value)}
-            placeholder={t("Accounts.SelectPlayer", "Select player")}
+            placeholder={t("Home.Accounts.SelectPlayer")}
           />
-          <InputWrapper label={t("Accounts.Website", "Website")} required>
+          <InputWrapper label={t("Home.Accounts.Website")} required>
             <Group grow>
               <GenericCard
                 id={"lichess"}
@@ -198,7 +208,7 @@ function AccountModal({
                 Header={
                   <Group>
                     <LichessLogo />
-                    {t("Accounts.Lichess", "Lichess")}
+                    Lichess
                   </Group>
                 }
               />
@@ -214,7 +224,7 @@ function AccountModal({
                       src="/chesscom.png"
                       alt="chess.com"
                     />
-                    {t("Accounts.ChessCom", "Chess.com")}
+                    Chess.com
                   </Group>
                 }
               />
@@ -222,22 +232,22 @@ function AccountModal({
           </InputWrapper>
 
           <TextInput
-            label={t("Accounts.Username", "Username")}
-            placeholder={t("Accounts.EnterUsername", "Enter your username")}
+            label={t("Home.Accounts.Username")}
+            placeholder={t("Home.Accounts.EnterUsername")}
             required
             value={username}
             onChange={(e) => setUsername(e.currentTarget.value)}
           />
           {website === "lichess" && (
             <Checkbox
-              label={t("Accounts.LoginWithBrowser", "Login with browser")}
-              description={t("Accounts.LoginWithBrowser.Desc", "Allows faster game downloads")}
+              label={t("Home.Accounts.LoginWithBrowser")}
+              description={t("Home.Accounts.LoginWithBrowser.Desc")}
               checked={withLogin}
               onChange={(e) => setWithLogin(e.currentTarget.checked)}
             />
           )}
           <Button mt="1rem" type="submit">
-            {t("Accounts.Add", "Add")}
+            {t("Common.Add")}
           </Button>
         </Stack>
       </form>

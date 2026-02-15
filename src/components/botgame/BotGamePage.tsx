@@ -10,7 +10,7 @@ import { positionFromFen, swapMove } from "@/utils/chessops";
 import { makeSan } from "chessops/san";
 import { chessgroundDests } from "chessops/compat";
 import { INITIAL_FEN, makeFen } from "chessops/fen";
-import type { DrawShape } from "chessground/draw";
+import type { DrawShape } from "@lichess-org/chessground/draw";
 import { generateChess960Fen } from "@/utils/chess";
 
 import {

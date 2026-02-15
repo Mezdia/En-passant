@@ -15,7 +15,10 @@ import { attachConsole, info } from "@tauri-apps/plugin-log";
 import i18n from "i18next";
 import { getDefaultStore, useAtom, useAtomValue } from "jotai";
 import { ContextMenuProvider } from "mantine-contextmenu";
+import posthog from "posthog-js";
 import { useEffect, useState } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import { Helmet } from "react-helmet";
 import {
   activeTabAtom,
@@ -23,9 +26,11 @@ import {
   nativeBarAtom,
   pieceSetAtom,
   primaryColorAtom,
+  referenceDbAtom,
   spellCheckAtom,
   storedDocumentDirAtom,
   tabsAtom,
+  telemetryEnabledAtom,
 } from "./state/atoms";
 
 import "@/styles/chessgroundBaseOverride.css";
@@ -50,8 +55,10 @@ const colorSchemeManager = localStorageColorSchemeManager({
 });
 
 import ErrorComponent from "@/components/ErrorComponent";
+import { initUserAgent } from "@/utils/http";
+import { getVersion } from "@tauri-apps/api/app";
 import { isTauri } from "@tauri-apps/api/core";
-import { resolve } from "@tauri-apps/api/path";
+import { documentDir, homeDir, resolve } from "@tauri-apps/api/path";
 import { routeTree } from "./routeTree.gen";
 
 export type Dirs = {
@@ -68,9 +75,6 @@ const router = createRouter({
       if (!doc) {
         try {
           if (isTauri()) {
-            const { documentDir, homeDir } = await import(
-              "@tauri-apps/api/path"
-            );
             doc = await resolve(await documentDir(), "EnPassant");
           } else {
             // Fallback for development mode
@@ -79,7 +83,6 @@ const router = createRouter({
         } catch (e) {
           try {
             if (isTauri()) {
-              const { homeDir } = await import("@tauri-apps/api/path");
               doc = await resolve(await homeDir(), "EnPassant");
             } else {
               // Fallback for development mode
@@ -112,9 +115,22 @@ export default function App() {
   useEffect(() => {
     (async () => {
       await commands.closeSplashscreen();
+      await initUserAgent();
       const detach = await attachConsole();
       info("React app started successfully");
 
+      const store = getDefaultStore();
+      const telemetryEnabled = store.get(telemetryEnabledAtom);
+      posthog.init("phc_kgEBtifs0EgWlrl4ROYEbnsQ1b7BS2W5BKLNyXe7f8z", {
+        api_host: "https://app.posthog.com",
+        autocapture: false,
+        capture_pageview: false,
+        capture_pageleave: false,
+        disable_session_recording: true,
+      });
+      if (telemetryEnabled) {
+        posthog.capture("app_started", { version: await getVersion() });
+      }
       const matches = await getMatches();
       if (matches.args.file.occurrences > 0) {
         info(`Opening file from command line: ${matches.args.file.value}`);
@@ -139,10 +155,22 @@ export default function App() {
     document.documentElement.style.fontSize = `${fontSize}%`;
   }, [fontSize]);
 
+  useEffect(() => {
+    const store = getDefaultStore();
+    const referenceDb = store.get(referenceDbAtom);
+    if (referenceDb) {
+      info(`Preloading reference database: ${referenceDb}`);
+      commands.preloadReferenceDb(referenceDb).catch((e: unknown) => {
+        info(`Failed to preload reference database: ${e}`);
+      });
+    }
+  }, []);
+
   // Update HTML lang and dir attributes when language changes to support font switching
   useEffect(() => {
     const updateLang = (nextLang?: string) => {
-      const currentLang = nextLang || i18n.language || localStorage.getItem("lang") || "en_US";
+      const currentLang =
+        nextLang || i18n.language || localStorage.getItem("lang") || "en_US";
       const isRtlLang =
         currentLang.startsWith("fa") || currentLang.startsWith("ar");
       document.documentElement.lang = currentLang;
@@ -159,68 +187,70 @@ export default function App() {
 
   return (
     <>
-      <Helmet>
-        <link rel="stylesheet" href={`/pieces/${pieceSet}.css`} />
-      </Helmet>
-      <MantineProvider
-        colorSchemeManager={colorSchemeManager}
-        defaultColorScheme="dark"
-        theme={{
-          primaryColor,
-          fontFamily:
-            lang.startsWith("fa") || lang.startsWith("ar")
-              ? "Vazirmatn, sans-serif"
-              : "\"Source Sans 3\", \"Segoe UI Variable Text\", \"Segoe UI\", \"Noto Sans\", sans-serif",
-          components: {
-            ActionIcon: ActionIcon.extend({
-              defaultProps: {
-                variant: "transparent",
-                color: "gray",
-              },
-            }),
-            TextInput: TextInput.extend({
-              defaultProps: {
-                spellCheck: spellCheck,
-              },
-            }),
-            Autocomplete: Autocomplete.extend({
-              defaultProps: {
-                spellCheck: spellCheck,
-              },
-            }),
-            Textarea: Textarea.extend({
-              defaultProps: {
-                spellCheck: spellCheck,
-              },
-            }),
-            Input: Input.extend({
-              defaultProps: {
-                // @ts-ignore
-                spellCheck: spellCheck,
-              },
-            }),
-          },
-          colors: {
-            dark: [
-              "#C1C2C5",
-              "#A6A7AB",
-              "#909296",
-              "#5c5f66",
-              "#373A40",
-              "#2C2E33",
-              "#25262b",
-              "#1A1B1E",
-              "#141517",
-              "#101113",
-            ],
-          },
-        }}
-      >
-        <ContextMenuProvider>
-          <Notifications />
-          <RouterProvider router={router} />
-        </ContextMenuProvider>
-      </MantineProvider>
+      <DndProvider backend={HTML5Backend}>
+        <Helmet>
+          <link rel="stylesheet" href={`/pieces/${pieceSet}.css`} />
+        </Helmet>
+        <MantineProvider
+          colorSchemeManager={colorSchemeManager}
+          defaultColorScheme="dark"
+          theme={{
+            primaryColor,
+            fontFamily:
+              lang.startsWith("fa") || lang.startsWith("ar")
+                ? "Vazirmatn, sans-serif"
+                : '"Source Sans 3", "Segoe UI Variable Text", "Segoe UI", "Noto Sans", sans-serif',
+            components: {
+              ActionIcon: ActionIcon.extend({
+                defaultProps: {
+                  variant: "transparent",
+                  color: "gray",
+                },
+              }),
+              TextInput: TextInput.extend({
+                defaultProps: {
+                  spellCheck: spellCheck,
+                },
+              }),
+              Autocomplete: Autocomplete.extend({
+                defaultProps: {
+                  spellCheck: spellCheck,
+                },
+              }),
+              Textarea: Textarea.extend({
+                defaultProps: {
+                  spellCheck: spellCheck,
+                },
+              }),
+              Input: Input.extend({
+                defaultProps: {
+                  // @ts-ignore
+                  spellCheck: spellCheck,
+                },
+              }),
+            },
+            colors: {
+              dark: [
+                "#C1C2C5",
+                "#A6A7AB",
+                "#909296",
+                "#5c5f66",
+                "#373A40",
+                "#2C2E33",
+                "#25262b",
+                "#1A1B1E",
+                "#141517",
+                "#101113",
+              ],
+            },
+          }}
+        >
+          <ContextMenuProvider>
+            <Notifications />
+            <RouterProvider router={router} />
+          </ContextMenuProvider>
+        </MantineProvider>
+      </DndProvider>
     </>
   );
 }

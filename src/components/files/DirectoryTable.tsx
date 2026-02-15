@@ -1,8 +1,6 @@
-import { commands } from "@/bindings";
 import { activeTabAtom, deckAtomFamily, tabsAtom } from "@/state/atoms";
+import { openFile } from "@/utils/files";
 import { capitalize } from "@/utils/format";
-import { createTab } from "@/utils/tabs";
-import { unwrap } from "@/utils/unwrap";
 import { Badge, Box, Group } from "@mantine/core";
 import {
   IconChevronRight,
@@ -201,23 +199,12 @@ function Table({
 
   const { showContextMenu } = useContextMenu();
 
-  const openFile = useCallback(
+  const handleOpenFile = useCallback(
     async (record: FileMetadata) => {
-      const pgn = unwrap(await commands.readGames(record.path, 0, 0));
-      createTab({
-        tab: {
-          name: record?.name || "Untitled",
-          type: "analysis",
-        },
-        setTabs,
-        setActiveTab,
-        pgn: pgn[0] || "",
-        fileInfo: record,
-        gameNumber: 0,
-      });
+      await openFile(record, setTabs, setActiveTab);
       navigate({ to: "/" });
     },
-    [selected, setActiveTab, setTabs, navigate],
+    [setActiveTab, setTabs, navigate],
   );
 
   return (
@@ -238,7 +225,7 @@ function Table({
       sortStatus={sort}
       onRowDoubleClick={({ record }) => {
         if (record.type === "directory") return;
-        openFile(record);
+        handleOpenFile(record);
       }}
       onSortStatusChange={setSort}
       columns={[
@@ -324,7 +311,7 @@ function Table({
             disabled: record.type === "directory",
             onClick: () => {
               if (record.type === "directory") return;
-              openFile(record);
+              handleOpenFile(record);
             },
           },
           {

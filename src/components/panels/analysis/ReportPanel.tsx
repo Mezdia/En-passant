@@ -1,13 +1,9 @@
-import { events } from "@/bindings";
+import { commands } from "@/bindings";
 import EvalChart from "@/components/common/EvalChart";
 import ProgressButton from "@/components/common/ProgressButton";
 import { TreeStateContext } from "@/components/common/TreeStateContext";
 import { activeTabAtom } from "@/state/atoms";
-import {
-  ANNOTATION_INFO,
-  type Annotation,
-  isBasicAnnotation,
-} from "@/utils/annotation";
+import { ANNOTATION_INFO, isBasicAnnotation } from "@/utils/annotation";
 import { getGameStats, getMainLine } from "@/utils/chess";
 import { Grid, Group, Paper, ScrollArea, Stack, Text } from "@mantine/core";
 import { useToggle } from "@mantine/hooks";
@@ -15,7 +11,7 @@ import { IconZoomCheck } from "@tabler/icons-react";
 import cx from "clsx";
 import equal from "fast-deep-equal";
 import { useAtomValue } from "jotai";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useCallback, useState } from "react";
 import { memo, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useStore } from "zustand";
@@ -37,6 +33,10 @@ function ReportPanel() {
   const setInProgress = useStore(store, (s) => s.setReportInProgress);
 
   const stats = useMemo(() => getGameStats(root), [root]);
+
+  const handleCancel = useCallback(() => {
+    commands.cancelAnalysis(`report_${activeTab}`);
+  }, [activeTab]);
 
   return (
     <ScrollArea offsetScrollbars>
@@ -74,8 +74,8 @@ function ReportPanel() {
               disabled={root.children.length === 0}
               leftIcon={<IconZoomCheck size="0.875rem" />}
               onClick={() => toggleReportingMode()}
+              onCancel={handleCancel}
               initInstalled={false}
-              progressEvent={events.reportProgress}
               labels={{
                 action: t("Board.Analysis.GenerateReport"),
                 completed: t("Board.Analysis.ReportGenerated"),
@@ -113,14 +113,11 @@ const GameStats = memo(
       <Paper withBorder>
         <Grid columns={11} justify="space-between" p="md">
           {Object.keys(ANNOTATION_INFO)
-            .filter((a): a is Annotation => isBasicAnnotation(a))
-            .sort((a, b) => ANNOTATION_INFO[a].nag - ANNOTATION_INFO[b].nag)
+            .filter((a) => isBasicAnnotation(a))
             .map((annotation) => {
-              const s = annotation;
+              const s = annotation as "??" | "?" | "?!" | "!!" | "!" | "!?";
               const { name, color, translationKey } = ANNOTATION_INFO[s];
-              // @ts-ignore
               const w = whiteAnnotations[s];
-              // @ts-ignore
               const b = blackAnnotations[s];
               return (
                 <React.Fragment key={annotation}>

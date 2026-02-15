@@ -1,4 +1,5 @@
 import { TreeStateContext } from "@/components/common/TreeStateContext";
+import { annotationFocusAtom } from "@/state/atoms";
 import {
   ANNOTATION_INFO,
   type Annotation,
@@ -17,8 +18,8 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconChevronDown } from "@tabler/icons-react";
-import { atom, useAtom } from "jotai";
-import { memo, useContext } from "react";
+import { atom, useAtom, useAtomValue } from "jotai";
+import { memo, useContext, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useStore } from "zustand";
 import AnnotationEditor from "./AnnotationEditor";
@@ -77,10 +78,17 @@ function AnnotationPanel() {
   const position = useStore(store, (s) => s.position);
   const currentNode = getNodeAtPath(root, position);
   const [showMoreSymbols, setShowMoreSymbols] = useAtom(showMoreSymbolsAtom);
+  const editorRef = useRef<{ focus: () => void }>(null);
+  const focusSignal = useAtomValue(annotationFocusAtom);
+
+  useEffect(() => {
+    editorRef.current?.focus();
+  }, [focusSignal]);
+
   return (
-    <Stack h="100%" gap={0}>
+    <Stack h="100%" gap={0} py="sm">
       <Stack gap={0}>
-        <Group grow>
+        <Group grow px="sm">
           {BASIC.map((annotation) => {
             return (
               <SymbolButton
@@ -108,7 +116,7 @@ function AnnotationPanel() {
         />
       </Stack>
 
-      <Collapse in={showMoreSymbols}>
+      <Collapse in={showMoreSymbols} px="sm">
         <Stack mb="md">
           <Group grow>
             {ADVANTAGE.map((annotation) => (
@@ -131,8 +139,8 @@ function AnnotationPanel() {
         </Stack>
       </Collapse>
 
-      <ScrollArea offsetScrollbars>
-        <AnnotationEditor />
+      <ScrollArea offsetScrollbars pl="sm">
+        <AnnotationEditor ref={editorRef} />
       </ScrollArea>
     </Stack>
   );

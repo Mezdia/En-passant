@@ -1,4 +1,5 @@
 import { events } from "@/bindings";
+import { apiHeaders } from "@/utils/http";
 import { notifications } from "@mantine/notifications";
 import { IconX } from "@tabler/icons-react";
 import { appDataDir, resolve } from "@tauri-apps/api/path";
@@ -17,9 +18,6 @@ import { z } from "zod";
 import { decodeTCN } from "./tcn";
 
 const baseURL = "https://api.chess.com";
-const headers = {
-  "User-Agent": "EnPassant",
-};
 
 const ChessComPerf = z.object({
   last: z.object({
@@ -73,7 +71,7 @@ export async function getChessComAccount(
   player: string,
 ): Promise<ChessComStats | null> {
   const url = `${baseURL}/pub/player/${player.toLowerCase()}/stats`;
-  const response = await fetch(url, { headers, method: "GET" });
+  const response = await fetch(url, { headers: apiHeaders(), method: "GET" });
   if (!response.ok) {
     error(
       `Failed to fetch Chess.com account: ${response.status} ${response.url}`,
@@ -105,7 +103,7 @@ export async function getChessComAccount(
 
 async function getGameArchives(player: string) {
   const url = `${baseURL}/pub/player/${player}/games/archives`;
-  const response = await fetch(url, { headers, method: "GET" });
+  const response = await fetch(url, { headers: apiHeaders(), method: "GET" });
   return (await response.json()) as Archive;
 }
 
@@ -141,7 +139,7 @@ export async function downloadChessCom(
   for (const archive of filteredArchives) {
     info(`Fetching games for ${player} from ${archive}`);
     const response = await fetch(archive, {
-      headers,
+      headers: apiHeaders(),
       method: "GET",
     });
     const games = ChessComGames.safeParse(await response.json());
@@ -162,14 +160,14 @@ export async function downloadChessCom(
     writeTextFile(file, games.data.games.map((g) => g.pgn).join("\n"), {
       append: true,
     });
-    events.downloadProgress.emit({
+    events.progressEvent.emit({
       finished: false,
       id: `chesscom_${player}`,
       progress:
         (filteredArchives.indexOf(archive) / filteredArchives.length) * 100,
     });
   }
-  events.downloadProgress.emit({
+  events.progressEvent.emit({
     finished: false,
     id: `chesscom_${player}`,
     progress: 100,
@@ -177,8 +175,10 @@ export async function downloadChessCom(
 }
 
 const chessComGameSchema = z.object({
-  moveList: z.string(),
-  pgnHeaders: z.record(z.string(), z.string()),
+  game: z.object({
+    moveList: z.string(),
+    pgnHeaders: z.record(z.string(), z.union([z.string(), z.number()])),
+  }),
 });
 
 export async function getChesscomGame(gameURL: string) {
@@ -186,7 +186,27 @@ export async function getChesscomGame(gameURL: string) {
   const match = gameURL.match(regex);
 
   if (!match) {
-    return "";
+    const eventRegex = /chess.com\/events/;
+    if (gameURL.match(eventRegex)) {
+      error(`Event URLs are not supported: ${gameURL}`);
+      notifications.show({
+        title: "Event URLs not supported",
+        message:
+          "Event URLs cannot be imported directly. Please import the PGN instead.",
+        color: "red",
+        icon: <IconX />,
+      });
+      return null;
+    }
+    error(`Unsupported Chess.com URL format: ${gameURL}`);
+    notifications.show({
+      title: "Unsupported URL format",
+      message:
+        "The URL format is not recognized. Please use a direct game link like https://www.chess.com/game/live/12345",
+      color: "red",
+      icon: <IconX />,
+    });
+    return null;
   }
 
   const gameType = match[1];
@@ -195,7 +215,7 @@ export async function getChesscomGame(gameURL: string) {
   const response = await fetch(
     `https://www.chess.com/callback/${gameType}/game/${gameId}`,
     {
-      headers,
+      headers: apiHeaders(),
       method: "GET",
     },
   );
@@ -226,8 +246,8 @@ export async function getChesscomGame(gameURL: string) {
     return null;
   }
 
-  const moveList = gameData.data.moveList;
-  const pgnHeaders = gameData.data.pgnHeaders;
+  const moveList = gameData.data.game.moveList;
+  const pgnHeaders = gameData.data.game.pgnHeaders;
   const moves = moveList.match(/.{1,2}/g);
   if (!moves) {
     return "";
@@ -251,101 +271,6 @@ export async function getChesscomGame(gameURL: string) {
   }
 
   return makePgn(game);
-}
-
-// Type for game data used in the Games Viewer
-export type ChessComGameData = {
-  id: string;
-  url: string;
-  pgn: string;
-  timeControl: string;
-  endTime: number;
-  rated: boolean;
-  white: {
-    username: string;
-    rating: number;
-    result: string;
-  };
-  black: {
-    username: string;
-    rating: number;
-    result: string;
-  };
-  opening?: string;
-};
-
-// Fetch games for viewing (returns array of games)
-export async function fetchChessComGames(
-  player: string,
-  maxGames = 50,
-): Promise<ChessComGameData[]> {
-  const archives = await getGameArchives(player);
-  if (!archives.archives || archives.archives.length === 0) {
-    return [];
-  }
-
-  const allGames: ChessComGameData[] = [];
-  // Start from the most recent archive
-  const sortedArchives = [...archives.archives].reverse();
-
-  for (const archive of sortedArchives) {
-    if (allGames.length >= maxGames) break;
-
-    const response = await fetch(archive, { headers, method: "GET" });
-    const gamesResult = ChessComGames.safeParse(await response.json());
-
-    if (!gamesResult.success) {
-      error(`Failed to fetch Chess.com games from ${archive}`);
-      continue;
-    }
-
-    // Also reverse games within the archive to get most recent first
-    const reversedGames = [...gamesResult.data.games].reverse();
-
-    for (const game of reversedGames) {
-      if (allGames.length >= maxGames) break;
-
-      // Extract game ID from URL
-      const urlMatch = game.url.match(/\/game\/(live|daily)\/(\d+)/);
-      const gameId = urlMatch ? urlMatch[2] : game.url;
-
-      // Try to extract opening from PGN
-      let opening: string | undefined;
-      if (game.pgn) {
-        const ecoMatch = game.pgn.match(/\[ECOUrl\s+"[^"]*\/([^"]+)"\]/);
-        if (ecoMatch) {
-          opening = ecoMatch[1].replace(/-/g, " ");
-        } else {
-          const openingMatch = game.pgn.match(/\[Opening\s+"([^"]+)"\]/);
-          if (openingMatch) {
-            opening = openingMatch[1];
-          }
-        }
-      }
-
-      allGames.push({
-        id: gameId,
-        url: game.url,
-        pgn: game.pgn || "",
-        timeControl: game.time_control,
-        endTime: game.end_time,
-        rated: game.rated,
-        white: {
-          username: game.white.username,
-          rating: game.white.rating,
-          result: game.white.result,
-        },
-        black: {
-          username: game.black.username,
-          rating: game.black.rating,
-          result: game.black.result,
-        },
-        opening,
-      });
-    }
-  }
-
-  return allGames;
 }
 
 export function getStats(stats: ChessComStats) {

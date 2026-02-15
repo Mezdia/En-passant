@@ -1,7 +1,8 @@
 import { Comment } from "@/components/common/Comment";
 import { TreeStateContext } from "@/components/common/TreeStateContext";
-import { currentInvisibleAtom } from "@/state/atoms";
+import { currentInvisibleAtom, tableViewAtom } from "@/state/atoms";
 import { keyMapAtom } from "@/state/keybinds";
+import { formatScore } from "@/utils/score";
 import { type TreeNode, getNodeAtPath } from "@/utils/treeReducer";
 import {
   ActionIcon,
@@ -12,6 +13,7 @@ import {
   Paper,
   ScrollArea,
   Stack,
+  Table,
   Text,
   Tooltip,
 } from "@mantine/core";
@@ -21,9 +23,10 @@ import {
   IconArrowsSplit,
   IconArticle,
   IconArticleOff,
-  IconBinaryTree2,
   IconEye,
   IconEyeOff,
+  IconLayoutList,
+  IconList,
   IconMinus,
   IconPlus,
 } from "@tabler/icons-react";
@@ -33,17 +36,20 @@ import { useAtom, useAtomValue } from "jotai";
 import { memo, useContext, useEffect, useRef, useState } from "react";
 import React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useTranslation } from "react-i18next";
 import { useStore } from "zustand";
 import CompleteMoveCell from "./CompleteMoveCell";
 import * as styles from "./GameNotation.css";
 import OpeningName from "./OpeningName";
-import TreeVisualization from "./TreeVisualization";
 
-function GameNotation({ topBar }: { topBar?: boolean }) {
+function GameNotation({
+  topBar,
+  controls,
+}: { topBar?: boolean; controls?: React.ReactNode }) {
   const store = useContext(TreeStateContext)!;
-  const root = useStore(store, (s) => s.root);
   const currentFen = useStore(store, (s) => s.currentNode().fen);
   const headers = useStore(store, (s) => s.headers);
+  const rootComment = useStore(store, (s) => s.root.comment);
 
   const viewport = useRef<HTMLDivElement>(null);
   const targetRef = useRef<HTMLSpanElement>(null);
@@ -51,11 +57,17 @@ function GameNotation({ topBar }: { topBar?: boolean }) {
   useEffect(() => {
     if (viewport.current) {
       if (currentFen === INITIAL_FEN) {
-        viewport.current.scrollTo({ top: 0, behavior: "smooth" });
+        viewport.current.scrollTo({ top: 0, behavior: "auto" });
       } else if (targetRef.current) {
-        viewport.current.scrollTo({
-          top: targetRef.current.offsetTop - 65,
-          behavior: "smooth",
+        const viewportEl = viewport.current;
+        const targetEl = targetRef.current;
+        const viewportRect = viewportEl.getBoundingClientRect();
+        const targetRect = targetEl.getBoundingClientRect();
+        const offsetInViewport =
+          targetRect.top - viewportRect.top + viewportEl.scrollTop;
+        viewportEl.scrollTo({
+          top: offsetInViewport - 65,
+          behavior: "auto",
         });
       }
     }
@@ -65,7 +77,7 @@ function GameNotation({ topBar }: { topBar?: boolean }) {
   const invisible = topBar && invisibleValue;
   const [showVariations, toggleVariations] = useToggle([true, false]);
   const [showComments, toggleComments] = useToggle([true, false]);
-  const [showTree, toggleTree] = useToggle([false, true]);
+  const [tableView, setTableView] = useAtom(tableViewAtom);
   const colorScheme = useColorScheme();
 
   const keyMap = useAtomValue(keyMapAtom);
@@ -74,26 +86,34 @@ function GameNotation({ topBar }: { topBar?: boolean }) {
   return (
     <Paper
       withBorder
-      p="md"
       flex={1}
       style={{ position: "relative", overflow: "hidden" }}
     >
-      <Stack h="100%" gap={0}>
-        {topBar && (
-          <NotationHeader
-            showComments={showComments}
-            toggleComments={toggleComments}
-            showVariations={showVariations}
-            toggleVariations={toggleVariations}
-            showTree={showTree}
-            toggleTree={toggleTree}
-          />
+      <Group h="100%" gap="sm" wrap="nowrap" align="stretch" pr="md" pl="sm">
+        {controls && (
+          <>
+            <ScrollArea type="never" py="md" style={{ flexShrink: 0 }}>
+              {controls}
+            </ScrollArea>
+            <Divider orientation="vertical" />
+          </>
         )}
-        {showTree ? (
-          <TreeVisualization />
-        ) : (
-          <ScrollArea flex={1} offsetScrollbars viewportRef={viewport}>
-            <Stack pt="md">
+        <Stack h="100%" pt="xs" gap={0} style={{ flex: 1, minWidth: 0 }}>
+          {topBar && (
+            <NotationHeader
+              showComments={showComments}
+              toggleComments={toggleComments}
+              showVariations={showVariations}
+              toggleVariations={toggleVariations}
+            />
+          )}
+          <ScrollArea
+            flex={1}
+            offsetScrollbars
+            scrollbars="y"
+            viewportRef={viewport}
+          >
+            <Stack gap="xs">
               <Box>
                 {invisible && (
                   <Overlay
@@ -103,37 +123,49 @@ function GameNotation({ topBar }: { topBar?: boolean }) {
                     zIndex={2}
                   />
                 )}
-                {showComments && root.comment && (
-                  <Comment comment={root.comment} />
+                {showComments && rootComment && (
+                  <Comment comment={rootComment} />
                 )}
-                <RenderVariationTree
-                  targetRef={targetRef}
-                  tree={root}
-                  depth={0}
-                  first
-                  start={headers.start}
-                  showVariations={showVariations}
-                  showComments={showComments}
-                  path={[]}
-                />
+                {tableView ? (
+                  <TableNotation
+                    targetRef={targetRef}
+                    start={headers.start}
+                    showVariations={showVariations}
+                    showComments={showComments}
+                  />
+                ) : (
+                  <Box pt="md">
+                    <RenderVariationTree
+                      targetRef={targetRef}
+                      nodePath={[]}
+                      depth={0}
+                      first
+                      start={headers.start}
+                      showVariations={showVariations}
+                      showComments={showComments}
+                    />
+                  </Box>
+                )}
               </Box>
-              {headers.result && headers.result !== "*" && (
-                <Text ta="center">
-                  {headers.result}
-                  <br />
-                  <Text span fs="italic">
-                    {headers.result === "1/2-1/2"
-                      ? "Draw"
-                      : headers.result === "1-0"
-                        ? "White wins"
-                        : "Black wins"}
+              <Box pb="md">
+                {headers.result !== "*" && (
+                  <Text ta="center">
+                    {headers.result}
+                    <br />
+                    <Text span fs="italic">
+                      {headers.result === "1/2-1/2"
+                        ? "Draw"
+                        : headers.result === "1-0"
+                          ? "White wins"
+                          : "Black wins"}
+                    </Text>
                   </Text>
-                </Text>
-              )}
+                )}
+              </Box>
             </Stack>
           </ScrollArea>
-        )}
-      </Stack>
+        </Stack>
+      </Group>
     </Paper>
   );
 }
@@ -143,37 +175,49 @@ const NotationHeader = memo(function NotationHeader({
   toggleComments,
   showVariations,
   toggleVariations,
-  showTree,
-  toggleTree,
 }: {
   showComments: boolean;
   toggleComments: () => void;
   showVariations: boolean;
   toggleVariations: () => void;
-  showTree: boolean;
-  toggleTree: () => void;
 }) {
+  const { t } = useTranslation();
   const [invisible, setInvisible] = useAtom(currentInvisibleAtom);
+  const [tableView, setTableView] = useAtom(tableViewAtom);
   return (
-    <Stack>
+    <Stack gap="xs">
       <Group justify="space-between">
         <OpeningName />
         <Group gap="sm">
-          <Tooltip label={showTree ? "Hide tree" : "Show tree view"}>
-            <ActionIcon
-              onClick={() => toggleTree()}
-              variant={showTree ? "filled" : "subtle"}
-              color={showTree ? "green" : undefined}
-            >
-              <IconBinaryTree2 size="1rem" />
-            </ActionIcon>
-          </Tooltip>
-          <Tooltip label={invisible ? "Show moves" : "Hide moves"}>
+          <Tooltip
+            label={
+              invisible ? t("Notation.ShowMoves") : t("Notation.HideMoves")
+            }
+          >
             <ActionIcon onClick={() => setInvisible((v) => !v)}>
               {invisible ? <IconEyeOff size="1rem" /> : <IconEye size="1rem" />}
             </ActionIcon>
           </Tooltip>
-          <Tooltip label={showComments ? "Hide comments" : "Show comments"}>
+          <Tooltip
+            label={
+              tableView ? t("Notation.NormalView") : t("Notation.TableView")
+            }
+          >
+            <ActionIcon onClick={() => setTableView((v) => !v)}>
+              {tableView ? (
+                <IconList size="1rem" />
+              ) : (
+                <IconLayoutList size="1rem" />
+              )}
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip
+            label={
+              showComments
+                ? t("Notation.HideComments")
+                : t("Notation.ShowComments")
+            }
+          >
             <ActionIcon onClick={() => toggleComments()}>
               {showComments ? (
                 <IconArticle size="1rem" />
@@ -182,7 +226,13 @@ const NotationHeader = memo(function NotationHeader({
               )}
             </ActionIcon>
           </Tooltip>
-          <Tooltip label={showVariations ? "Show Variations" : "Main line"}>
+          <Tooltip
+            label={
+              showVariations
+                ? t("Notation.HideVariations")
+                : t("Notation.ShowVariations")
+            }
+          >
             <ActionIcon onClick={() => toggleVariations()}>
               {showVariations ? (
                 <IconArrowsSplit size="1rem" />
@@ -200,28 +250,30 @@ const NotationHeader = memo(function NotationHeader({
 
 const RenderVariationTree = memo(
   function RenderVariationTree({
-    tree,
+    nodePath,
     depth,
     start,
     first,
     showVariations,
     showComments,
     targetRef,
-    path,
   }: {
     start?: number[];
-    tree: TreeNode;
+    nodePath: number[];
     depth: number;
     first?: boolean;
     showVariations: boolean;
     showComments: boolean;
     targetRef: React.RefObject<HTMLSpanElement>;
-    path: number[];
   }) {
-    const variations = tree.children;
+    const store = useContext(TreeStateContext)!;
+    const node = useStore(store, (s) => getNodeAtPath(s.root, nodePath));
+    const variations = node.children;
+
     const variationNodes = showVariations
-      ? variations.slice(1).map((variation) => {
-          const newPath = [...path, variations.indexOf(variation)];
+      ? variations.slice(1).map((variation, idx) => {
+          const variationIndex = idx + 1;
+          const newPath = [...nodePath, variationIndex];
           return (
             <React.Fragment key={variation.fen}>
               <CompleteMoveCell
@@ -238,20 +290,18 @@ const RenderVariationTree = memo(
               />
               <RenderVariationTree
                 targetRef={targetRef}
-                tree={variation}
+                nodePath={newPath}
                 depth={depth + 2}
-                first
                 showVariations={showVariations}
                 showComments={showComments}
                 start={start}
-                path={newPath}
               />
             </React.Fragment>
           );
         })
       : [];
 
-    const newPath = [...path, 0];
+    const mainLinePath = [...nodePath, 0];
     return (
       <>
         {variations.length > 0 && (
@@ -262,24 +312,23 @@ const RenderVariationTree = memo(
             halfMoves={variations[0].halfMoves}
             move={variations[0].san}
             fen={variations[0].fen}
-            movePath={newPath}
+            movePath={mainLinePath}
             showComments={showComments}
-            isStart={equal(newPath, start)}
+            isStart={equal(mainLinePath, start)}
             first={first}
           />
         )}
 
         <VariationCell moveNodes={variationNodes} />
 
-        {tree.children.length > 0 && (
+        {node.children.length > 0 && (
           <RenderVariationTree
             targetRef={targetRef}
-            tree={tree.children[0]}
+            nodePath={mainLinePath}
             depth={depth + 1}
             showVariations={showVariations}
             start={start}
             showComments={showComments}
-            path={newPath}
           />
         )}
       </>
@@ -287,16 +336,328 @@ const RenderVariationTree = memo(
   },
   (prev, next) => {
     return (
-      prev.tree === next.tree &&
+      equal(prev.nodePath, next.nodePath) &&
       prev.depth === next.depth &&
       prev.first === next.first &&
       prev.showVariations === next.showVariations &&
       prev.showComments === next.showComments &&
-      equal(prev.path, next.path) &&
       equal(prev.start, next.start)
     );
   },
 );
+
+const TableNotation = memo(function TableNotation({
+  targetRef,
+  start,
+  showVariations,
+  showComments,
+}: {
+  targetRef: React.RefObject<HTMLSpanElement>;
+  start?: number[];
+  showVariations: boolean;
+  showComments: boolean;
+}) {
+  const store = useContext(TreeStateContext)!;
+  const root = useStore(store, (s) => s.root);
+
+  type RowItem = {
+    type: "row";
+    moveNumber: number;
+    white: TreeNode | null;
+    whitePath: number[];
+    black: TreeNode | null;
+    blackPath: number[];
+    splitRow?: boolean;
+  };
+  type VariationItem = {
+    type: "variations";
+    variations: TreeNode[];
+    parentPath: number[];
+  };
+  type CommentItem = {
+    type: "comment";
+    comment: string;
+  };
+  type Segment = RowItem | VariationItem | CommentItem;
+
+  const segments: Segment[] = [];
+
+  let current = root;
+  let path: number[] = [];
+
+  while (current.children.length > 0) {
+    const child = current.children[0];
+    const childPath = [...path, 0];
+    const isWhite = child.halfMoves % 2 === 1;
+    const moveNum = Math.ceil(child.halfMoves / 2);
+    const whiteVariations = current.children.slice(1);
+
+    if (isWhite) {
+      const hasWhiteVars = showVariations && whiteVariations.length > 0;
+      const hasWhiteComment = showComments && !!child.comment;
+
+      let blackNode: TreeNode | null = null;
+      let blackPath: number[] = [];
+      let blackVariations: TreeNode[] = [];
+
+      if (child.children.length > 0) {
+        const blackChild = child.children[0];
+        const bPath = [...childPath, 0];
+        if (blackChild.halfMoves % 2 === 0) {
+          blackNode = blackChild;
+          blackPath = bPath;
+          blackVariations = child.children.slice(1);
+        }
+      }
+
+      const hasBlackVars = showVariations && blackVariations.length > 0;
+      const hasBlackComment = showComments && !!blackNode?.comment;
+      const splitWhite = hasWhiteVars || hasWhiteComment;
+
+      if (splitWhite) {
+        segments.push({
+          type: "row",
+          moveNumber: moveNum,
+          white: child,
+          whitePath: childPath,
+          black: null,
+          blackPath: [],
+          splitRow: !!blackNode,
+        });
+        if (hasWhiteComment) {
+          segments.push({ type: "comment", comment: child.comment });
+        }
+        if (hasWhiteVars) {
+          segments.push({
+            type: "variations",
+            variations: whiteVariations,
+            parentPath: childPath.slice(0, -1),
+          });
+        }
+
+        if (blackNode) {
+          if (hasBlackVars || hasBlackComment) {
+            segments.push({
+              type: "row",
+              moveNumber: moveNum,
+              white: null,
+              whitePath: [],
+              black: blackNode,
+              blackPath: blackPath,
+            });
+            if (hasBlackComment) {
+              segments.push({ type: "comment", comment: blackNode.comment });
+            }
+            if (hasBlackVars) {
+              segments.push({
+                type: "variations",
+                variations: blackVariations,
+                parentPath: blackPath.slice(0, -1),
+              });
+            }
+          } else {
+            segments.push({
+              type: "row",
+              moveNumber: moveNum,
+              white: null,
+              whitePath: [],
+              black: blackNode,
+              blackPath: blackPath,
+            });
+          }
+          current = blackNode;
+          path = blackPath;
+        } else {
+          current = child;
+          path = childPath;
+        }
+      } else if (hasBlackVars || hasBlackComment) {
+        segments.push({
+          type: "row",
+          moveNumber: moveNum,
+          white: child,
+          whitePath: childPath,
+          black: blackNode,
+          blackPath: blackPath,
+        });
+        if (hasBlackComment) {
+          segments.push({ type: "comment", comment: blackNode!.comment });
+        }
+        if (hasBlackVars) {
+          segments.push({
+            type: "variations",
+            variations: blackVariations,
+            parentPath: blackPath.slice(0, -1),
+          });
+        }
+        current = blackNode!;
+        path = blackPath;
+      } else {
+        segments.push({
+          type: "row",
+          moveNumber: moveNum,
+          white: child,
+          whitePath: childPath,
+          black: blackNode,
+          blackPath: blackPath,
+        });
+        if (blackNode) {
+          current = blackNode;
+          path = blackPath;
+        } else {
+          current = child;
+          path = childPath;
+        }
+      }
+    } else {
+      const hasBlackVars = showVariations && whiteVariations.length > 0;
+      const hasBlackComment = showComments && !!child.comment;
+      segments.push({
+        type: "row",
+        moveNumber: moveNum,
+        white: null,
+        whitePath: [],
+        black: child,
+        blackPath: childPath,
+      });
+      if (hasBlackComment) {
+        segments.push({ type: "comment", comment: child.comment });
+      }
+      if (hasBlackVars) {
+        segments.push({
+          type: "variations",
+          variations: whiteVariations,
+          parentPath: childPath.slice(0, -1),
+        });
+      }
+      current = child;
+      path = childPath;
+    }
+  }
+
+  return (
+    <Table layout="fixed">
+      <Table.Tbody>
+        {segments.map((seg, idx) => {
+          if (seg.type === "comment") {
+            return (
+              <tr key={`comment-${idx}`}>
+                <td colSpan={3}>
+                  <Box pl="sm" pt="xs">
+                    <Comment comment={seg.comment} />
+                  </Box>
+                </td>
+              </tr>
+            );
+          }
+
+          if (seg.type === "variations") {
+            return (
+              <tr key={`var-${idx}`}>
+                <td colSpan={3}>
+                  <Box pl="sm" pt="xs">
+                    {seg.variations.map((variation, vIdx) => {
+                      const variationPath = [...seg.parentPath, vIdx + 1];
+                      return (
+                        <Box
+                          key={variation.fen}
+                          className={styles.variationBorder}
+                          mb={4}
+                        >
+                          <CompleteMoveCell
+                            targetRef={targetRef}
+                            annotations={variation.annotations}
+                            comment={variation.comment}
+                            halfMoves={variation.halfMoves}
+                            move={variation.san}
+                            fen={variation.fen}
+                            movePath={variationPath}
+                            showComments={showComments}
+                            isStart={equal(variationPath, start)}
+                            first
+                          />
+                          <RenderVariationTree
+                            targetRef={targetRef}
+                            nodePath={variationPath}
+                            depth={1}
+                            showVariations={showVariations}
+                            showComments={showComments}
+                            start={start}
+                          />
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </td>
+              </tr>
+            );
+          }
+
+          const row = seg;
+          return (
+            <React.Fragment key={`row-${row.moveNumber}-${idx}`}>
+              <Table.Tr>
+                <Table.Td className={styles.moveTableMoveNumber}>
+                  {row.moveNumber}
+                </Table.Td>
+                <Table.Td className={styles.moveTableCell}>
+                  {row.white ? (
+                    <CompleteMoveCell
+                      targetRef={targetRef}
+                      annotations={row.white.annotations}
+                      comment={row.white.comment}
+                      halfMoves={row.white.halfMoves}
+                      move={row.white.san}
+                      fen={row.white.fen}
+                      movePath={row.whitePath}
+                      showComments={showComments}
+                      isStart={equal(row.whitePath, start)}
+                      tableLayout
+                      scoreText={
+                        row.white.score
+                          ? formatScore(row.white.score.value, 1)
+                          : undefined
+                      }
+                    />
+                  ) : (
+                    <Text c="dimmed" style={{ padding: "5px 8px" }}>
+                      ...
+                    </Text>
+                  )}
+                </Table.Td>
+                <Table.Td className={styles.moveTableCell}>
+                  {row.black ? (
+                    <CompleteMoveCell
+                      targetRef={targetRef}
+                      annotations={row.black.annotations}
+                      comment={row.black.comment}
+                      halfMoves={row.black.halfMoves}
+                      move={row.black.san}
+                      fen={row.black.fen}
+                      movePath={row.blackPath}
+                      showComments={showComments}
+                      isStart={equal(row.blackPath, start)}
+                      tableLayout
+                      scoreText={
+                        row.black.score
+                          ? formatScore(row.black.score.value, 1)
+                          : undefined
+                      }
+                    />
+                  ) : row.splitRow ? (
+                    <Text c="dimmed" style={{ padding: "5px 8px" }}>
+                      ...
+                    </Text>
+                  ) : null}
+                </Table.Td>
+              </Table.Tr>
+            </React.Fragment>
+          );
+        })}
+      </Table.Tbody>
+    </Table>
+  );
+});
 
 function VariationCell({ moveNodes }: { moveNodes: React.ReactNode[] }) {
   const [expanded, setExpanded] = useState(true);

@@ -11,7 +11,7 @@ import { positionFromFen } from "@/utils/chessops";
 import { ActionIcon, Box, Flex, Portal, Table } from "@mantine/core";
 import { useForceUpdate } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
-import type { Key } from "chessground/types";
+import type { Key } from "@lichess-org/chessground/types";
 import { chessgroundMove } from "chessops/compat";
 import { makeFen } from "chessops/fen";
 import { parseSan } from "chessops/san";

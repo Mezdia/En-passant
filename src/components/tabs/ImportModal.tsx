@@ -1,5 +1,6 @@
 import { commands } from "@/bindings";
 import { currentTabAtom } from "@/state/atoms";
+import { addRecentFileAtom } from "@/state/atoms";
 import { parsePGN } from "@/utils/chess";
 import { getChesscomGame } from "@/utils/chess.com/api";
 import { chessopsError } from "@/utils/chessops";
@@ -22,9 +23,11 @@ import {
 } from "@mantine/core";
 import { useLoaderData } from "@tanstack/react-router";
 import { open } from "@tauri-apps/plugin-dialog";
+import { readTextFile } from "@tauri-apps/plugin-fs";
 import { makeFen, parseFen } from "chessops/fen";
-import { useAtom } from "jotai";
+import { useAtom, useStore } from "jotai";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { match } from "ts-pattern";
 import GenericCard from "../common/GenericCard";
 import type { FileMetadata, FileType } from "../files/file";
@@ -32,11 +35,11 @@ import type { FileMetadata, FileType } from "../files/file";
 type ImportType = "PGN" | "Link" | "FEN";
 
 const FILE_TYPES = [
-  { label: "Game", value: "game" },
-  { label: "Repertoire", value: "repertoire" },
-  { label: "Tournament", value: "tournament" },
-  { label: "Puzzle", value: "puzzle" },
-  { label: "Other", value: "other" },
+  { label: "Files.FileType.Game", value: "game" },
+  { label: "Files.FileType.Repertoire", value: "repertoire" },
+  { label: "Files.FileType.Tournament", value: "tournament" },
+  { label: "Files.FileType.Puzzle", value: "puzzle" },
+  { label: "Files.FileType.Other", value: "other" },
 ] as const;
 
 export default function ImportModal({
@@ -46,6 +49,7 @@ export default function ImportModal({
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const { t } = useTranslation();
   const [pgn, setPgn] = useState("");
   const [fen, setFen] = useState("");
   const [file, setFile] = useState<string | null>(null);
@@ -60,6 +64,7 @@ export default function ImportModal({
   const [filename, setFilename] = useState("");
   const [error, setError] = useState("");
   const { documentDir } = useLoaderData({ from: "/" });
+  const store = useStore();
 
   async function handleSubmit() {
     setLoading(true);
@@ -69,12 +74,13 @@ export default function ImportModal({
         let input = pgn;
         if (file) {
           const count = unwrap(await commands.countPgnGames(file));
+          const fileContent = await readTextFile(file);
           input = unwrap(await commands.readGames(file, 0, 0))[0];
           if (save) {
             const newFile = await createFile({
               filename,
               filetype,
-              pgn: input,
+              pgn: fileContent,
               dir: documentDir,
             });
             if (newFile.isErr) {
@@ -111,6 +117,14 @@ export default function ImportModal({
             type: "analysis",
           };
         });
+
+        if (fileInfo?.path) {
+          store.set(addRecentFileAtom, {
+            name: fileInfo.name,
+            path: fileInfo.path,
+            type: fileInfo.metadata.type,
+          });
+        }
       }
     } else if (importType === "Link") {
       if (!link) {
@@ -160,7 +174,7 @@ export default function ImportModal({
         );
         return {
           ...prev,
-          name: "Analysis Board",
+          name: t("Home.Card.AnalysisBoard.Title"),
           type: "analysis",
         };
       });
@@ -173,15 +187,15 @@ export default function ImportModal({
       <Stack>
         <div>
           <FileInput
-            label="PGN file"
-            description={"Click to select a PGN file."}
+            label={t("Common.PGNFile")}
+            description={t("Import.PGN.ClickToSelect")}
             onClick={async () => {
               const selected = (await open({
                 multiple: false,
 
                 filters: [
                   {
-                    name: "PGN file",
+                    name: t("Common.PGNFile"),
                     extensions: ["pgn"],
                   },
                 ],
@@ -203,19 +217,19 @@ export default function ImportModal({
             }}
             disabled={pgn !== ""}
           />
-          <Divider pt="xs" label="OR" labelPosition="center" />
+          <Divider pt="xs" label={t("Import.Or")} labelPosition="center" />
           <Textarea
             value={pgn}
             disabled={file !== null}
             onChange={(event) => setPgn(event.currentTarget.value)}
-            label="PGN game"
+            label={t("Common.PGNGame")}
             data-autofocus
             rows={8}
           />
         </div>
 
         <Checkbox
-          label="Save to collection"
+          label={t("Import.SaveToCollection")}
           checked={save}
           onChange={(e) => setSave(e.currentTarget.checked)}
         />
@@ -223,8 +237,8 @@ export default function ImportModal({
         {save && (
           <>
             <TextInput
-              label="Name"
-              placeholder="Enter your filename"
+              label={t("Common.Name")}
+              placeholder={t("Common.EnterFileName")}
               required
               value={filename}
               onChange={(e) => setFilename(e.currentTarget.value)}
@@ -232,7 +246,7 @@ export default function ImportModal({
             />
 
             <Text fz="sm" fw="bold">
-              File type
+              {t("Files.FileType")}
             </Text>
 
             <SimpleGrid cols={3}>
@@ -242,7 +256,7 @@ export default function ImportModal({
                   id={v.value}
                   isSelected={filetype === v.value}
                   setSelected={setFiletype}
-                  Header={<Text ta="center">{v.label}</Text>}
+                  Header={<Text ta="center">{t(v.label)}</Text>}
                 />
               ))}
             </SimpleGrid>
@@ -254,7 +268,7 @@ export default function ImportModal({
       <TextInput
         value={link}
         onChange={(event) => setLink(event.currentTarget.value)}
-        label="Game URL (lichess or chess.com)"
+        label={t("Import.GameURL")}
         data-autofocus
         onKeyDown={(e) => {
           if (e.key === "Enter") handleSubmit();
@@ -285,7 +299,7 @@ export default function ImportModal({
     <Modal
       opened={openModal}
       onClose={() => setOpenModal(false)}
-      title="Import game"
+      title={t("Home.Card.ImportGame.Title")}
     >
       <Group grow mb="sm">
         <GenericCard
@@ -299,7 +313,7 @@ export default function ImportModal({
           id={"Link"}
           isSelected={importType === "Link"}
           setSelected={setImportType}
-          Header={<Text ta="center">Online</Text>}
+          Header={<Text ta="center">{t("Import.Online")}</Text>}
         />
 
         <GenericCard
@@ -320,7 +334,7 @@ export default function ImportModal({
         disabled={disabled}
         onClick={handleSubmit}
       >
-        {loading ? "Importing..." : "Import"}
+        {loading ? t("Import.Importing") : t("Home.Card.ImportGame.Button")}
       </Button>
     </Modal>
   );

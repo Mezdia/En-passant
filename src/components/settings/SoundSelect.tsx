@@ -76,7 +76,7 @@ export default function SoundSelect() {
           {selected ? (
             <SelectOption label={selected.label} />
           ) : (
-            <Input.Placeholder>Pick value</Input.Placeholder>
+            <Input.Placeholder>{t("Common.PickValue")}</Input.Placeholder>
           )}
         </InputBase>
       </Combobox.Target>

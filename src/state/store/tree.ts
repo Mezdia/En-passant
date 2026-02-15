@@ -14,7 +14,7 @@ import {
   getNodeAtPath,
   treeIteratorMainLine,
 } from "@/utils/treeReducer";
-import type { DrawShape } from "chessground/draw";
+import type { DrawShape } from "@lichess-org/chessground/draw";
 import { type Move, isNormal } from "chessops";
 import { INITIAL_FEN, makeFen } from "chessops/fen";
 import { makeSan, parseSan } from "chessops/san";
@@ -638,6 +638,9 @@ function deleteMove(state: TreeState, path: number[]) {
     if (state.position.length >= path.length) {
       state.position[path.length - 1] = 0;
     }
+  }
+  if (state.headers.start && isPrefix(path, state.headers.start)) {
+    state.headers.start = undefined;
   }
 }
 

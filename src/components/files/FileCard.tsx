@@ -1,7 +1,7 @@
 import { commands } from "@/bindings";
 import { activeTabAtom, tabsAtom } from "@/state/atoms";
+import { openFile } from "@/utils/files";
 import { capitalize } from "@/utils/format";
-import { createTab } from "@/utils/tabs";
 import { unwrap } from "@/utils/unwrap";
 import {
   ActionIcon,
@@ -55,16 +55,9 @@ function FileCard({
   }, [selected, page]);
 
   async function openGame() {
-    createTab({
-      tab: {
-        name: selected.name || "Untitled",
-        type: "analysis",
-      },
-      setTabs,
-      setActiveTab,
-      pgn: selectedGame || "",
-      fileInfo: selected,
+    await openFile(selected, setTabs, setActiveTab, {
       gameNumber: page,
+      pgn: selectedGame || "",
     });
     navigate({ to: "/" });
   }

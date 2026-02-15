@@ -16,6 +16,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { isTauri } from "@tauri-apps/api/core";
+import { TauriEvent } from "@tauri-apps/api/event";
 import {
   Menu,
   MenuItem,
@@ -25,8 +26,7 @@ import {
 import { resolve } from "@tauri-apps/api/path";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ask, message, open } from "@tauri-apps/plugin-dialog";
-import { relaunch } from "@tauri-apps/plugin-process";
-import { exit } from "@tauri-apps/plugin-process";
+import { exit, relaunch } from "@tauri-apps/plugin-process";
 import { open as shellOpen } from "@tauri-apps/plugin-shell";
 import { check } from "@tauri-apps/plugin-updater";
 import { useAtom, useAtomValue } from "jotai";
@@ -277,6 +277,31 @@ function RootLayout() {
     }
     // In development mode, we don't set up the native menu
   }, [menu, isNative]);
+
+  useEffect(() => {
+    const unlisten = getCurrentWindow().listen(
+      TauriEvent.DRAG_DROP,
+      (event) => {
+        const payload = event.payload as { paths: string[] };
+        if (payload?.paths) {
+          const pgnFiles = payload.paths.filter((path) =>
+            path.toLowerCase().endsWith(".pgn"),
+          );
+
+          if (pgnFiles.length > 0) {
+            navigate({ to: "/" });
+            for (const file of pgnFiles) {
+              openFile(file, setTabs, setActiveTab);
+            }
+          }
+        }
+      },
+    );
+
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  }, [navigate, setTabs, setActiveTab]);
 
   return (
     <AppShell

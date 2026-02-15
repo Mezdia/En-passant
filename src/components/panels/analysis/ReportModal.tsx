@@ -4,7 +4,6 @@ import { enginesAtom, gameHistoryTriggerAtom, referenceDbAtom } from "@/state/at
 import { getGameStats } from "@/utils/chess";
 import type { LocalEngine } from "@/utils/engines";
 import { updateGameHistoryByTab } from "@/utils/gameHistory";
-import { unwrap } from "@/utils/unwrap";
 import {
   Button,
   Checkbox,
@@ -17,7 +16,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { memo, useContext, useEffect } from "react";
+import { memo, useContext, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useStore } from "zustand";
 
@@ -49,8 +48,9 @@ function ReportModal({
 
   const referenceDb = useAtomValue(referenceDbAtom);
   const engines = useAtomValue(enginesAtom);
-  const localEngines = engines.filter(
-    (e): e is LocalEngine => e.type === "local",
+  const localEngines = useMemo(
+    () => engines.filter((e): e is LocalEngine => e.type === "local"),
+    [engines],
   );
   const store = useContext(TreeStateContext)!;
   const addAnalysis = useStore(store, (s) => s.addAnalysis);
@@ -75,18 +75,18 @@ function ReportModal({
       localEngines.length === 0
         ? ""
         : !reportSettings.engine ||
-            !localEngines.some((l) => l.path === reportSettings.engine)
-          ? localEngines[0].path
+            !localEngines.some((l) => l.id === reportSettings.engine)
+          ? localEngines[0].id
           : reportSettings.engine;
 
     form.setValues({ ...reportSettings, engine });
-  }, [localEngines.length, reportSettings]);
+  }, [localEngines, reportSettings]);
 
   function analyze() {
     setReportSettings(form.values);
     setInProgress(true);
     toggleReportingMode();
-    const engine = localEngines.find((e) => e.path === form.values.engine);
+    const engine = localEngines.find((e) => e.id === form.values.engine);
     const engineSettings = (engine?.settings ?? []).map((s) => ({
       ...s,
       value: s.value?.toString() ?? "",
@@ -99,7 +99,7 @@ function ReportModal({
     commands
       .analyzeGame(
         `report_${tab}`,
-        form.values.engine,
+        engine?.path ?? "",
         form.values.goMode,
         {
           annotateNovelties: form.values.novelty,
@@ -111,14 +111,15 @@ function ReportModal({
         engineSettings,
       )
       .then((analysis) => {
-        const analysisData = unwrap(analysis);
-        addAnalysis(analysisData);
-        const stats = getGameStats(store.getState().root);
-        updateGameHistoryByTab(tab, {
-          whiteAccuracy: stats.whiteAccuracy,
-          blackAccuracy: stats.blackAccuracy,
-        });
-        setGameHistoryTrigger((prev) => prev + 1);
+        if (analysis.status === "ok") {
+          addAnalysis(analysis.data);
+          const stats = getGameStats(store.getState().root);
+          updateGameHistoryByTab(tab, {
+            whiteAccuracy: stats.whiteAccuracy,
+            blackAccuracy: stats.blackAccuracy,
+          });
+          setGameHistoryTrigger((prev) => prev + 1);
+        }
       })
       .finally(() => setInProgress(false));
   }
@@ -139,7 +140,7 @@ function ReportModal({
             data={
               localEngines.map((engine) => {
                 return {
-                  value: engine.path,
+                  value: engine.id,
                   label: engine.name,
                 };
               }) ?? []

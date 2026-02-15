@@ -2,14 +2,17 @@ import { type PuzzleDatabaseInfo, commands } from "@/bindings";
 import {
   activeTabAtom,
   currentPuzzleAtom,
+  currentPuzzleTimerAtom,
   hidePuzzleRatingAtom,
   jumpToNextPuzzleAtom,
   progressivePuzzlesAtom,
   puzzleRatingRangeAtom,
+  puzzleThemeAtom,
   selectedPuzzleDbAtom,
   tabsAtom,
 } from "@/state/atoms";
 import { positionFromFen } from "@/utils/chessops";
+import { formatThemeLabel, formatTime } from "@/utils/format";
 import {
   type Completion,
   type Puzzle,
@@ -19,32 +22,42 @@ import { createTab } from "@/utils/tabs";
 import { defaultTree } from "@/utils/treeReducer";
 import { unwrap } from "@/utils/unwrap";
 import {
+  Accordion,
   ActionIcon,
+  Alert,
+  Badge,
   Button,
-  Center,
-  Checkbox,
   Divider,
   Group,
-  Input,
   Paper,
   Portal,
   RangeSlider,
   ScrollArea,
   Select,
+  SimpleGrid,
   Stack,
   Switch,
   Text,
   Tooltip,
 } from "@mantine/core";
 import { useSessionStorage } from "@mantine/hooks";
-import { IconPlus, IconX, IconZoomCheck } from "@tabler/icons-react";
+import {
+  IconAlertTriangle,
+  IconFlame,
+  IconPlus,
+  IconSettings,
+  IconTrash,
+  IconX,
+  IconZoomCheck,
+} from "@tabler/icons-react";
 import { Chess, parseUci } from "chessops";
 import { parseFen } from "chessops/fen";
 import { useAtom, useSetAtom } from "jotai";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useStore } from "zustand";
 import ChallengeHistory from "../common/ChallengeHistory";
+import ConfirmModal from "../common/ConfirmModal";
 import GameNotation from "../common/GameNotation";
 import MoveControls from "../common/MoveControls";
 import { TreeStateContext } from "../common/TreeStateContext";
@@ -67,6 +80,8 @@ function Puzzles({ id }: { id: string }) {
   const [puzzleDbs, setPuzzleDbs] = useState<PuzzleDatabaseInfo[]>([]);
   const [selectedDb, setSelectedDb] = useAtom(selectedPuzzleDbAtom);
 
+  const [settingsOpened, setSettingsOpened] = useState(false);
+
   useEffect(() => {
     getPuzzleDatabases().then((databases) => {
       setPuzzleDbs(databases);
@@ -75,28 +90,71 @@ function Puzzles({ id }: { id: string }) {
 
   const [ratingRange, setRatingRange] = useAtom(puzzleRatingRangeAtom);
 
+  const [selectedTheme, setSelectedTheme] = useAtom(puzzleThemeAtom);
+  const [availableThemes, setAvailableThemes] = useState<string[]>([]);
+  const [themesTableMissing, setThemesTableMissing] = useState(false);
+
+  useEffect(() => {
+    setSelectedTheme(null);
+    setThemesTableMissing(false);
+
+    if (!selectedDb) {
+      setAvailableThemes([]);
+      return;
+    }
+
+    commands.getPuzzleThemes(selectedDb).then((res) => {
+      if (res.status === "ok") {
+        setAvailableThemes(res.data);
+        return;
+      }
+
+      setAvailableThemes([]);
+
+      if (
+        typeof res.error === "string" &&
+        res.error.includes("no such table")
+      ) {
+        setThemesTableMissing(true);
+      }
+    });
+  }, [selectedDb, setSelectedTheme]);
+
   const [jumpToNextPuzzleImmediately, setJumpToNextPuzzleImmediately] =
     useAtom(jumpToNextPuzzleAtom);
 
-  const wonPuzzles = puzzles.filter(
-    (puzzle) => puzzle.completion === "correct",
-  );
-  const lostPuzzles = puzzles.filter(
-    (puzzle) => puzzle.completion === "incorrect",
-  );
-  const averageWonRating =
-    wonPuzzles.reduce((acc, puzzle) => acc + puzzle.rating, 0) /
-    wonPuzzles.length;
-  const averageLostRating =
-    lostPuzzles.reduce((acc, puzzle) => acc + puzzle.rating, 0) /
-    lostPuzzles.length;
+  const wonPuzzles = puzzles.filter((p) => p.completion === "correct");
+  const lostPuzzles = puzzles.filter((p) => p.completion === "incorrect");
+
+  const totalCompleted = wonPuzzles.length + lostPuzzles.length;
+  const accuracy =
+    totalCompleted > 0
+      ? Math.round((wonPuzzles.length / totalCompleted) * 100)
+      : 0;
+
+  let currentStreak = 0;
+  for (let i = puzzles.length - 1; i >= 0; i--) {
+    if (puzzles[i].completion === "correct") currentStreak++;
+    else if (puzzles[i].completion === "incorrect") break;
+  }
+
+  const avgTimeSeconds =
+    wonPuzzles.length > 0
+      ? wonPuzzles.reduce((acc, p) => acc + (p.timeSpent || 0), 0) /
+        wonPuzzles.length /
+        1000
+      : 0;
 
   function setPuzzle(puzzle: { fen: string; moves: string[] }) {
     setFen(puzzle.fen);
     makeMove({ payload: parseUci(puzzle.moves[0])! });
   }
 
+  const solutionAbortRef = useRef<AbortController | null>(null);
+
   function generatePuzzle(db: string) {
+    solutionAbortRef.current?.abort();
+
     let range = ratingRange;
     if (progressive) {
       const rating = puzzles[currentPuzzle]?.rating;
@@ -105,32 +163,89 @@ function Puzzles({ id }: { id: string }) {
         setRatingRange([rating + 50, rating + 100]);
       }
     }
-    commands.getPuzzle(db, range[0], range[1]).then((res) => {
-      const puzzle = unwrap(res);
-      const newPuzzle: Puzzle = {
-        ...puzzle,
-        moves: puzzle.moves.split(" "),
-        completion: "incomplete",
-      };
-      setPuzzles((puzzles) => {
-        return [...puzzles, newPuzzle];
+    commands
+      .getPuzzle(db, range[0], range[1], selectedTheme ?? null)
+      .then((res) => {
+        const puzzle = unwrap(res);
+        const newPuzzle: Puzzle = {
+          ...puzzle,
+          moves: puzzle.moves.split(" "),
+          completion: "incomplete",
+        };
+        setPuzzles((puzzles) => {
+          return [...puzzles, newPuzzle];
+        });
+        setCurrentPuzzle(puzzles.length);
+        setPuzzle(newPuzzle);
+        setTimerStart(Date.now());
       });
-      setCurrentPuzzle(puzzles.length);
-      setPuzzle(newPuzzle);
-    });
   }
 
   function changeCompletion(completion: Completion) {
+    const timeSpent = timerStart !== null ? Date.now() - timerStart : 0;
+    const puzzle = puzzles[currentPuzzle];
     setPuzzles((puzzles) => {
       puzzles[currentPuzzle].completion = completion;
+      puzzles[currentPuzzle].timeSpent = timeSpent;
       return [...puzzles];
     });
+    setTimerStart(null);
+
+    if (selectedDb && puzzle?.id) {
+      commands.getThemesForPuzzle(selectedDb, puzzle.id).then((res) => {
+        if (res.status === "ok") {
+          setPuzzles((puzzles) => {
+            puzzles[currentPuzzle].themes = res.data;
+            return [...puzzles];
+          });
+        }
+      });
+    }
   }
 
   const [addOpened, setAddOpened] = useState(false);
+  const [deleteModalOpened, setDeleteModalOpened] = useState(false);
 
   const [progressive, setProgressive] = useAtom(progressivePuzzlesAtom);
   const [hideRating, setHideRating] = useAtom(hidePuzzleRatingAtom);
+
+  const [timerStart, setTimerStart] = useAtom(currentPuzzleTimerAtom);
+  const [, setTick] = useState(0);
+
+  const elapsedTime = timerStart !== null ? Date.now() - timerStart : 0;
+
+  useEffect(() => {
+    const currentPuzzleData = puzzles[currentPuzzle];
+    if (!currentPuzzleData || currentPuzzleData.completion !== "incomplete") {
+      return;
+    }
+
+    if (timerStart === null) {
+      setTimerStart(Date.now());
+    }
+
+    const displayInterval = setInterval(() => {
+      setTick((t) => t + 1);
+    }, 100);
+
+    const saveInterval = setInterval(() => {
+      if (timerStart !== null) {
+        const elapsed = Date.now() - timerStart;
+        setPuzzles((puzzles) => {
+          if (puzzles[currentPuzzle]?.completion === "incomplete") {
+            puzzles[currentPuzzle].timeSpent = elapsed;
+            return [...puzzles];
+          }
+          return puzzles;
+        });
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(displayInterval);
+      clearInterval(saveInterval);
+    };
+  }, [currentPuzzle, puzzles, timerStart, setTimerStart, setPuzzles]);
 
   const [, setTabs] = useAtom(tabsAtom);
   const setActiveTab = useSetAtom(activeTabAtom);
@@ -153,56 +268,52 @@ function Puzzles({ id }: { id: string }) {
         />
       </Portal>
       <Portal target="#topRight" style={{ height: "100%" }}>
-        <Paper h="100%" withBorder p="md">
+        <Paper
+          h="100%"
+          withBorder
+          p="md"
+          style={{
+            overflow: "hidden",
+          }}
+        >
           <AddPuzzle
             puzzleDbs={puzzleDbs}
             opened={addOpened}
             setOpened={setAddOpened}
             setPuzzleDbs={setPuzzleDbs}
           />
-          <Group grow>
-            <div>
-              <Text size="sm" c="dimmed">
-                Puzzle Rating
-              </Text>
-              <Text fw={500} size="xl">
-                {puzzles[currentPuzzle]?.completion === "incomplete"
-                  ? hideRating
-                    ? "?"
-                    : puzzles[currentPuzzle]?.rating
-                  : puzzles[currentPuzzle]?.rating}
-              </Text>
-            </div>
-            {averageWonRating && (
-              <div>
-                <Text size="sm" c="dimmed">
-                  Average Success Rating
-                </Text>
-                <Text fw={500} size="xl">
-                  {averageWonRating.toFixed(0)}
-                </Text>
-              </div>
-            )}
-            {averageLostRating && (
-              <div>
-                <Text size="sm" c="dimmed">
-                  Average Fail Rating
-                </Text>
-                <Text fw={500} size="xl">
-                  {averageLostRating.toFixed(0)}
-                </Text>
-              </div>
-            )}
+          <ConfirmModal
+            title="Delete Puzzle Database"
+            description="Are you sure you want to delete this puzzle database?"
+            opened={deleteModalOpened}
+            onClose={() => setDeleteModalOpened(false)}
+            onConfirm={() => {
+              if (selectedDb) {
+                commands.deletePuzzleDatabase(selectedDb).then(() => {
+                  setPuzzleDbs((dbs) =>
+                    dbs.filter((db) => db.path !== selectedDb),
+                  );
+                  setSelectedDb(null);
+                  setPuzzles([]);
+                  reset();
+                  setTimerStart(null);
+                });
+              }
+              setDeleteModalOpened(false);
+            }}
+          />
+          <Group justify="space-between" pb="sm">
             <Select
+              style={{ flex: 1 }}
               data={puzzleDbs
                 .map((p) => ({
                   label: p.title.split(".db3")[0],
                   value: p.path,
                 }))
-                .concat({ label: "+ Add new", value: "add" })}
+                .concat({ label: `+ ${t("Common.AddNew")}`, value: "add" })}
               value={selectedDb}
               clearable={false}
-              placeholder="Select database"
+              placeholder={t("Puzzle.SelectDatabase")}
               onChange={(v) => {
                 if (v === "add") {
                   setAddOpened(true);
@@ -211,58 +322,183 @@ function Puzzles({ id }: { id: string }) {
                 }
               }}
             />
+            <Group gap="xs">
+              <Tooltip label="Delete database">
+                <ActionIcon
+                  color="red"
+                  disabled={!selectedDb}
+                  onClick={() => setDeleteModalOpened(true)}
+                >
+                  <IconTrash size={20} />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip label={t("SideBar.Settings")}>
+                <ActionIcon onClick={() => setSettingsOpened((o) => !o)}>
+                  <IconSettings size={20} />
+                </ActionIcon>
+              </Tooltip>
+            </Group>
           </Group>
-          <Divider my="sm" />
-          <Group>
-            <Input.Wrapper label="Rating Range" flex={1}>
-              <RangeSlider
-                min={600}
-                max={2800}
-                value={ratingRange}
-                onChange={setRatingRange}
-                disabled={progressive}
-              />
-            </Input.Wrapper>
-            <Input.Wrapper label="Progressive">
-              <Center>
-                <Checkbox
-                  checked={progressive}
-                  onChange={(event) =>
-                    setProgressive(event.currentTarget.checked)
-                  }
-                />
-              </Center>
-            </Input.Wrapper>
-            <Input.Wrapper label="Hide Rating">
-              <Center>
-                <Checkbox
-                  checked={hideRating}
-                  onChange={(event) =>
-                    setHideRating(event.currentTarget.checked)
-                  }
-                />
-              </Center>
-            </Input.Wrapper>
-          </Group>
-          <Divider my="sm" />
-          <Group justify="space-between">
-            {turnToMove && (
-              <Text fz="1.75rem">
-                {turnToMove === "white" ? "Black " : "White "}
-                To Move
+          <Accordion
+            value={settingsOpened ? "settings" : null}
+            onChange={(v) => setSettingsOpened(v === "settings")}
+            mb="sm"
+          >
+            <Accordion.Item value="settings">
+              <Accordion.Panel>
+                <Stack gap="md">
+                  {themesTableMissing && (
+                    <Alert
+                      icon={<IconAlertTriangle />}
+                      title="Puzzle database outdated"
+                      color="yellow"
+                    >
+                      This database does not support themes. Update to the
+                      latest puzzle DB.
+                    </Alert>
+                  )}
+                  <div>
+                    <Text size="sm" fw={500} mb={4}>
+                      {t("Puzzle.RatingRange")}
+                    </Text>
+                    <RangeSlider
+                      min={600}
+                      my="md"
+                      max={2800}
+                      value={ratingRange}
+                      onChange={setRatingRange}
+                      disabled={progressive}
+                      marks={[
+                        { value: 600, label: "600" },
+                        { value: 1700, label: "1700" },
+                        { value: 2800, label: "2800" },
+                      ]}
+                    />
+                  </div>
+                  <Select
+                    label="Theme"
+                    placeholder="All themes"
+                    data={availableThemes.map((theme) => ({
+                      label: formatThemeLabel(theme),
+                      value: theme,
+                    }))}
+                    value={selectedTheme}
+                    onChange={setSelectedTheme}
+                    clearable
+                    searchable
+                  />
+                  <SimpleGrid cols={2} spacing="sm">
+                    <Switch
+                      label={t("Puzzle.Progressive")}
+                      description={t("Puzzle.Progressive.Desc")}
+                      checked={progressive}
+                      onChange={(event) =>
+                        setProgressive(event.currentTarget.checked)
+                      }
+                    />
+                    <Switch
+                      label={t("Puzzle.HideRating")}
+                      description={t("Puzzle.HideRating.Desc")}
+                      checked={hideRating}
+                      onChange={(event) =>
+                        setHideRating(event.currentTarget.checked)
+                      }
+                    />
+                    <Switch
+                      label={t("Puzzle.JumpToNextPuzzleImmediately")}
+                      description={t("Puzzle.JumpToNextPuzzleImmediately.Desc")}
+                      checked={jumpToNextPuzzleImmediately}
+                      onChange={(event) =>
+                        setJumpToNextPuzzleImmediately(
+                          event.currentTarget.checked,
+                        )
+                      }
+                    />
+                  </SimpleGrid>
+                </Stack>
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
+          <Group grow>
+            <Paper withBorder p="xs">
+              <Text size="xs" c="dimmed">
+                {t("Puzzle.Rating")}
               </Text>
-            )}
-            <Group>
-              <Switch
-                defaultChecked
-                onChange={(event) =>
-                  setJumpToNextPuzzleImmediately(event.currentTarget.checked)
-                }
-                checked={jumpToNextPuzzleImmediately}
-                label={t("Puzzle.JumpToNextPuzzleImmediately")}
-              />
+              <Text fw={700} size="lg">
+                {puzzles[currentPuzzle]?.completion === "incomplete"
+                  ? hideRating
+                    ? "?"
+                    : puzzles[currentPuzzle]?.rating
+                  : puzzles[currentPuzzle]?.rating || "-"}
+              </Text>
+            </Paper>
 
-              <Tooltip label="New Puzzle">
+            <Paper withBorder p="xs">
+              <Text size="xs" c="dimmed">
+                {t("Puzzle.Time")}
+              </Text>
+              <Text fw={700} size="lg" ff="monospace">
+                {puzzles[currentPuzzle]?.completion === "incomplete"
+                  ? formatTime(elapsedTime)
+                  : puzzles[currentPuzzle]?.timeSpent
+                    ? formatTime(puzzles[currentPuzzle].timeSpent!)
+                    : "-"}
+              </Text>
+            </Paper>
+
+            <Paper withBorder p="xs">
+              <Text size="xs" c="dimmed">
+                {t("Puzzle.Accuracy")}
+              </Text>
+              <Text fw={700} size="lg" c={accuracy >= 50 ? "teal" : "orange"}>
+                {accuracy}%
+              </Text>
+            </Paper>
+
+            <Paper withBorder p="xs">
+              <Text size="xs" c="dimmed">
+                {t("Puzzle.Streak")}
+              </Text>
+              <Group gap={2}>
+                <Text fw={700} size="lg">
+                  {currentStreak}
+                </Text>
+                <IconFlame size={20} color="orange" />
+              </Group>
+            </Paper>
+
+            {avgTimeSeconds > 0 && (
+              <Paper withBorder p="xs">
+                <Text size="xs" c="dimmed">
+                  {t("Puzzle.AvgTime")}
+                </Text>
+                <Text fw={700} size="lg">
+                  {avgTimeSeconds.toFixed(1)}s
+                </Text>
+              </Paper>
+            )}
+          </Group>
+          <Divider my="sm" />
+          {puzzles[currentPuzzle]?.completion !== "incomplete" &&
+            (puzzles[currentPuzzle]?.themes?.length ?? 0) > 0 && (
+              <Group gap="xs" mb="sm">
+                {puzzles[currentPuzzle]?.themes?.map((theme) => (
+                  <Badge key={theme} variant="light" size="sm">
+                    {formatThemeLabel(theme)}
+                  </Badge>
+                ))}
+              </Group>
+            )}
+          <Group justify="space-between">
+            <Text fz="1.75rem" fw={500}>
+              {!turnToMove
+                ? ""
+                : turnToMove === "white"
+                  ? t("Fen.BlackToMove")
+                  : t("Fen.WhiteToMove")}
+            </Text>
+            <Group gap="xs">
+              <Tooltip label={t("Puzzle.NewPuzzle")}>
                 <ActionIcon
                   disabled={!selectedDb}
                   onClick={() => generatePuzzle(selectedDb!)}
@@ -270,7 +506,7 @@ function Puzzles({ id }: { id: string }) {
                   <IconPlus />
                 </ActionIcon>
               </Tooltip>
-              <Tooltip label="Analyze Position">
+              <Tooltip label={t("Puzzle.AnalyzePosition")}>
                 <ActionIcon
                   disabled={!selectedDb}
                   onClick={() =>
@@ -286,9 +522,8 @@ function Puzzles({ id }: { id: string }) {
                         ...defaultTree().headers,
                         fen: puzzles[currentPuzzle]?.fen,
                         orientation:
-                          Chess.fromSetup(
-                            parseFen(puzzles[currentPuzzle].fen).unwrap(),
-                          ).unwrap().turn === "white"
+                          parseFen(puzzles[currentPuzzle].fen).unwrap().turn ===
+                          "white"
                             ? "black"
                             : "white",
                       },
@@ -298,11 +533,12 @@ function Puzzles({ id }: { id: string }) {
                   <IconZoomCheck />
                 </ActionIcon>
               </Tooltip>
-              <Tooltip label="Clear Session">
+              <Tooltip label={t("Puzzle.ClearSession")}>
                 <ActionIcon
                   onClick={() => {
                     setPuzzles([]);
                     reset();
+                    setTimerStart(null);
                   }}
                 >
                   <IconX />
@@ -310,17 +546,22 @@ function Puzzles({ id }: { id: string }) {
               </Tooltip>
             </Group>
           </Group>
-
           <Button
             mt="sm"
             variant="light"
+            fullWidth
             onClick={async () => {
+              solutionAbortRef.current?.abort();
+              const abortController = new AbortController();
+              solutionAbortRef.current = abortController;
+
               const curPuzzle = puzzles[currentPuzzle];
               if (curPuzzle.completion === "incomplete") {
                 changeCompletion("incorrect");
               }
               goToStart();
               for (let i = 0; i < curPuzzle.moves.length; i++) {
+                if (abortController.signal.aborted) break;
                 makeMove({
                   payload: parseUci(curPuzzle.moves[i])!,
                   mainline: true,
@@ -330,7 +571,7 @@ function Puzzles({ id }: { id: string }) {
             }}
             disabled={puzzles.length === 0}
           >
-            View Solution
+            {t("Puzzle.ViewSolution")}
           </Button>
         </Paper>
       </Portal>
@@ -345,8 +586,14 @@ function Puzzles({ id }: { id: string }) {
                 }))}
                 current={currentPuzzle}
                 select={(i) => {
+                  solutionAbortRef.current?.abort();
                   setCurrentPuzzle(i);
                   setPuzzle(puzzles[i]);
+                  if (puzzles[i].completion === "incomplete") {
+                    setTimerStart(Date.now() - (puzzles[i].timeSpent || 0));
+                  } else {
+                    setTimerStart(null);
+                  }
                 }}
               />
             </ScrollArea>

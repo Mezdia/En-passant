@@ -142,8 +142,6 @@ export const ru_RU = {
     "Home.Card.Chess960.Desc": "Играть в шахматы Фишера",
     "Home.Card.Chess960.Button": "Играть",
 
-    "Board.Action.TogglePawnStructureView":
-      "Переключить отображение структуры пешек",
     "Board.Action.TakeSnapshot": "Сделать скриншот",
     "Board.Action.AnalyzeGame": "Анализировать партию",
     "Board.Action.PlayFromHere": "Играть отсюда",
