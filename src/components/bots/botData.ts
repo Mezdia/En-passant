@@ -67,7 +67,8 @@ export const BEGINNER_BOTS: Bot[] = [
     namePersian: "مارتین",
     rating: 250,
     descriptionKey: "Bots.Bot.Martin.Desc",
-    descriptionEnglish: "A friendly beginner bot that has just learned the rules.",
+    descriptionEnglish:
+      "A friendly beginner bot that has just learned the rules.",
     descriptionPersian: "ربات مبتدی دوستانه که تازه قوانین را یاد گرفته است.",
     category: "Beginner",
     image: "/bots/beginner/martin.png",
@@ -77,7 +78,7 @@ export const BEGINNER_BOTS: Bot[] = [
       blunderReaction: "oops",
       winReaction: "yay",
       lossReaction: "gg",
-    }
+    },
   },
   {
     id: "wayne",
@@ -146,7 +147,8 @@ export const BEGINNER_BOTS: Bot[] = [
     nameKey: "Bots.Bot.Noel.Name",
     rating: 571,
     descriptionKey: "Bots.Bot.Noel.Desc",
-    descriptionEnglish: "A beginner bot that is a chess enthusiast who learns tactical patterns.",
+    descriptionEnglish:
+      "A beginner bot that is a chess enthusiast who learns tactical patterns.",
     descriptionPersian: "ربات مبتدی کنجکاو که الگوهای تاکتیکی را یاد می‌گیرد.",
     category: "Beginner",
     image: "/bots/beginner/noel.png",
@@ -446,8 +448,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.wendy",
     rating: 1750,
     descriptionKey: "bot.description.wendy",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی پیشرفته با گرایش تهاجمی و توان بالا در تاکتیک‌های موقعیتی؛ مناسب برای بازیکنان میانه‌تاپیشرفته که دنبال تمرین محاسبات تاکتیکی هستند.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی پیشرفته با گرایش تهاجمی و توان بالا در تاکتیک‌های موقعیتی؛ مناسب برای بازیکنان میانه‌تاپیشرفته که دنبال تمرین محاسبات تاکتیکی هستند.",
     category: "Advanced",
     image: "/bots/advanced/wendy.png",
     greeting: "bot.greeting.wendy",
@@ -459,8 +463,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.antonio",
     rating: 1850,
     descriptionKey: "bot.description.antonio",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی با سبک بازی متعادل و استحکام موقعیتی؛ کمتر ریسک‌پذیر و مناسب برای تمرین خط‌مشی‌های پوزیسیونی.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی با سبک بازی متعادل و استحکام موقعیتی؛ کمتر ریسک‌پذیر و مناسب برای تمرین خط‌مشی‌های پوزیسیونی.",
     category: "Advanced",
     image: "/bots/advanced/antonio.png",
     country: "es",
@@ -472,8 +478,10 @@ export const ADVANCED_BOTS: Bot[] = [
     namePersian: "پیر",
     nameKey: "bot.name.pierre",
     rating: 1900,
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی تکنیکی و محاسباتی که به برنامه‌ریزی بلندمدت و اجرای طرح‌های میانه‌بازی توجه دارد؛ مناسب برای تمرین بازی موقعیتی و انتهای بازی.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی تکنیکی و محاسباتی که به برنامه‌ریزی بلندمدت و اجرای طرح‌های میانه‌بازی توجه دارد؛ مناسب برای تمرین بازی موقعیتی و انتهای بازی.",
     descriptionKey: "bot.description.pierre",
     category: "Advanced",
     image: "/bots/advanced/pierre.png",
@@ -487,8 +495,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.pablo",
     rating: 1700,
     descriptionKey: "bot.description.pablo",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی هجومی-تاکتیکی که در موقعیت‌های باز بسیار خطرناک است؛ برای تمرین حمله و محاسبات ترکیبی مناسب است.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی هجومی-تاکتیکی که در موقعیت‌های باز بسیار خطرناک است؛ برای تمرین حمله و محاسبات ترکیبی مناسب است.",
     category: "Advanced",
     image: "/bots/advanced/pablo.png",
     country: "es",
@@ -501,8 +511,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.joel",
     rating: 1800,
     descriptionKey: "bot.description.joel",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی با سبک همه‌کاره که تعادل خوبی بین تاکتیک و پوزیسیون دارد؛ گزینه‌ای مناسب برای بازیکنانی که می‌خواهند جنبه‌های مختلف بازی را تمرین کنند.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی با سبک همه‌کاره که تعادل خوبی بین تاکتیک و پوزیسیون دارد؛ گزینه‌ای مناسب برای بازیکنانی که می‌خواهند جنبه‌های مختلف بازی را تمرین کنند.",
     category: "Advanced",
     image: "/bots/advanced/joel.png",
     greeting: "bot.greeting.joel",
@@ -514,8 +526,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.isabel",
     rating: 1950,
     descriptionKey: "bot.description.isabel",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی با دقت بالا در محاسبات و تسلط بر انتهای بازی؛ برای تمرین تبدیل مزیت به پیروزی و مطالعه انتهای بازی مناسب است.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی با دقت بالا در محاسبات و تسلط بر انتهای بازی؛ برای تمرین تبدیل مزیت به پیروزی و مطالعه انتهای بازی مناسب است.",
     category: "Advanced",
     image: "/bots/advanced/isabel.png",
     country: "es",
@@ -528,8 +542,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.arthur",
     rating: 2000,
     descriptionKey: "bot.description.arthur",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی کلاسیک و ساخت‌یافته که به اصول بنیادین شطرنج پایبند است؛ مناسب برای آشنایی با خطوط اصلی و استراتژی‌های کلاسیک.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی کلاسیک و ساخت‌یافته که به اصول بنیادین شطرنج پایبند است؛ مناسب برای آشنایی با خطوط اصلی و استراتژی‌های کلاسیک.",
     category: "Advanced",
     image: "/bots/advanced/arthur.png",
     country: "gb",
@@ -542,8 +558,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.jonas",
     rating: 1780,
     descriptionKey: "bot.description.jonas",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی منعطف که بین بازی حفاظتی و هجومی تغییر سبک می‌دهد؛ برای بررسی پاسخ‌های مختلف به گشایش‌های متنوع مناسب است.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی منعطف که بین بازی حفاظتی و هجومی تغییر سبک می‌دهد؛ برای بررسی پاسخ‌های مختلف به گشایش‌های متنوع مناسب است.",
     category: "Advanced",
     image: "/bots/advanced/jonas.png",
     country: "se",
@@ -556,8 +574,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.isla",
     rating: 1670,
     descriptionKey: "bot.description.isla",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی که تمایل به بازی باز و پویایی دارد؛ مناسب برای تمرین بازی‌های تاکتیکی و تمرکز بر محاسبات کوتاه‌مدت.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی که تمایل به بازی باز و پویایی دارد؛ مناسب برای تمرین بازی‌های تاکتیکی و تمرکز بر محاسبات کوتاه‌مدت.",
     category: "Advanced",
     image: "/bots/advanced/isla.png",
     greeting: "bot.greeting.isla",
@@ -569,8 +589,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.lorenzo",
     rating: 1820,
     descriptionKey: "bot.description.lorenzo",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی با تاکید بر بازی موقعیتی و مدیریت ساختار پیاده؛ برای تمرین برنامه‌ریزی میانه‌بازی مناسب است.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی با تاکید بر بازی موقعیتی و مدیریت ساختار پیاده؛ برای تمرین برنامه‌ریزی میانه‌بازی مناسب است.",
     category: "Advanced",
     image: "/bots/advanced/lorenzo.png",
     country: "it",
@@ -583,8 +605,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.wally",
     rating: 1600,
     descriptionKey: "bot.description.wally",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی نسبتاً سازگار برای تمرین بازیکنانی که می‌خواهند در برابر بازی‌های غیرمنتظره و اشتباهات حریف تمرین کنند.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی نسبتاً سازگار برای تمرین بازیکنانی که می‌خواهند در برابر بازی‌های غیرمنتظره و اشتباهات حریف تمرین کنند.",
     category: "Advanced",
     image: "/bots/advanced/wally.png",
     greeting: "bot.greeting.wally",
@@ -596,8 +620,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.julia",
     rating: 1880,
     descriptionKey: "bot.description.julia",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی دقیق با توانایی‌های تاکتیکی و استراتژیک؛ مناسب برای تمرین هماهنگی حمله و دفاع در میانه‌بازی.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی دقیق با توانایی‌های تاکتیکی و استراتژیک؛ مناسب برای تمرین هماهنگی حمله و دفاع در میانه‌بازی.",
     category: "Advanced",
     image: "/bots/advanced/julia.png",
     country: "de",
@@ -610,8 +636,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.miguel",
     rating: 1740,
     descriptionKey: "bot.description.miguel",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی هجومی با تمایل به ایجاد پیچیدگی‌های تاکتیکی؛ برای تمرین حملات برنده‌ساز و محاسبات ترکیبی مناسب است.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی هجومی با تمایل به ایجاد پیچیدگی‌های تاکتیکی؛ برای تمرین حملات برنده‌ساز و محاسبات ترکیبی مناسب است.",
     category: "Advanced",
     image: "/bots/advanced/miguel.png",
     country: "es",
@@ -624,8 +652,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.xavier",
     rating: 1920,
     descriptionKey: "bot.description.xavier",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی فنی با تمرکز بر دقت محاسبات و برنامه‌ریزی؛ مناسب برای تمرین بازی‌های پیچیده و حفظ مزیت فنی.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی فنی با تمرکز بر دقت محاسبات و برنامه‌ریزی؛ مناسب برای تمرین بازی‌های پیچیده و حفظ مزیت فنی.",
     category: "Advanced",
     image: "/bots/advanced/xavier.png",
     country: "fr",
@@ -638,8 +668,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.olga",
     rating: 1700,
     descriptionKey: "bot.description.olga",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی که ترکیبی از بازی دفاعی قوی و حملات سریع را ارائه می‌دهد؛ برای تمرین واکنش به تهدیدات ناگهانی مناسب است.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی که ترکیبی از بازی دفاعی قوی و حملات سریع را ارائه می‌دهد؛ برای تمرین واکنش به تهدیدات ناگهانی مناسب است.",
     category: "Advanced",
     image: "/bots/advanced/olga.png",
     country: "ru",
@@ -652,8 +684,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.li",
     rating: 1650,
     descriptionKey: "bot.description.li",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی چابک با تمایل به بازی‌های ترکیبی سریع؛ برای تمرین تاکتیک‌های موقعیتی و محاسبات سریع مناسب است.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی چابک با تمایل به بازی‌های ترکیبی سریع؛ برای تمرین تاکتیک‌های موقعیتی و محاسبات سریع مناسب است.",
     category: "Advanced",
     image: "/bots/advanced/li.png",
     country: "cn",
@@ -666,8 +700,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.charles",
     rating: 1970,
     descriptionKey: "bot.description.charles",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی با سبک کلاسیک و تیز در محاسبات؛ مناسب برای بازیکنانی که می‌خواهند با سبک اصولی و دقیق تمرین کنند.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی با سبک کلاسیک و تیز در محاسبات؛ مناسب برای بازیکنانی که می‌خواهند با سبک اصولی و دقیق تمرین کنند.",
     category: "Advanced",
     image: "/bots/advanced/charles.png",
     country: "gb",
@@ -680,8 +716,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.fatima",
     rating: 1680,
     descriptionKey: "bot.description.fatima",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی چندوجهی با واکنش‌های هوشمندانه به اشتباهات حریف؛ برای تمرین بهره‌برداری از موقعیت‌های کوچک مناسب است.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی چندوجهی با واکنش‌های هوشمندانه به اشتباهات حریف؛ برای تمرین بهره‌برداری از موقعیت‌های کوچک مناسب است.",
     category: "Advanced",
     image: "/bots/advanced/fatima.png",
     greeting: "bot.greeting.fatima",
@@ -693,8 +731,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.manuel",
     rating: 1830,
     descriptionKey: "bot.description.manuel",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی با استحکام پوزیسیونی و توانایی بازی در سطوح میانه تا پیشرفته؛ مناسب برای تمرین ساختارهای پیاده و میانه‌بازی.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی با استحکام پوزیسیونی و توانایی بازی در سطوح میانه تا پیشرفته؛ مناسب برای تمرین ساختارهای پیاده و میانه‌بازی.",
     category: "Advanced",
     image: "/bots/advanced/manuel.png",
     country: "es",
@@ -707,8 +747,10 @@ export const ADVANCED_BOTS: Bot[] = [
     nameKey: "bot.name.oscar",
     rating: 1760,
     descriptionKey: "bot.description.oscar",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رباتی منعطف با قابلیت ایجاد فشار در میانه‌بازی و تبدیل اشتباهات حریف به برتری؛ مناسب برای تمرین فشار مداوم.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رباتی منعطف با قابلیت ایجاد فشار در میانه‌بازی و تبدیل اشتباهات حریف به برتری؛ مناسب برای تمرین فشار مداوم.",
     category: "Advanced",
     image: "/bots/advanced/oscar.png",
     greeting: "bot.greeting.oscar",
@@ -726,8 +768,10 @@ export const MASTER_BOTS: Bot[] = [
     nameKey: "bot.name.nora",
     rating: 2600,
     descriptionKey: "bot.description.nora",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "یک استاد تهاجمی با گرایش به بازی ترکیبی و حملات سریع؛ رفتار آموزشی دارد و پس از هر اشتباه، توضیح مختصر می‌دهد.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "یک استاد تهاجمی با گرایش به بازی ترکیبی و حملات سریع؛ رفتار آموزشی دارد و پس از هر اشتباه، توضیح مختصر می‌دهد.",
     category: "Master",
     image: "/bots/master/nora.png",
     country: "us",
@@ -740,8 +784,10 @@ export const MASTER_BOTS: Bot[] = [
     nameKey: "bot.name.noam",
     rating: 2700,
     descriptionKey: "bot.description.noam",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "استادی محاسبه‌گر و دفاعی که تکیه‌گاه استراتژی طولانی‌مدت است؛ مناسب بازیکنانی که می‌خواهند محاسبات انتهایی را تقویت کنند.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "استادی محاسبه‌گر و دفاعی که تکیه‌گاه استراتژی طولانی‌مدت است؛ مناسب بازیکنانی که می‌خواهند محاسبات انتهایی را تقویت کنند.",
     category: "Master",
     image: "/bots/master/noam.png",
     country: "pl",
@@ -754,8 +800,10 @@ export const MASTER_BOTS: Bot[] = [
     nameKey: "bot.name.ahmed",
     rating: 2550,
     descriptionKey: "bot.description.ahmed",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "استادی متعادل با اولویت کنترل مرکز و بازی پوزیسیونی؛ توضیحات کوتاه‌وکاربردی در مورد اشتباهات می‌دهد.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "استادی متعادل با اولویت کنترل مرکز و بازی پوزیسیونی؛ توضیحات کوتاه‌وکاربردی در مورد اشتباهات می‌دهد.",
     category: "Master",
     image: "/bots/master/ahmed.png",
     country: "eg",
@@ -768,8 +816,10 @@ export const MASTER_BOTS: Bot[] = [
     nameKey: "bot.name.sakura",
     rating: 2500,
     descriptionKey: "bot.description.sakura",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رویکرد خلاقانه و دید تاکتیکی بالا؛ ترکیب‌های غیرمتعارف را دوست دارد و برای تمرین تاکتیک مناسب است.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رویکرد خلاقانه و دید تاکتیکی بالا؛ ترکیب‌های غیرمتعارف را دوست دارد و برای تمرین تاکتیک مناسب است.",
     category: "Master",
     image: "/bots/master/sakura.png",
     country: "jp",
@@ -782,8 +832,10 @@ export const MASTER_BOTS: Bot[] = [
     nameKey: "bot.name.arjun",
     rating: 2650,
     descriptionKey: "bot.description.arjun",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "استادی محکم با مبانی نظری قوی؛ به بازیکنان کمک می‌کند ایده‌های بازی وسط را بهتر درک کنند و پایان‌بازی‌ها را تقویت می‌کند.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "استادی محکم با مبانی نظری قوی؛ به بازیکنان کمک می‌کند ایده‌های بازی وسط را بهتر درک کنند و پایان‌بازی‌ها را تقویت می‌کند.",
     category: "Master",
     image: "/bots/master/arjun.png",
     country: "in",
@@ -796,8 +848,10 @@ export const MASTER_BOTS: Bot[] = [
     nameKey: "bot.name.francis",
     rating: 2620,
     descriptionKey: "bot.description.francis",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رویه‌ای متفکر و حساب‌شده؛ مناسب برای مطالعه بازی‌های استراتژیک و بازنمایی ایده‌های کلاسیک شطرنج.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رویه‌ای متفکر و حساب‌شده؛ مناسب برای مطالعه بازی‌های استراتژیک و بازنمایی ایده‌های کلاسیک شطرنج.",
     category: "Master",
     image: "/bots/master/francis.png",
     country: "fr",
@@ -810,8 +864,10 @@ export const MASTER_BOTS: Bot[] = [
     nameKey: "bot.name.sofia",
     rating: 2580,
     descriptionKey: "bot.description.sofia",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "سبک بازی انعطاف‌پذیر؛ ترکیبی از برنامه‌ریزی پوزیسیونی و واکنش‌های تاکتیکی سریع، مناسب بازیکنان میانی-پیشرفته.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "سبک بازی انعطاف‌پذیر؛ ترکیبی از برنامه‌ریزی پوزیسیونی و واکنش‌های تاکتیکی سریع، مناسب بازیکنان میانی-پیشرفته.",
     category: "Master",
     image: "/bots/master/sofia.png",
     country: "bg",
@@ -824,8 +880,10 @@ export const MASTER_BOTS: Bot[] = [
     nameKey: "bot.name.alexander",
     rating: 2680,
     descriptionKey: "bot.description.alexander",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "استاد بزرگ با سبک جهان‌شمول؛ بازی او دقیق و بدون ریسک‌های غیرضروری است و برای یادگیری بازی استاندارد ایده‌آل است.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "استاد بزرگ با سبک جهان‌شمول؛ بازی او دقیق و بدون ریسک‌های غیرضروری است و برای یادگیری بازی استاندارد ایده‌آل است.",
     category: "Master",
     image: "/bots/master/alexander.png",
     country: "ru",
@@ -838,8 +896,10 @@ export const MASTER_BOTS: Bot[] = [
     nameKey: "bot.name.luke",
     rating: 2490,
     descriptionKey: "bot.description.luke",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "رویکرد تهاجمی‌تر نسبت به میانگین؛ برای تمرین حملات و موقعیت‌های باز مناسب است.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "رویکرد تهاجمی‌تر نسبت به میانگین؛ برای تمرین حملات و موقعیت‌های باز مناسب است.",
     category: "Master",
     image: "/bots/master/luke.png",
     country: "gb",
@@ -852,8 +912,10 @@ export const MASTER_BOTS: Bot[] = [
     nameKey: "bot.name.wei",
     rating: 2630,
     descriptionKey: "bot.description.wei",
-    descriptionEnglish: "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
-    descriptionPersian: "استادی سریع‌العمل با تبحر در تاکتیک‌های باز؛ مناسب تمرین تاکتیک‌های پیچیده و موقعیت‌های پویا.",
+    descriptionEnglish:
+      "An advanced bot with a focus on tactical play and high tactical skills; suitable for intermediate to advanced players looking to improve their tactical skills.",
+    descriptionPersian:
+      "استادی سریع‌العمل با تبحر در تاکتیک‌های باز؛ مناسب تمرین تاکتیک‌های پیچیده و موقعیت‌های پویا.",
     category: "Master",
     image: "/bots/master/wei.png",
     country: "cn",
@@ -871,8 +933,10 @@ export const CHAMPION_BOTS: Bot[] = [
     namePersian: "ایریل پاورز",
     nameKey: "bot.name.Aerial-Powers-BOT",
     rating: 2500,
-    descriptionEnglish: "Enjoy a friendly game of computer chess with Aerial Powers. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
-    descriptionPersian: "در یک بازی دوستانه شطرنج کامپیوتری با ایریال پاورز شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
+    descriptionEnglish:
+      "Enjoy a friendly game of computer chess with Aerial Powers. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
+    descriptionPersian:
+      "در یک بازی دوستانه شطرنج کامپیوتری با ایریال پاورز شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
     descriptionKey: "bot.description.Aerial-Powers-BOT",
     category: "Champions",
     image: "/bots/champions/aerial-powers-bot.png",
@@ -884,8 +948,10 @@ export const CHAMPION_BOTS: Bot[] = [
     namePersian: "ژوستین رید",
     nameKey: "bot.name.Justin-Reid-BOT",
     rating: 2500,
-    descriptionEnglish: "Enjoy a friendly game of computer chess with Justin Reid. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
-    descriptionPersian: "در یک بازی دوستانه شطرنج کامپیوتری با ژوستین رید شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
+    descriptionEnglish:
+      "Enjoy a friendly game of computer chess with Justin Reid. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
+    descriptionPersian:
+      "در یک بازی دوستانه شطرنج کامپیوتری با ژوستین رید شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
     descriptionKey: "bot.description.Justin-Reid-BOT",
     category: "Champions",
     image: "/bots/champions/justin-reid-bot.png",
@@ -897,8 +963,10 @@ export const CHAMPION_BOTS: Bot[] = [
     namePersian: "ژوییو واتو",
     nameKey: "bot.name.JosephVottoBot",
     rating: 2500,
-    descriptionEnglish: "Enjoy a friendly game of computer chess with Joey Votto. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
-    descriptionPersian: "در یک بازی دوستانه شطرنج کامپیوتری با ژوییو واتو شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
+    descriptionEnglish:
+      "Enjoy a friendly game of computer chess with Joey Votto. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
+    descriptionPersian:
+      "در یک بازی دوستانه شطرنج کامپیوتری با ژوییو واتو شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
     descriptionKey: "bot.description.JosephVottoBot",
     category: "Champions",
     image: "/bots/champions/josephvottobot.png",
@@ -910,8 +978,10 @@ export const CHAMPION_BOTS: Bot[] = [
     namePersian: "لری فیتزجرالد",
     nameKey: "bot.name.LarryFitzgeraldBot",
     rating: 2500,
-    descriptionEnglish: "Enjoy a friendly game of computer chess with Larry Fitzgerald. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
-    descriptionPersian: "در یک بازی دوستانه شطرنج کامپیوتری با لری فیتزجرالد شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
+    descriptionEnglish:
+      "Enjoy a friendly game of computer chess with Larry Fitzgerald. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
+    descriptionPersian:
+      "در یک بازی دوستانه شطرنج کامپیوتری با لری فیتزجرالد شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
     descriptionKey: "bot.description.LarryFitzgeraldBot",
     category: "Champions",
     image: "/bots/champions/larryfitzgeraldbot.png",
@@ -923,8 +993,10 @@ export const CHAMPION_BOTS: Bot[] = [
     namePersian: "جایلن براون",
     nameKey: "bot.name.jaylen-brown",
     rating: 2500,
-    descriptionEnglish: "Enjoy a friendly game of computer chess with Jaylen Brown. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
-    descriptionPersian: "در یک بازی دوستانه شطرنج کامپیوتری با جایلن براون شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
+    descriptionEnglish:
+      "Enjoy a friendly game of computer chess with Jaylen Brown. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
+    descriptionPersian:
+      "در یک بازی دوستانه شطرنج کامپیوتری با جایلن براون شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
     descriptionKey: "bot.description.jaylen-brown",
     category: "Champions",
     image: "/bots/champions/jaylen-brown.png",
@@ -936,8 +1008,10 @@ export const CHAMPION_BOTS: Bot[] = [
     namePersian: "دروی ترانکويل",
     nameKey: "bot.name.Drue-Tranquill-BOT",
     rating: 2500,
-    descriptionEnglish: "Enjoy a friendly game of computer chess with Drue Tranquill. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
-    descriptionPersian: "در یک بازی دوستانه شطرنج کامپیوتری با دروی ترانکويل شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
+    descriptionEnglish:
+      "Enjoy a friendly game of computer chess with Drue Tranquill. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
+    descriptionPersian:
+      "در یک بازی دوستانه شطرنج کامپیوتری با دروی ترانکويل شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
     descriptionKey: "bot.description.Drue-Tranquill-BOT",
     category: "Champions",
     image: "/bots/champions/drue-tranquill-bot.png",
@@ -949,8 +1023,10 @@ export const CHAMPION_BOTS: Bot[] = [
     namePersian: "گوردون هیوارد",
     nameKey: "bot.name.GordonHaywardBot",
     rating: 2500,
-    descriptionEnglish: "Enjoy a friendly game of computer chess with Gordon Hayward. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
-    descriptionPersian: "در یک بازی دوستانه شطرنج کامپیوتری با گوردون هیوارد شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
+    descriptionEnglish:
+      "Enjoy a friendly game of computer chess with Gordon Hayward. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
+    descriptionPersian:
+      "در یک بازی دوستانه شطرنج کامپیوتری با گوردون هیوارد شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
     descriptionKey: "bot.description.GordonHaywardBot",
     category: "Champions",
     image: "/bots/champions/gordonhaywardbot.png",
@@ -962,8 +1038,10 @@ export const CHAMPION_BOTS: Bot[] = [
     namePersian: "چیدوب آوزی",
     nameKey: "bot.name.chidobe-awuziebot",
     rating: 2500,
-    descriptionEnglish: "Enjoy a friendly game of computer chess with Chidobe Awuzie. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
-    descriptionPersian: "در یک بازی دوستانه شطرنج کامپیوتری با چیدوب آوزی شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
+    descriptionEnglish:
+      "Enjoy a friendly game of computer chess with Chidobe Awuzie. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
+    descriptionPersian:
+      "در یک بازی دوستانه شطرنج کامپیوتری با چیدوب آوزی شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
     descriptionKey: "bot.description.chidobe-awuziebot",
     category: "Champions",
     image: "/bots/champions/chidobe-awuziebot.png",
@@ -975,8 +1053,10 @@ export const CHAMPION_BOTS: Bot[] = [
     namePersian: "کریستین پولیسیچ",
     nameKey: "bot.name.christian-pulisic-bot",
     rating: 2500,
-    descriptionEnglish: "Enjoy a friendly game of computer chess with Christian Pulisic. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
-    descriptionPersian: "در یک بازی دوستانه شطرنج کامپیوتری با کریستین پولیسیچ شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
+    descriptionEnglish:
+      "Enjoy a friendly game of computer chess with Christian Pulisic. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
+    descriptionPersian:
+      "در یک بازی دوستانه شطرنج کامپیوتری با کریستین پولیسیچ شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
     descriptionKey: "bot.description.christian-pulisic-bot",
     category: "Champions",
     image: "/bots/champions/christian-pulisic-bot.png",
@@ -988,8 +1068,10 @@ export const CHAMPION_BOTS: Bot[] = [
     namePersian: "جامی جاکوزی جر",
     nameKey: "bot.name.jaime-jaquez-jr-BOT",
     rating: 2500,
-    descriptionEnglish: "Enjoy a friendly game of computer chess with Jaime Jaquez Jr.. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
-    descriptionPersian: "در یک بازی دوستانه شطرنج کامپیوتری با جامی جاکوزی جر شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
+    descriptionEnglish:
+      "Enjoy a friendly game of computer chess with Jaime Jaquez Jr.. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
+    descriptionPersian:
+      "در یک بازی دوستانه شطرنج کامپیوتری با جامی جاکوزی جر شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
     descriptionKey: "bot.description.jaime-jaquez-jr-BOT",
     category: "Champions",
     image: "/bots/champions/jaime-jaquez-jr-bot.png",
@@ -1001,8 +1083,10 @@ export const CHAMPION_BOTS: Bot[] = [
     namePersian: "دریل موری",
     nameKey: "bot.name.DarylMoreyBot",
     rating: 2500,
-    descriptionEnglish: "Enjoy a friendly game of computer chess with Daryl Morey. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
-    descriptionPersian: "در یک بازی دوستانه شطرنج کامپیوتری با دریلی موری شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
+    descriptionEnglish:
+      "Enjoy a friendly game of computer chess with Daryl Morey. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
+    descriptionPersian:
+      "در یک بازی دوستانه شطرنج کامپیوتری با دریلی موری شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
     descriptionKey: "bot.description.DarylMoreyBot",
     category: "Champions",
     image: "/bots/champions/darylmoreybot.png",
@@ -1014,8 +1098,10 @@ export const CHAMPION_BOTS: Bot[] = [
     namePersian: "لوک اِی‌آی",
     nameKey: "bot.name.LukAIbot",
     rating: 2500,
-    descriptionEnglish: "Enjoy a friendly game of computer chess with Luk AI. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
-    descriptionPersian: "در یک بازی دوستانه شطرنج کامپیوتری با لوک اِی‌آی شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
+    descriptionEnglish:
+      "Enjoy a friendly game of computer chess with Luk AI. Have a fun and engaging chess experience and see whether you can win vs. the bot.",
+    descriptionPersian:
+      "در یک بازی دوستانه شطرنج کامپیوتری با لوک اِی‌آی شرکت کنید. تجربه‌ای سرگرم‌کننده و جذاب از شطرنج داشته باشید و ببینید آیا می‌توانید این ربات را شکست دهید.",
     descriptionKey: "bot.description.LukAIbot",
     category: "Champions",
     image: "/bots/champions/lukAIbot.png",
@@ -1033,8 +1119,10 @@ export const MUSICIAN_BOTS: Bot[] = [
     namePersian: "Thomas Mars",
     nameKey: "bot.thomas_mars.name",
     rating: 2000,
-    descriptionEnglish: "Thomas Mars, the main singer of the French indie-pop/rap group Phoenix. Known for his melodic voice and precise melodies, a central role in the group's works and multiple artistic collaborations in contemporary music.",
-    descriptionPersian: "توماس مارس، خوانندهٔ اصلی گروه ایندی-پاپ/راک فرانسوی Phoenix. شناخته‌شده برای صدای ملایم و ملودی‌های دقیق، نقش محوری در آثار گروه و همکاری‌های هنری متعدد در موسیقی معاصر.",
+    descriptionEnglish:
+      "Thomas Mars, the main singer of the French indie-pop/rap group Phoenix. Known for his melodic voice and precise melodies, a central role in the group's works and multiple artistic collaborations in contemporary music.",
+    descriptionPersian:
+      "توماس مارس، خوانندهٔ اصلی گروه ایندی-پاپ/راک فرانسوی Phoenix. شناخته‌شده برای صدای ملایم و ملودی‌های دقیق، نقش محوری در آثار گروه و همکاری‌های هنری متعدد در موسیقی معاصر.",
     descriptionKey: "bot.thomas_mars.description",
     category: "Musicians",
     image: "/bots/musicians/thomasmarsbot.png",
@@ -1047,8 +1135,10 @@ export const MUSICIAN_BOTS: Bot[] = [
     namePersian: "Steve Aoki",
     nameKey: "bot.steve_aoki.name",
     rating: 2000,
-    descriptionEnglish: "Steve Aoki, the main singer of the French indie-pop/rap group Phoenix. Known for his melodic voice and precise melodies, a central role in the group's works and multiple artistic collaborations in contemporary music.",
-    descriptionPersian: "استیو آوکی، دی‌جی و تهیه‌کنندهٔ موسیقی الکترونیک آمریکایی و بنیان‌گذار لیبل Dim Mak. مشهور به اجراهای پرانرژی، همکاری با هنرمندان گوناگون و رفتارهای نمایشی در سن مثل پرتاب کیک در کنسرت‌ها.",
+    descriptionEnglish:
+      "Steve Aoki, the main singer of the French indie-pop/rap group Phoenix. Known for his melodic voice and precise melodies, a central role in the group's works and multiple artistic collaborations in contemporary music.",
+    descriptionPersian:
+      "استیو آوکی، دی‌جی و تهیه‌کنندهٔ موسیقی الکترونیک آمریکایی و بنیان‌گذار لیبل Dim Mak. مشهور به اجراهای پرانرژی، همکاری با هنرمندان گوناگون و رفتارهای نمایشی در سن مثل پرتاب کیک در کنسرت‌ها.",
     descriptionKey: "bot.steve_aoki.description",
     category: "Musicians",
     image: "/bots/musicians/steve-aoki-bot.png",
@@ -1061,8 +1151,10 @@ export const MUSICIAN_BOTS: Bot[] = [
     namePersian: "لاجیک",
     nameKey: "bot.logic.name",
     rating: 2000,
-    descriptionEnglish: "Logic, the main singer of the French indie-pop/rap group Phoenix. Known for his melodic voice and precise melodies, a central role in the group's works and multiple artistic collaborations in contemporary music.",
-    descriptionPersian: "لاجیک، رپر و خوانندهٔ آمریکایی شناخته شده برای فلوهای سریع، روایت های شخصی در ترانه ها و آلبوم های پُرطرفدار که عناصر هیپ هاپ کلاسیک و معاصر را ترکیب می کنند.",
+    descriptionEnglish:
+      "Logic, the main singer of the French indie-pop/rap group Phoenix. Known for his melodic voice and precise melodies, a central role in the group's works and multiple artistic collaborations in contemporary music.",
+    descriptionPersian:
+      "لاجیک، رپر و خوانندهٔ آمریکایی شناخته شده برای فلوهای سریع، روایت های شخصی در ترانه ها و آلبوم های پُرطرفدار که عناصر هیپ هاپ کلاسیک و معاصر را ترکیب می کنند.",
     descriptionKey: "bot.logic.description",
     category: "Musicians",
     image: "/bots/musicians/logic-bot.png",
@@ -1075,8 +1167,10 @@ export const MUSICIAN_BOTS: Bot[] = [
     namePersian: "والوهای",
     nameKey: "bot.wallows.name",
     rating: 2000,
-    descriptionEnglish: "Wallows, an indie-pop/rap group from Los Angeles, known for their melodic voice and precise melodies, a central role in the group's works and multiple artistic collaborations in contemporary music.",
-    descriptionPersian: "والوهای، گروه ایندی راک/پاپ آمریکایی از لس-آنجلس، شناخته شده برای آهنگ های ملودیک، فضاسازی نوستالژیک و حضور باثبات در صحنه موسیقی مستقل معاصر.",
+    descriptionEnglish:
+      "Wallows, an indie-pop/rap group from Los Angeles, known for their melodic voice and precise melodies, a central role in the group's works and multiple artistic collaborations in contemporary music.",
+    descriptionPersian:
+      "والوهای، گروه ایندی راک/پاپ آمریکایی از لس-آنجلس، شناخته شده برای آهنگ های ملودیک، فضاسازی نوستالژیک و حضور باثبات در صحنه موسیقی مستقل معاصر.",
     descriptionKey: "bot.wallows.description",
     category: "Musicians",
     image: "/bots/musicians/wallows-bot.png",
@@ -1089,14 +1183,16 @@ export const MUSICIAN_BOTS: Bot[] = [
 // TOP PLAYERS (Historical/Famous)
 // ============================================================
 export const TOP_PLAYER_BOTS: Bot[] = [
-    {
+  {
     id: "world-champion-carlsen",
     nameEnglish: "Magnus Carlsen",
     namePersian: "مگنوس",
     nameKey: "bot.carlsen.name",
     rating: 2882,
-    descriptionEnglish: "Magnus Carlsen, a Norwegian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "مگنوس کارلسن — استاد بزرگ نروژی و قهرمان جهان؛ یکی از قدرتمندترین بازیکنان تاریخ معاصر که بات نمایانگر سبک همه‌جانبه و درک موقعیتی عمیق او است. )",
+    descriptionEnglish:
+      "Magnus Carlsen, a Norwegian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "مگنوس کارلسن — استاد بزرگ نروژی و قهرمان جهان؛ یکی از قدرتمندترین بازیکنان تاریخ معاصر که بات نمایانگر سبک همه‌جانبه و درک موقعیتی عمیق او است. )",
     descriptionKey: "bot.carlsen.description",
     category: "TopPlayers",
     image: "/bots/top_players/world-champion-carlsen.png",
@@ -1110,8 +1206,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "علیرضا فیروزجا",
     nameKey: "bot.firouzja.name",
     rating: 2804,
-    descriptionEnglish: "Firouzja, an Iranian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games. ",
-    descriptionPersian: "نابغه شطرنج متولد ۱۳۸۲ ایران، ساکن فرانسه؛ جوان‌ترین بازیکن تاریخ با ریتینگ بالای ۲۸۰۰ و مدعی جدی قهرمانی جهان.",
+    descriptionEnglish:
+      "Firouzja, an Iranian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games. ",
+    descriptionPersian:
+      "نابغه شطرنج متولد ۱۳۸۲ ایران، ساکن فرانسه؛ جوان‌ترین بازیکن تاریخ با ریتینگ بالای ۲۸۰۰ و مدعی جدی قهرمانی جهان.",
     descriptionKey: "bot.firouzja.description",
     category: "TopPlayers",
     image: "/bots/top_players/firouzjaBot.png",
@@ -1125,8 +1223,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "هیکارو ناکامورا",
     nameKey: "bot.hikaru.name",
     rating: 2775,
-    descriptionEnglish: "Hikaru Nakamura, a US grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "هیکارو ناکامورا، استاد بزرگ (GM) آمریکایی، متخصص شطرنج سریع و بلیتس؛ شناخته شده برای سبک تهاجمی و حضور گسترده در بازی های آنلاین. (رتبه عددی تقریباً نشان دهنده توانایی بات است.)",
+    descriptionEnglish:
+      "Hikaru Nakamura, a US grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "هیکارو ناکامورا، استاد بزرگ (GM) آمریکایی، متخصص شطرنج سریع و بلیتس؛ شناخته شده برای سبک تهاجمی و حضور گسترده در بازی های آنلاین. (رتبه عددی تقریباً نشان دهنده توانایی بات است.)",
     descriptionKey: "bot.hikaru.description",
     category: "TopPlayers",
     image: "/bots/top_players/Hikaru-bot.png",
@@ -1140,8 +1240,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "فابیانو کاروآنا",
     nameKey: "bot.caruanabot.name",
     rating: 2815,
-    descriptionEnglish: "Fabiano Caruana, an American grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "فابیانو کاروآنا، استاد بزرگ آمریکایی (اصل ایتالیایی/ایتالیا‌زادهٔ ایتالیا/اکنون در آمریکا بازی می‌کند)، شناخته شده برای بازی‌های فنی و آمادگی بالای بازکردن؛ باتی با سطح قوی محاسباتی.",
+    descriptionEnglish:
+      "Fabiano Caruana, an American grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "فابیانو کاروآنا، استاد بزرگ آمریکایی (اصل ایتالیایی/ایتالیا‌زادهٔ ایتالیا/اکنون در آمریکا بازی می‌کند)، شناخته شده برای بازی‌های فنی و آمادگی بالای بازکردن؛ باتی با سطح قوی محاسباتی.",
     descriptionKey: "bot.caruanabot.description",
     category: "TopPlayers",
     image: "/bots/top_players/Caruanabot.png",
@@ -1155,8 +1257,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "پرهام مقصودلو",
     nameKey: "bot.maghsoodloo.name",
     rating: 2738,
-    descriptionEnglish: "Maghsoodloo, an Iranian grandmaster (GM) and the 2018 World Junior Chess Champion; renowned for his profound positional understanding, endgame precision, and dynamic tactical vision in classical and rapid formats.",
-    descriptionPersian: "استادبزرگ ایرانی، قهرمان جهانی شطرنج نوجوانان ۲۰۱۸؛ نابغه‌ی متولد ۱۳۷۹ با سبکی ترکیبی از استراتژی عمیق، تاکتیک هوشمندانه و تسلط چشمگیر بر بازی‌های پایانی. یکی از ستارگان درخشان شطرنج جهانی نسل جدید با ریتینگی بالای ۲۷۰۰.",
+    descriptionEnglish:
+      "Maghsoodloo, an Iranian grandmaster (GM) and the 2018 World Junior Chess Champion; renowned for his profound positional understanding, endgame precision, and dynamic tactical vision in classical and rapid formats.",
+    descriptionPersian:
+      "استادبزرگ ایرانی، قهرمان جهانی شطرنج نوجوانان ۲۰۱۸؛ نابغه‌ی متولد ۱۳۷۹ با سبکی ترکیبی از استراتژی عمیق، تاکتیک هوشمندانه و تسلط چشمگیر بر بازی‌های پایانی. یکی از ستارگان درخشان شطرنج جهانی نسل جدید با ریتینگی بالای ۲۷۰۰.",
     descriptionKey: "bot.maghsoodloo.description",
     category: "TopPlayers",
     image: "/bots/top_players/maghsoodlooBot.png",
@@ -1170,8 +1274,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "آنا موزیچوک",
     nameKey: "bot.annamuzychuk.name",
     rating: 2550,
-    descriptionEnglish: "Anna Muzychuk, a Ukrainian women's grandmaster (WGM/GM), a quick chess player and blitz specialist; known for her aggressive style and extensive presence in online games.",
-    descriptionPersian: "آنا موزیچوک، استاد بزرگ زنی (WGM/GM) اوکراینی، قهرمان مسابقات قهرمانی زنان در کنترل سریع؛ شناخته شده برای تسلط در مراحل میانی بازی و آمادگی مسابقاتی. (رتبه عددی تقریباً نشان دهنده توانایی بات است.)",
+    descriptionEnglish:
+      "Anna Muzychuk, a Ukrainian women's grandmaster (WGM/GM), a quick chess player and blitz specialist; known for her aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "آنا موزیچوک، استاد بزرگ زنی (WGM/GM) اوکراینی، قهرمان مسابقات قهرمانی زنان در کنترل سریع؛ شناخته شده برای تسلط در مراحل میانی بازی و آمادگی مسابقاتی. (رتبه عددی تقریباً نشان دهنده توانایی بات است.)",
     descriptionKey: "bot.annamuzychuk.description",
     category: "TopPlayers",
     image: "/bots/top_players/AnnaMuzychukBot.png",
@@ -1184,8 +1290,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "ویشی اناند",
     nameKey: "bot.vishy.name",
     rating: 2755,
-    descriptionEnglish: "Vishy Anand, an Indian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "ویشواناثان (ویشی) اناند، استاد بزرگ هندی و قهرمان سابق جهان؛ بات نماینده سبک عمیق و تجربه بالای مسابقاتی است. (رتبه عددی تقریباً نشان دهنده توانایی بات است.)",
+    descriptionEnglish:
+      "Vishy Anand, an Indian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "ویشواناثان (ویشی) اناند، استاد بزرگ هندی و قهرمان سابق جهان؛ بات نماینده سبک عمیق و تجربه بالای مسابقاتی است. (رتبه عددی تقریباً نشان دهنده توانایی بات است.)",
     descriptionKey: "bot.vishy.description",
     category: "TopPlayers",
     image: "/bots/top_players/Vishy-Bot.png",
@@ -1198,8 +1306,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "دینگ لیرن",
     nameKey: "bot.dingliren.name",
     rating: 2790,
-    descriptionEnglish: "Ding Liren, a Chinese grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "دینگ لیرن، استاد بزرگ چینی و قهرمان سابق جهان؛ بات نماینده سبک عمیق و تجربه بالای مسابقاتی است. (رتبه عددی تقریباً نشان دهنده توانایی بات است.)",
+    descriptionEnglish:
+      "Ding Liren, a Chinese grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "دینگ لیرن، استاد بزرگ چینی و قهرمان سابق جهان؛ بات نماینده سبک عمیق و تجربه بالای مسابقاتی است. (رتبه عددی تقریباً نشان دهنده توانایی بات است.)",
     descriptionKey: "bot.dingliren.description",
     category: "TopPlayers",
     image: "/bots/top_players/DingLirenBot.png",
@@ -1212,8 +1322,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "کاستنیوک",
     nameKey: "bot.kosteniuk.name",
     rating: 2520,
-    descriptionEnglish: "Alina Kosteniuk, a Russian women's grandmaster (WGM/GM), a quick chess player and blitz specialist; known for her aggressive style and extensive presence in online games.",
-    descriptionPersian: "الکساندرا کاستنیوک — استاد بزرگ زن روسی و قهرمان سابق زنان جهان؛ بات نمایانگر تجربهٔ تهاجمی و دانش عمیق خط‌های نظری است. ",
+    descriptionEnglish:
+      "Alina Kosteniuk, a Russian women's grandmaster (WGM/GM), a quick chess player and blitz specialist; known for her aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "الکساندرا کاستنیوک — استاد بزرگ زن روسی و قهرمان سابق زنان جهان؛ بات نمایانگر تجربهٔ تهاجمی و دانش عمیق خط‌های نظری است. ",
     descriptionKey: "bot.kosteniuk.description",
     category: "TopPlayers",
     image: "/bots/top_players/Kosteniuk-Bot.png",
@@ -1226,8 +1338,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "دانیا",
     nameKey: "bot.naroditsky.name",
     rating: 2620,
-    descriptionEnglish: "Naroditsky, an American grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "دنیل نارودیتسکی — استاد بزرگ آمریکایی، استاد و محتواساز شطرنج، شناخته شده برای بازی های خلاقانه و آموزشی. ",
+    descriptionEnglish:
+      "Naroditsky, an American grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "دنیل نارودیتسکی — استاد بزرگ آمریکایی، استاد و محتواساز شطرنج، شناخته شده برای بازی های خلاقانه و آموزشی. ",
     descriptionKey: "bot.naroditsky.description",
     category: "TopPlayers",
     image: "/bots/top_players/Naroditsky-Bot.png",
@@ -1240,8 +1354,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "ایان",
     nameKey: "bot.nepomniachtchi.name",
     rating: 2745,
-    descriptionEnglish: "Nepomniachtchi, a Russian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "یان لپونیاچی (نِپو) — استاد بزرگ روسی، شناخته شده برای بازی سریع و محاسبات قوی در موقعیت‌های پیچیده. )",
+    descriptionEnglish:
+      "Nepomniachtchi, a Russian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "یان لپونیاچی (نِپو) — استاد بزرگ روسی، شناخته شده برای بازی سریع و محاسبات قوی در موقعیت‌های پیچیده. )",
     descriptionKey: "bot.nepomniachtchi.description",
     category: "TopPlayers",
     image: "/bots/top_players/NepomniachtchiBot.png",
@@ -1254,8 +1370,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "آرونیان",
     nameKey: "bot.aronian.name",
     rating: 2760,
-    descriptionEnglish: "Aronian, a Russian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "لوون آرونیان — استاد بزرگ با سبک خلاق و تهاجمی؛ نمایندهٔ یکی از برجسته‌ترین شطرنج‌بازان معاصر. )",
+    descriptionEnglish:
+      "Aronian, a Russian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "لوون آرونیان — استاد بزرگ با سبک خلاق و تهاجمی؛ نمایندهٔ یکی از برجسته‌ترین شطرنج‌بازان معاصر. )",
     descriptionKey: "bot.aronian.description",
     category: "TopPlayers",
     image: "/bots/top_players/AronianBot1.png",
@@ -1268,8 +1386,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "پل مورفی",
     nameKey: "bot.paulmorphy.name",
     rating: 2600,
-    descriptionEnglish: "Paul Morphy, an American grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "پل مورفی — استاد تاریخی آمریکایی سدهٔ ۱۹، از پیشگامان شطرنج مدرن. (رتبهٔ عددی ذکرشده تقریب تاریخی برای نمایندگی توانایی بات است؛ طبیعتاً مقایسهٔ مستقیم با ریتینگ‌های مدرن پیچیده است.)",
+    descriptionEnglish:
+      "Paul Morphy, an American grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "پل مورفی — استاد تاریخی آمریکایی سدهٔ ۱۹، از پیشگامان شطرنج مدرن. (رتبهٔ عددی ذکرشده تقریب تاریخی برای نمایندگی توانایی بات است؛ طبیعتاً مقایسهٔ مستقیم با ریتینگ‌های مدرن پیچیده است.)",
     descriptionKey: "bot.paulmorphy.description",
     category: "TopPlayers",
     image: "/bots/top_players/paulmorphy-BOT.png",
@@ -1282,8 +1402,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "جودیت پولگار",
     nameKey: "bot.juditpolgar.name",
     rating: 2735,
-    descriptionEnglish: "Judit Polgar, a Hungarian grandmaster (GM), a quick chess player and blitz specialist; known for her aggressive style and extensive presence in online games.",
-    descriptionPersian: "جودیت پولگار — استاد بزرگ مجارستانی، یکی از قوی‌ترین زنان تاریخ شطرنج که به‌طور مداوم در برابر بهترین‌های جهان بازی کرده است. )",
+    descriptionEnglish:
+      "Judit Polgar, a Hungarian grandmaster (GM), a quick chess player and blitz specialist; known for her aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "جودیت پولگار — استاد بزرگ مجارستانی، یکی از قوی‌ترین زنان تاریخ شطرنج که به‌طور مداوم در برابر بهترین‌های جهان بازی کرده است. )",
     descriptionKey: "bot.juditpolgar.description",
     category: "TopPlayers",
     image: "/bots/top_players/JuditPolgarBot.png",
@@ -1296,8 +1418,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "ویدیت",
     nameKey: "bot.vidit.name",
     rating: 2710,
-    descriptionEnglish: "Vidit, an Indian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "ویدیت گرگِرِسِن — استاد بزرگ هندی، شناخته شده برای بازی های محاسباتی دقیق و سبک قابل اعتماد در رقابت های سطح بالا. )",
+    descriptionEnglish:
+      "Vidit, an Indian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "ویدیت گرگِرِسِن — استاد بزرگ هندی، شناخته شده برای بازی های محاسباتی دقیق و سبک قابل اعتماد در رقابت های سطح بالا. )",
     descriptionKey: "bot.vidit.description",
     category: "TopPlayers",
     image: "/bots/top_players/viditbot.png",
@@ -1310,8 +1434,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "ایرینا کراش",
     nameKey: "bot.irinakrush.name",
     rating: 2450,
-    descriptionEnglish: "Irina Krush, an American grandmaster (GM), a quick chess player and blitz specialist; known for her aggressive style and extensive presence in online games.",
-    descriptionPersian: "ایرینا کراش — استاد بزرگ زن آمریکایی، چندبار قهرمان ملی آمریکا؛ باتی آموزشی و رقابتی با تجربهٔ گستردهٔ تورنمنت. )",
+    descriptionEnglish:
+      "Irina Krush, an American grandmaster (GM), a quick chess player and blitz specialist; known for her aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "ایرینا کراش — استاد بزرگ زن آمریکایی، چندبار قهرمان ملی آمریکا؛ باتی آموزشی و رقابتی با تجربهٔ گستردهٔ تورنمنت. )",
     descriptionKey: "bot.irinakrush.description",
     category: "TopPlayers",
     image: "/bots/top_players/IrinaKrushBot.png",
@@ -1324,8 +1450,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "گیری",
     nameKey: "bot.giri.name",
     rating: 2770,
-    descriptionEnglish: "Giri, an Indonesian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "آنیش گیری — استاد بزرگ هلندی، شناخته شده برای بازی فنی و تسلط نظریهٔ افتتاحیه؛ بات نمایندهٔ سطح بسیار بالا. )",
+    descriptionEnglish:
+      "Giri, an Indonesian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "آنیش گیری — استاد بزرگ هلندی، شناخته شده برای بازی فنی و تسلط نظریهٔ افتتاحیه؛ بات نمایندهٔ سطح بسیار بالا. )",
     descriptionKey: "bot.giri.description",
     category: "TopPlayers",
     image: "/bots/top_players/Giri-Bot.png",
@@ -1338,8 +1466,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "عبدالستارف",
     nameKey: "bot.abdusattorov.name",
     rating: 2730,
-    descriptionEnglish: "Abdusattorov, an Uzbek grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "رفات عبدالستّروف — استاد بزرگ ازبکستان، قهرمان جوان و تهاجمی معاصر؛ بات نمایانگر سبک سریع و قدرتمند جوانان. )",
+    descriptionEnglish:
+      "Abdusattorov, an Uzbek grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "رفات عبدالستّروف — استاد بزرگ ازبکستان، قهرمان جوان و تهاجمی معاصر؛ بات نمایانگر سبک سریع و قدرتمند جوانان. )",
     descriptionKey: "bot.abdusattorov.description",
     category: "TopPlayers",
     image: "/bots/top_players/Abdusattorov-Bot.png",
@@ -1352,8 +1482,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "لاسکر",
     nameKey: "bot.lasker.name",
     rating: 2580,
-    descriptionEnglish: "Lasker, an American grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "اِمانوئل لاسکر — استاد بزرگ تاریخی آلمانی، قهرمان جهان آغاز سدهٔ ۲۰؛ این بات نمایانگر سبک کلاسیک و قواعد تاریخی شطرنج است. (رتبهٔ عددی تقریب تاریخی است.)",
+    descriptionEnglish:
+      "Lasker, an American grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "اِمانوئل لاسکر — استاد بزرگ تاریخی آلمانی، قهرمان جهان آغاز سدهٔ ۲۰؛ این بات نمایانگر سبک کلاسیک و قواعد تاریخی شطرنج است. (رتبهٔ عددی تقریب تاریخی است.)",
     descriptionKey: "bot.lasker.description",
     category: "TopPlayers",
     image: "/bots/top_players/lasker-BOT.png",
@@ -1366,8 +1498,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "هو یی‌فان",
     nameKey: "bot.houyifan.name",
     rating: 2650,
-    descriptionEnglish: "Hou Yifan, a Chinese grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "هو یی‌فان — استاد بزرگ زن چینی و از بارزترین چهره‌های شطرنج زنان معاصر؛ باتی با پایهٔ قوی نظری و تاکتیکی. )",
+    descriptionEnglish:
+      "Hou Yifan, a Chinese grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "هو یی‌فان — استاد بزرگ زن چینی و از بارزترین چهره‌های شطرنج زنان معاصر؛ باتی با پایهٔ قوی نظری و تاکتیکی. )",
     descriptionKey: "bot.houyifan.description",
     category: "TopPlayers",
     image: "/bots/top_players/HouYifanBot.png",
@@ -1380,8 +1514,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "بوک",
     nameKey: "bot.bok.name",
     rating: 2500,
-    descriptionEnglish: "Bok, a Chinese grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "بوک — بات نمایندهٔ بازیکنی به‌نام 'بوک'؛ توضیحات و منشأ دقیق‌تر بستگی به مرجع داخلی پلتفرم دارد. (رتبهٔ تقریبی برای نمایندگی توانایی بات ذکر شده.)",
+    descriptionEnglish:
+      "Bok, a Chinese grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "بوک — بات نمایندهٔ بازیکنی به‌نام 'بوک'؛ توضیحات و منشأ دقیق‌تر بستگی به مرجع داخلی پلتفرم دارد. (رتبهٔ تقریبی برای نمایندگی توانایی بات ذکر شده.)",
     descriptionKey: "bot.bok.description",
     category: "TopPlayers",
     image: "/bots/top_players/bokbot.png",
@@ -1394,8 +1530,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "وسلی سو",
     nameKey: "bot.wesleyso.name",
     rating: 2770,
-    descriptionEnglish: "Wesley So, an Indonesian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "وسلی سو — استاد بزرگ آمریکایی (اصل فیلیپینی) و بازیکن رده‌بالا؛ باتی با سبک فنی و آمادهٔ رقابت در سطوح بالا. )",
+    descriptionEnglish:
+      "Wesley So, an Indonesian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "وسلی سو — استاد بزرگ آمریکایی (اصل فیلیپینی) و بازیکن رده‌بالا؛ باتی با سبک فنی و آمادهٔ رقابت در سطوح بالا. )",
     descriptionKey: "bot.wesleyso.description",
     category: "TopPlayers",
     image: "/bots/top_players/wesleysobot.png",
@@ -1408,8 +1546,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "تال",
     nameKey: "bot.tal.name",
     rating: 2650,
-    descriptionEnglish: "Michael Tal, an Indonesian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "میکائیل تال — استاد بزرگ تاریخی لاتویایی (شهروند سابق اتحاد شوروی) معروف به بازی‌های بسیار تهاجمی و تاکتیکی؛ این بات نمایانگر سبک تهاجمی کلاسیک او است. )",
+    descriptionEnglish:
+      "Michael Tal, an Indonesian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "میکائیل تال — استاد بزرگ تاریخی لاتویایی (شهروند سابق اتحاد شوروی) معروف به بازی‌های بسیار تهاجمی و تاکتیکی؛ این بات نمایانگر سبک تهاجمی کلاسیک او است. )",
     descriptionKey: "bot.tal.description",
     category: "TopPlayers",
     image: "/bots/top_players/tal-BOT.png",
@@ -1422,8 +1562,10 @@ export const TOP_PLAYER_BOTS: Bot[] = [
     namePersian: "کاپابلانکا",
     nameKey: "bot.capablanca.name",
     rating: 2680,
-    descriptionEnglish: "Capablanca, an Indonesian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
-    descriptionPersian: "خوسه رائول کاپابلانکا — استاد بزرگ تاریخی کوبایی و قهرمان جهان اوایل سدهٔ ۲۰؛ بات نمایانگر بازی کلاسیک و فنی او است. )",
+    descriptionEnglish:
+      "Capablanca, an Indonesian grandmaster (GM), a quick chess player and blitz specialist; known for his aggressive style and extensive presence in online games.",
+    descriptionPersian:
+      "خوسه رائول کاپابلانکا — استاد بزرگ تاریخی کوبایی و قهرمان جهان اوایل سدهٔ ۲۰؛ بات نمایانگر بازی کلاسیک و فنی او است. )",
     descriptionKey: "bot.capablanca.description",
     category: "TopPlayers",
     image: "/bots/top_players/capablanca-BOT.png",
@@ -1456,8 +1598,10 @@ export const PERSIAN_CREATORS_BOTS: Bot[] = [
     namePersian: "محمد شاه‌مرادی",
     rating: 2158,
     descriptionKey: "Bots.Bot.MohammadShahMoradi.Desc",
-    descriptionEnglish: "A Persian chess content creator and Candidate Master with a YouTube channel 'Enjoy Chess' featuring game analysis and educational content.",
-    descriptionPersian: "تولیدکننده محتوای شطرنج پارسی و نامزد استاد با کانال یوتیوب «Enjoy Chess» شامل تحلیل بازی‌ها و محتوای آموزشی.",
+    descriptionEnglish:
+      "A Persian chess content creator and Candidate Master with a YouTube channel 'Enjoy Chess' featuring game analysis and educational content.",
+    descriptionPersian:
+      "تولیدکننده محتوای شطرنج پارسی و نامزد استاد با کانال یوتیوب «Enjoy Chess» شامل تحلیل بازی‌ها و محتوای آموزشی.",
     category: "PersianCreators",
     image: "/bots/persiancreators/mohammad-shah-moradi-bot.png",
     country: "ir",
@@ -1471,14 +1615,16 @@ export const PERSIAN_CREATORS_BOTS: Bot[] = [
     namePersian: "بهروز شجاعیان",
     rating: 1905,
     descriptionKey: "Bots.Bot.BehroozShojaeian.Desc",
-    descriptionEnglish: "A Persian chess instructor with YouTube channel 'Persian Chess' focused on helping players reach 2000 rating, teaching openings, traps, endgames, tactics, and game analysis.",
-    descriptionPersian: "مربی شطرنج پارسی با کانال یوتیوب «پرشین چس» که بر کمک به بازیکنان برای رسیدن به ریتینگ ۲۰۰۰ تمرکز دارد، آموزش گشایش‌ها، تله‌ها، آخربازی، تاکتیک‌ها و تحلیل بازی‌ها.",
+    descriptionEnglish:
+      "A Persian chess instructor with YouTube channel 'Persian Chess' focused on helping players reach 2000 rating, teaching openings, traps, endgames, tactics, and game analysis.",
+    descriptionPersian:
+      "مربی شطرنج پارسی با کانال یوتیوب «پرشین چس» که بر کمک به بازیکنان برای رسیدن به ریتینگ ۲۰۰۰ تمرکز دارد، آموزش گشایش‌ها، تله‌ها، آخربازی، تاکتیک‌ها و تحلیل بازی‌ها.",
     category: "PersianCreators",
     image: "/bots/persiancreators/behrooz-shojaeian-bot.png",
     country: "ir",
     cardStyle: "youtube",
-    youtubeUrl: "https://www.youtube.com/@PersianChess"
-},
+    youtubeUrl: "https://www.youtube.com/@PersianChess",
+  },
   {
     id: "behrang-mehdiabadi",
     nameKey: "Bots.Bot.BehrangMehdiabadi.Name",
@@ -1486,8 +1632,10 @@ export const PERSIAN_CREATORS_BOTS: Bot[] = [
     namePersian: "بهرنگ مهدی‌آبادی",
     rating: 1948,
     descriptionKey: "Bots.Bot.BehrangMehdiabadi.Desc",
-    descriptionEnglish: "A Persian chess instructor with YouTube channel 'Chess with Behrang' teaching tactics, techniques, and analysis, also leading a Lichess academy.",
-    descriptionPersian: "مربی شطرنج پارسی با کانال یوتیوب «Chess with Behrang» آموزش تاکتیک‌ها، تکنیک‌ها و تحلیل، همچنین رهبری آکادمی در Lichess.",
+    descriptionEnglish:
+      "A Persian chess instructor with YouTube channel 'Chess with Behrang' teaching tactics, techniques, and analysis, also leading a Lichess academy.",
+    descriptionPersian:
+      "مربی شطرنج پارسی با کانال یوتیوب «Chess with Behrang» آموزش تاکتیک‌ها، تکنیک‌ها و تحلیل، همچنین رهبری آکادمی در Lichess.",
     category: "PersianCreators",
     image: "/bots/persiancreators/behrang-mehdiabadi-bot.png",
     country: "ir",

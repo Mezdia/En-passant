@@ -31,9 +31,7 @@ export default function GameSelector({
   activePage: number;
   deleteGame?: (index: number) => void;
 }) {
-  function isRowLoaded(index: number) {
-    return games.has(index);
-  }
+  const isRowLoaded = useCallback((index: number) => games.has(index), [games]);
 
   const loadMoreRows = useCallback(
     async (startIndex: number, stopIndex: number) => {
@@ -56,7 +54,7 @@ export default function GameSelector({
   const rowVirtualizer = useVirtualizer({
     count: total,
     estimateSize: () => 30 * (fontSize / 100),
-    getScrollElement: () => parentRef.current!,
+    getScrollElement: () => parentRef.current ?? null,
   });
 
   useEffect(() => {
@@ -67,7 +65,7 @@ export default function GameSelector({
     if (items.some((item) => !isRowLoaded(item.index))) {
       loadMoreRows(items[0].index, items[items.length - 1].index);
     }
-  }, [games.size, loadMoreRows, rowVirtualizer.getVirtualItems()]);
+  }, [games.size, loadMoreRows, rowVirtualizer, isRowLoaded]);
 
   return (
     <ScrollArea viewportRef={parentRef} h="100%">

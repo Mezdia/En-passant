@@ -14,13 +14,13 @@ import { Mosaic, type MosaicNode } from "react-mosaic-component";
 import { match } from "ts-pattern";
 import BoardAnalysis from "../boards/BoardAnalysis";
 import BoardGame from "../boards/BoardGame";
+import { BotGamePage } from "../botgame/BotGamePage";
 import { TreeStateProvider } from "../common/TreeStateContext";
 import GameHistoryPage from "../history/GameHistoryPage";
 import Puzzles from "../puzzles/Puzzles";
 import { BoardTab } from "./BoardTab";
 import ConfirmChangesModal from "./ConfirmChangesModal";
 import NewTabHome from "./NewTabHome";
-import { BotGamePage } from "../botgame/BotGamePage";
 
 import "react-mosaic-component/react-mosaic-component.css";
 
@@ -365,10 +365,7 @@ function TabSwitch({
       }
 
       return (
-        <BotGamePage
-          bot={botGameInfo.bot}
-          onExit={() => closeTab(tab.value)}
-        />
+        <BotGamePage bot={botGameInfo.bot} onExit={() => closeTab(tab.value)} />
       );
     })
     .exhaustive();

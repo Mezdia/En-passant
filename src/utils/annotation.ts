@@ -35,7 +35,11 @@ export type Annotation =
   | "∆"
   | "□"
   | "⨀"
-  | "⊗";
+  | "⊗"
+  | "⭐"
+  | "✓"
+  | "○"
+  | "✖";
 
 export const NAG_INFO = new Map<string, Annotation>([
   ["$1", "!"],
@@ -187,6 +191,10 @@ export const ANNOTATION_INFO: Record<Annotation, AnnotationInfo> = {
   "□": { name: "Only move", translationKey: "OnlyMove", nag: 7 },
   "⨀": { name: "Zugzwang", translationKey: "Zugzwang", nag: 22 },
   "⊗": { name: "Miss", color: "red", nag: 9 },
+  "⭐": { name: "Best", color: "yellow", nag: 0 },
+  "✓": { name: "Excellent", color: "green", nag: 0 },
+  "○": { name: "Good", color: "teal", nag: 0 },
+  "✖": { name: "Miss", color: "red", nag: 0 },
 };
 
 export function isBasicAnnotation(

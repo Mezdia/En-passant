@@ -36,7 +36,7 @@ function AccountCards({
         (s) => s.player ?? s.lichess?.username ?? s.chessCom?.username,
       ),
     ),
-  );
+  ).filter((name): name is string => Boolean(name));
 
   const playerSessions = playerNames.map((name) => ({
     name,
@@ -58,7 +58,7 @@ function AccountCards({
         {playerSessions.map(({ name, sessions }) => (
           <PlayerSession
             key={name}
-            name={name!}
+            name={name}
             sessions={sessions}
             databases={databases}
             setDatabases={setDatabases}
@@ -161,9 +161,14 @@ function PlayerSession({
       </Group>
       <Divider />
       <Accordion multiple chevronSize={0}>
-        {sessions.map((session, i) => (
+        {sessions.map((session) => (
           <LichessOrChessCom
-            key={i}
+            key={
+              session.lichess?.account.id ??
+              session.chessCom?.username ??
+              session.player ??
+              session.updatedAt
+            }
             session={session}
             databases={databases}
             setDatabases={setDatabases}

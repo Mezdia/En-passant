@@ -118,25 +118,34 @@ function TopBar({ menuActions }: { menuActions: MenuGroup[] }) {
                     </Button>
                   </Menu.Target>
                   <Menu.Dropdown>
-                    {action.options.map((option, i) =>
-                      option.label === "divider" ? (
-                        <Menu.Divider key={i} />
-                      ) : (
-                        <Menu.Item
-                          key={option.label}
-                          rightSection={
-                            option.shortcut && (
-                              <Text size="xs" c="dimmed">
-                                {option.shortcut}
-                              </Text>
-                            )
-                          }
-                          onClick={option.action}
-                        >
-                          {option.label}
-                        </Menu.Item>
-                      ),
-                    )}
+                    {(() => {
+                      let dividerCount = 0;
+                      return action.options.map((option) => {
+                        if (option.label === "divider") {
+                          dividerCount += 1;
+                          return (
+                            <Menu.Divider
+                              key={`${action.label}-divider-${dividerCount}`}
+                            />
+                          );
+                        }
+                        return (
+                          <Menu.Item
+                            key={`${action.label}-${option.label}`}
+                            rightSection={
+                              option.shortcut && (
+                                <Text size="xs" c="dimmed">
+                                  {option.shortcut}
+                                </Text>
+                              )
+                            }
+                            onClick={option.action}
+                          >
+                            {option.label}
+                          </Menu.Item>
+                        );
+                      });
+                    })()}
                   </Menu.Dropdown>
                 </Menu>
               ))}

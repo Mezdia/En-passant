@@ -15,12 +15,12 @@ import {
   getMasterGamesQueryParams,
 } from "@/utils/lichess/explorer";
 import { countMainPly } from "@/utils/treeReducer";
+import type { Color } from "@lichess-org/chessground/types";
 import { notifications } from "@mantine/notifications";
 import { IconX } from "@tabler/icons-react";
 import { appDataDir, resolve } from "@tauri-apps/api/path";
 import { fetch } from "@tauri-apps/plugin-http";
 import { error } from "@tauri-apps/plugin-log";
-import type { Color } from "@lichess-org/chessground/types";
 import { parseUci } from "chessops";
 import { makeFen } from "chessops/fen";
 import { makeSan } from "chessops/san";
@@ -268,7 +268,11 @@ export async function getBestMoves(
       const normalizedUciMoves: string[] = [];
 
       const sanMoves = uciMoves.map((m) => {
-        const move = parseUci(m)!;
+        const move = parseUci(m);
+        if (!move) {
+          normalizedUciMoves.push(m);
+          return m;
+        }
         const san = makeSan(posCopy, move);
         normalizedUciMoves.push(
           uciNormalize(
@@ -325,8 +329,10 @@ async function getCloudEvaluation(
   fen: string,
   multipv: number,
 ): Promise<LichessCloudData> {
-  if (cache.has(`${fen}-${multipv}`)) {
-    return cache.get(`${fen}-${multipv}`)!;
+  const cacheKey = `${fen}-${multipv}`;
+  const cached = cache.get(cacheKey);
+  if (cached) {
+    return cached;
   }
   const url = new URL(`${baseURL}/cloud-eval`);
   url.searchParams.append("fen", fen);
@@ -334,7 +340,7 @@ async function getCloudEvaluation(
 
   const response = await fetch(url.toString(), { headers: apiHeaders() });
   const data = (await response.json()) as LichessCloudData;
-  cache.set(`${fen}-${multipv}`, data);
+  cache.set(cacheKey, data);
   return data;
 }
 

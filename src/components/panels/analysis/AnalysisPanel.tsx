@@ -53,7 +53,12 @@ import TablebaseInfo from "./TablebaseInfo";
 function AnalysisPanel() {
   const { t } = useTranslation();
 
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "AnalysisPanel must be used within a TreeStateContext provider",
+    );
+  }
   const rootFen = useStore(store, (s) => s.root.fen);
   const headers = useStore(store, (s) => s.headers);
   const currentNodeFen = useStore(
@@ -94,7 +99,9 @@ function AnalysisPanel() {
         orientation="vertical"
         placement="right"
         value={tab}
-        onChange={(v) => setTab(v!)}
+        onChange={(v) => {
+          if (v) setTab(v);
+        }}
         style={{
           display: "flex",
         }}
@@ -195,7 +202,8 @@ function AnalysisPanel() {
 
                       result.forEach((e, i) => {
                         if (e.loaded) {
-                          result[i] = prevLoaded.shift()!;
+                          const next = prevLoaded.shift();
+                          if (next) result[i] = next;
                         }
                       });
                       return result;
@@ -308,7 +316,10 @@ function EngineSummary({
 }) {
   const activeTab = useAtomValue(activeTabAtom);
   const [ev] = useAtom(
-    engineMovesFamily({ engine: engine.id, tab: activeTab! }),
+    engineMovesFamily({
+      engine: engine.id,
+      tab: activeTab ?? "analysis",
+    }),
   );
 
   const curEval = useDeferredValue(

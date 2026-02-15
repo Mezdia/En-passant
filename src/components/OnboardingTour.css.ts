@@ -74,7 +74,7 @@ globalStyle(".driver-popover", {
       left: "5% !important",
       bottom: "20px !important",
       top: "auto !important",
-      position: "fixed !important" as any,
+      position: "fixed",
       margin: "0 !important",
     },
   },

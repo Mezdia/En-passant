@@ -39,7 +39,12 @@ function PuzzleBoard({
   generatePuzzle: (db: string) => void;
   db: string | null;
 }) {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "PuzzleBoard must be used within a TreeStateContext provider",
+    );
+  }
   const root = useStore(store, (s) => s.root);
   const position = useStore(store, (s) => s.position);
   const moveHighlight = useAtomValue(moveHighlightAtom);
@@ -77,7 +82,7 @@ function PuzzleBoard({
     : "white";
   const [pendingMove, setPendingMove] = useState<NormalMove | null>(null);
 
-  const dests = chessgroundDests(pos!);
+  const dests = pos ? chessgroundDests(pos) : new Map();
   const turn = pos?.turn || "white";
   const showCoordinates = useAtomValue(showCoordinatesAtom);
 
@@ -146,7 +151,8 @@ function PuzzleBoard({
           animation={{
             enabled: true,
           }}
-          coordinates={showCoordinates}
+          coordinates={showCoordinates !== "no"}
+          coordinatesOnSquares={showCoordinates === "all"}
           orientation={orientation}
           movable={{
             free: false,
@@ -160,8 +166,9 @@ function PuzzleBoard({
             dests: dests,
             events: {
               after: (orig, dest) => {
-                const from = parseSquare(orig)!;
-                const to = parseSquare(dest)!;
+                const from = parseSquare(orig);
+                const to = parseSquare(dest);
+                if (from === undefined || to === undefined) return;
                 const move: NormalMove = { from, to };
                 if (
                   pos?.board.get(from)?.role === "pawn" &&

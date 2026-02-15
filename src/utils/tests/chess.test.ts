@@ -5,7 +5,8 @@ import { hasMorePriority } from "../chess";
 test("NAGs are consistent", () => {
   for (const k of Object.keys(ANNOTATION_INFO)) {
     if (k === "") continue;
-    const nag = ANNOTATION_INFO[k as Annotation].nag!;
+    const nag = ANNOTATION_INFO[k as Annotation].nag;
+    if (!nag) continue;
     expect(NAG_INFO.get(`$${nag}`)).toBe(k);
   }
 });

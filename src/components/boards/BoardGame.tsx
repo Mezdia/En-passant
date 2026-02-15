@@ -23,8 +23,8 @@ import {
 import { getMainLine, getPGN } from "@/utils/chess";
 import { positionFromFen } from "@/utils/chessops";
 import { saveGameHistory } from "@/utils/gameHistory";
-import type { GameHeaders } from "@/utils/treeReducer";
 import { genID } from "@/utils/tabs";
+import type { GameHeaders } from "@/utils/treeReducer";
 import { unwrap } from "@/utils/unwrap";
 import {
   ActionIcon,
@@ -127,7 +127,10 @@ function BoardGame() {
     return { white, black };
   }
 
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
   const root = useStore(store, (s) => s.root);
   const headers = useStore(store, (s) => s.headers);
   const setFen = useStore(store, (s) => s.setFen);
@@ -138,7 +141,7 @@ function BoardGame() {
   const [, setTabs] = useAtom(tabsAtom);
   const [, setGameHistoryTrigger] = useAtom(gameHistoryTriggerAtom);
 
-  const boardRef = useRef(null);
+  const boardRef = useRef<HTMLDivElement | null>(null);
   const cgRef = useRef<ChessgroundRef>(null);
   const [gameState, setGameState] = useAtom(currentGameStateAtom);
   const [players, setPlayers] = useAtom(currentPlayersAtom);

@@ -22,7 +22,12 @@ function TablebaseInfo({
   turn,
 }: { fen: string; turn: "white" | "black" }) {
   const { t } = useTranslation();
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "TablebaseInfo must be used within a TreeStateContext provider",
+    );
+  }
   const makeMove = useStore(store, (s) => s.makeMove);
   const { data, error, isLoading } = useSWRImmutable(
     ["tablebase", fen],
@@ -77,13 +82,16 @@ function TablebaseInfo({
             {data && (
               <Stack gap="xs">
                 <SimpleGrid cols={3}>
-                  {sortedMoves!.map((m) => (
+                  {sortedMoves?.map((m) => (
                     <Paper
                       withBorder
                       key={m.san}
                       px="xs"
                       onClick={() => {
-                        makeMove({ payload: parseUci(m.uci)! });
+                        const move = parseUci(m.uci);
+                        if (move) {
+                          makeMove({ payload: move });
+                        }
                       }}
                       className={classes.info}
                     >

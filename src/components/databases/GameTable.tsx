@@ -35,9 +35,12 @@ import * as classes from "./styles.css";
 
 function GameTable() {
   const { t } = useTranslation();
-  const store = useContext(DatabaseViewStateContext)!;
+  const store = useContext(DatabaseViewStateContext);
+  if (!store) {
+    throw new Error("DatabaseViewStateContext is missing");
+  }
 
-  const file = useStore(store, (s) => s.database?.file)!;
+  const file = useStore(store, (s) => s.database?.file);
   const query = useStore(store, (s) => s.games.query);
   const setQuery = useStore(store, (s) => s.setGamesQuery);
   const openedSettings = useStore(store, (s) => s.games.isFilterExpanded);
@@ -48,14 +51,27 @@ function GameTable() {
 
   const selectedGame = useStore(store, (s) => s.games.selectedGame);
   const setSelectedGame = useStore(store, (s) => s.setGamesSelectedGame);
+  const baseOptions =
+    query.options ??
+    ({
+      skipCount: false,
+      sort: "date",
+      direction: "desc",
+    } as const);
 
   const navigate = useNavigate();
 
   const [, setTabs] = useAtom(tabsAtom);
   const setActiveTab = useSetAtom(activeTabAtom);
 
-  const { data, isLoading, mutate } = useSWR(["games", query], () =>
-    query_games(file, query),
+  const { data, isLoading, mutate } = useSWR(
+    file ? ["games", query, file] : null,
+    () => {
+      if (!file) {
+        return Promise.resolve(null);
+      }
+      return query_games(file, query);
+    },
   );
 
   const games = data?.data ?? [];
@@ -88,6 +104,14 @@ function GameTable() {
     ],
   ]);
 
+  if (!file) {
+    return (
+      <Center h="100%">
+        <Text>{t("Databases.Game.NoSelection")}</Text>
+      </Center>
+    );
+  }
+
   return (
     <>
       <GridLayout
@@ -100,7 +124,7 @@ function GameTable() {
                   setValue={(value) => setQuery({ ...query, player1: value })}
                   rightSection={
                     <SideInput
-                      sides={query.sides!}
+                      sides={query.sides ?? "Any"}
                       setSides={(value) => setQuery({ ...query, sides: value })}
                       label="Player"
                     />
@@ -113,7 +137,7 @@ function GameTable() {
                   setValue={(value) => setQuery({ ...query, player2: value })}
                   rightSection={
                     <SideInput
-                      sides={query.sides!}
+                      sides={query.sides ?? "Any"}
                       setSides={(value) => setQuery({ ...query, sides: value })}
                       label="Opponent"
                     />
@@ -286,14 +310,14 @@ function GameTable() {
               i === selectedGame ? classes.selected : ""
             }
             noRecordsText="No games found"
-            totalRecords={count!}
+            totalRecords={count ?? 0}
             recordsPerPage={query.options?.pageSize ?? 25}
             page={query.options?.page ?? 1}
             onPageChange={(page) =>
               setQuery({
                 ...query,
                 options: {
-                  ...query.options!,
+                  ...baseOptions,
                   page,
                 },
               })
@@ -301,7 +325,7 @@ function GameTable() {
             onRecordsPerPageChange={(value) =>
               setQuery({
                 ...query,
-                options: { ...query.options!, pageSize: value },
+                options: { ...baseOptions, pageSize: value },
               })
             }
             sortStatus={{
@@ -312,7 +336,7 @@ function GameTable() {
               setQuery({
                 ...query,
                 options: {
-                  ...query.options!,
+                  ...baseOptions,
                   sort: value.columnAccessor as GameSort,
                   direction: value.direction,
                 },

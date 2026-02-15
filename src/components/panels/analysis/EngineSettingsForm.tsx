@@ -149,7 +149,9 @@ function EngineSettingsForm({
                 <ActionIcon
                   variant="default"
                   onClick={() => {
-                    killEngine(engine, activeTab!);
+                    if (activeTab) {
+                      killEngine(engine, activeTab);
+                    }
                     setSettings((prev) => ({
                       ...prev,
                       enabled: false,
@@ -181,7 +183,7 @@ function SyncSettings({
 
   const engines = useAtomValue(enginesAtom);
   const engineDefault = useMemo(
-    () => engines.find((o) => o.name === engine)!,
+    () => engines.find((o) => o.name === engine),
     [engines, engine],
   );
 
@@ -193,8 +195,8 @@ function SyncSettings({
         if (e.currentTarget.checked) {
           setSettings((prev) => ({
             ...prev,
-            go: engineDefault.go || prev.go,
-            settings: engineDefault.settings || prev.settings,
+            go: engineDefault?.go || prev.go,
+            settings: engineDefault?.settings || prev.settings,
             synced: true,
           }));
         } else {

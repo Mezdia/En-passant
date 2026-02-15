@@ -1,7 +1,7 @@
 import type { ScoreValue } from "@/bindings";
 import { formatScore, getWinChance } from "@/utils/score";
-import { Box, Text, Tooltip, useMantineTheme } from "@mantine/core";
 import type { Color } from "@lichess-org/chessground/types";
+import { Box, Text, Tooltip, useMantineTheme } from "@mantine/core";
 
 function EvalBar({
   score,

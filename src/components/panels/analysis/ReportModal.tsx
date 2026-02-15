@@ -1,6 +1,10 @@
 import { type GoMode, commands } from "@/bindings";
 import { TreeStateContext } from "@/components/common/TreeStateContext";
-import { enginesAtom, gameHistoryTriggerAtom, referenceDbAtom } from "@/state/atoms";
+import {
+  enginesAtom,
+  gameHistoryTriggerAtom,
+  referenceDbAtom,
+} from "@/state/atoms";
 import { getGameStats } from "@/utils/chess";
 import type { LocalEngine } from "@/utils/engines";
 import { updateGameHistoryByTab } from "@/utils/gameHistory";
@@ -52,8 +56,14 @@ function ReportModal({
     () => engines.filter((e): e is LocalEngine => e.type === "local"),
     [engines],
   );
-  const store = useContext(TreeStateContext)!;
-  const addAnalysis = useStore(store, (s) => s.addAnalysis);
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "ReportModal must be used within a TreeStateContext provider",
+    );
+  }
+  const storeApi = store as NonNullable<typeof store>;
+  const addAnalysis = useStore(storeApi, (s) => s.addAnalysis);
 
   const [reportSettings, setReportSettings] = useAtom(reportSettingsAtom);
   const [, setGameHistoryTrigger] = useAtom(gameHistoryTriggerAtom);
@@ -80,7 +90,7 @@ function ReportModal({
           : reportSettings.engine;
 
     form.setValues({ ...reportSettings, engine });
-  }, [localEngines, reportSettings]);
+  }, [form.setValues, localEngines, reportSettings]);
 
   function analyze() {
     setReportSettings(form.values);
@@ -113,7 +123,7 @@ function ReportModal({
       .then((analysis) => {
         if (analysis.status === "ok") {
           addAnalysis(analysis.data);
-          const stats = getGameStats(store.getState().root);
+          const stats = getGameStats(storeApi.getState().root);
           updateGameHistoryByTab(tab, {
             whiteAccuracy: stats.whiteAccuracy,
             blackAccuracy: stats.blackAccuracy,
@@ -169,12 +179,19 @@ function ReportModal({
             <NumberInput
               min={1}
               value={form.values.goMode.c as number}
-              onChange={(v) =>
-                form.setFieldValue("goMode", {
-                  ...(form.values.goMode as any),
-                  c: (v || 1) as number,
-                })
-              }
+              onChange={(v) => {
+                const nextValue =
+                  typeof v === "number" ? v : Number.parseFloat(v);
+                const safeValue =
+                  Number.isFinite(nextValue) && nextValue > 0 ? nextValue : 1;
+                form.setFieldValue("goMode", (prev) => {
+                  const next: Exclude<GoMode, { t: "Infinite" }> =
+                    prev.t === "PlayersTime"
+                      ? { t: "Time", c: safeValue }
+                      : { ...prev, c: safeValue };
+                  return next;
+                });
+              }}
             />
           </Group>
 

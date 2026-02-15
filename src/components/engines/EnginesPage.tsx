@@ -35,12 +35,12 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useSWRImmutable from "swr/immutable";
 import OpenFolderButton from "../common/OpenFolderButton";
 import AddEngine from "./AddEngine";
 
-import { commands } from "@/bindings";
+import { type EngineConfig, type UciOptionConfig, commands } from "@/bindings";
 import * as classes from "@/components/common/GenericCard.css";
 import { Route } from "@/routes/engines";
 import { unwrap } from "@/utils/unwrap";
@@ -48,12 +48,41 @@ import { useToggle } from "@mantine/hooks";
 import { useNavigate } from "@tanstack/react-router";
 import { open } from "@tauri-apps/plugin-dialog";
 import { useTranslation } from "react-i18next";
-import { P, match } from "ts-pattern";
 import ConfirmModal from "../common/ConfirmModal";
 import GenericCard from "../common/GenericCard";
 import GoModeInput from "../common/GoModeInput";
 import LocalImage from "../common/LocalImage";
 import LinesSlider from "../panels/analysis/LinesSlider";
+
+type SpinOption = Extract<UciOptionConfig, { type: "spin" }>;
+type CheckOption = Extract<UciOptionConfig, { type: "check" }>;
+type ComboOption = Extract<UciOptionConfig, { type: "combo" }>;
+type StringOption = Extract<UciOptionConfig, { type: "string" }>;
+type NonButtonOption = SpinOption | CheckOption | ComboOption | StringOption;
+
+type OptionWithValue =
+  | (Omit<SpinOption, "value"> & {
+      value: SpinOption["value"] & { value: number };
+    })
+  | (Omit<CheckOption, "value"> & {
+      value: CheckOption["value"] & { value: boolean };
+    })
+  | (Omit<ComboOption, "value"> & {
+      value: ComboOption["value"] & { value: string };
+    })
+  | (Omit<StringOption, "value"> & {
+      value: StringOption["value"] & { value: string };
+    });
+
+const isCheckOption = (
+  option: OptionWithValue,
+): option is Extract<OptionWithValue, { type: "check" }> =>
+  option.type === "check";
+
+const isNonCheckOption = (
+  option: OptionWithValue,
+): option is Exclude<OptionWithValue, { type: "check" }> =>
+  option.type !== "check";
 
 export default function EnginesPage() {
   const { t } = useTranslation();
@@ -215,20 +244,24 @@ function EngineSettings({
 
   const [engines, setEngines] = useAtom(enginesAtom);
   const engine = engines[selected] as LocalEngine;
-  const { data: options } = useSWRImmutable(
-    ["engine-config", engine.path],
-    async ([, path]) => {
-      return unwrap(await commands.getEngineConfig(path));
-    },
+  const { data: options } = useSWRImmutable<
+    EngineConfig,
+    unknown,
+    [string, string]
+  >(["engine-config", engine.path], async ([, path]) =>
+    unwrap(await commands.getEngineConfig(path)),
   );
 
-  function setEngine(newEngine: LocalEngine) {
-    setEngines(async (prev) => {
-      const copy = [...(await prev)];
-      copy[selected] = newEngine;
-      return copy;
-    });
-  }
+  const setEngine = useCallback(
+    (newEngine: LocalEngine) => {
+      setEngines(async (prev) => {
+        const copy = [...(await prev)];
+        copy[selected] = newEngine;
+        return copy;
+      });
+    },
+    [selected, setEngines],
+  );
 
   useEffect(() => {
     if (options) {
@@ -251,27 +284,47 @@ function EngineSettings({
         setEngine({ ...engine, settings });
       }
     }
-  }, [options]);
+  }, [engine, engine.settings, options, setEngine]);
 
-  const completeOptions: any =
+  const completeOptions: OptionWithValue[] =
     options?.options
-      .filter((option) => option.type !== "button")
+      .filter((option): option is NonButtonOption => option.type !== "button")
       .map((option) => {
         const setting = engine.settings?.find(
           (setting) => setting.name === option.value.name,
         );
-        return {
-          ...option,
-          value: {
-            ...option.value,
-            value:
-              setting?.value !== undefined
-                ? setting.value
-                : // @ts-ignore
-                  option.value.default,
-          },
-        };
-      }) || [];
+        const rawValue = setting?.value;
+        switch (option.type) {
+          case "spin": {
+            const defaultValue = option.value.default ?? 0;
+            const value =
+              typeof rawValue === "number"
+                ? rawValue
+                : rawValue !== null && rawValue !== undefined
+                  ? Number(rawValue)
+                  : Number(defaultValue);
+            return { ...option, value: { ...option.value, value } };
+          }
+          case "check": {
+            const defaultValue = option.value.default ?? false;
+            const value =
+              typeof rawValue === "boolean" ? rawValue : defaultValue;
+            return { ...option, value: { ...option.value, value } };
+          }
+          case "combo": {
+            const defaultValue = option.value.default ?? "";
+            const value =
+              typeof rawValue === "string" ? rawValue : defaultValue;
+            return { ...option, value: { ...option.value, value } };
+          }
+          case "string": {
+            const defaultValue = option.value.default ?? "";
+            const value =
+              typeof rawValue === "string" ? rawValue : defaultValue;
+            return { ...option, value: { ...option.value, value } };
+          }
+        }
+      }) ?? [];
 
   function changeImage() {
     open({
@@ -396,91 +449,93 @@ function EngineSettings({
           label={t("Engines.Settings.AdvancedSettings")}
         />
         <SimpleGrid cols={2}>
-          {completeOptions
-            .filter((option: { type: string }) => option.type !== "check")
-            .map((option: any) => {
-              return match(option)
-                .with({ type: "spin", value: P.select() }, (v: any) => {
+          {completeOptions.filter(isNonCheckOption).map((option) => {
+            switch (option.type) {
+              case "spin": {
+                const v = option.value;
+                return (
+                  <NumberInput
+                    key={v.name}
+                    label={v.name}
+                    min={v.min !== null ? Number(v.min) : undefined}
+                    max={v.max !== null ? Number(v.max) : undefined}
+                    value={Number(v.value)}
+                    onChange={(e) =>
+                      setSetting(v.name, e, Number(v.default ?? 0))
+                    }
+                  />
+                );
+              }
+              case "combo": {
+                const v = option.value;
+                return (
+                  <Select
+                    key={v.name}
+                    label={v.name}
+                    data={v.var}
+                    value={v.value}
+                    onChange={(e) => setSetting(v.name, e, v.default ?? "")}
+                  />
+                );
+              }
+              case "string": {
+                const v = option.value;
+                if (v.name.toLowerCase().includes("file")) {
+                  const file = v.value ? new File([v.value], v.value) : null;
                   return (
-                    <NumberInput
+                    <FileInput
                       key={v.name}
+                      clearable
                       label={v.name}
-                      min={Number(v.min)}
-                      max={Number(v.max)}
-                      value={Number(v.value)}
-                      onChange={(e) => setSetting(v.name, e, Number(v.default))}
+                      value={file}
+                      onClick={async () => {
+                        const selected = await open({
+                          multiple: false,
+                        });
+                        if (!selected) return;
+                        setSetting(v.name, selected as string, v.default ?? "");
+                      }}
+                      onChange={(e) => {
+                        if (e === null) {
+                          setSetting(v.name, null, v.default ?? "");
+                        }
+                      }}
                     />
                   );
-                })
-                .with({ type: "combo", value: P.select() }, (v: any) => {
-                  return (
-                    <Select
-                      key={v.name}
-                      label={v.name}
-                      data={v.var}
-                      value={v.value}
-                      onChange={(e) => setSetting(v.name, e, v.default)}
-                    />
-                  );
-                })
-                .with({ type: "string", value: P.select() }, (v: any) => {
-                  if (v.name.toLowerCase().includes("file")) {
-                    const file = v.value ? new File([v.value], v.value) : null;
-                    return (
-                      <FileInput
-                        key={v.name}
-                        clearable
-                        label={v.name}
-                        value={file}
-                        onClick={async () => {
-                          const selected = await open({
-                            multiple: false,
-                          });
-                          if (!selected) return;
-                          setSetting(v.name, selected as string, v.default);
-                        }}
-                        onChange={(e) => {
-                          if (e === null) {
-                            setSetting(v.name, null, v.default);
-                          }
-                        }}
-                      />
-                    );
-                  }
-                  return (
-                    <TextInput
-                      key={v.name}
-                      label={v.name}
-                      value={v.value || ""}
-                      onChange={(e) =>
-                        setSetting(v.name, e.currentTarget.value, v.default)
-                      }
-                    />
-                  );
-                })
-                .otherwise(() => null);
-            })}
+                }
+                return (
+                  <TextInput
+                    key={v.name}
+                    label={v.name}
+                    value={v.value || ""}
+                    onChange={(e) =>
+                      setSetting(v.name, e.currentTarget.value, v.default ?? "")
+                    }
+                  />
+                );
+              }
+              default:
+                return null;
+            }
+          })}
         </SimpleGrid>
         <SimpleGrid cols={2}>
-          {completeOptions
-            .filter((option: any) => option.type === "check")
-            .map((o: any) => {
-              return (
-                <Checkbox
-                  key={o.value.name}
-                  label={o.value.name}
-                  checked={!!o.value.value}
-                  onChange={(e) =>
-                    setSetting(
-                      o.value.name,
-                      e.currentTarget.checked,
-                      // @ts-ignore
-                      o.value.default,
-                    )
-                  }
-                />
-              );
-            })}
+          {completeOptions.filter(isCheckOption).map((o) => {
+            return (
+              <Checkbox
+                key={o.value.name}
+                label={o.value.name}
+                checked={o.value.value}
+                onChange={(e) =>
+                  setSetting(
+                    o.value.name,
+                    e.currentTarget.checked,
+                    o.value.default ?? false,
+                  )
+                }
+              />
+            );
+          })}
         </SimpleGrid>
 
         <Group justify="end">

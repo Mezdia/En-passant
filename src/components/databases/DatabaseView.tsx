@@ -20,7 +20,9 @@ import TournamentTable from "./TournamentTable";
 function DatabaseView() {
   const { t } = useTranslation();
   const database = useActiveDatabaseViewStore((s) => s.database);
-  const databaseTitle = useActiveDatabaseViewStore((s) => s.database?.title)!;
+  const databaseTitle = useActiveDatabaseViewStore(
+    (s) => s.database?.title ?? "",
+  );
   const mode = useActiveDatabaseViewStore((s) => s.activeTab);
   const clearDatabase = useActiveDatabaseViewStore((s) => s.clearDatabase);
   const setActiveTab = useActiveDatabaseViewStore((s) => s.setActiveTab);

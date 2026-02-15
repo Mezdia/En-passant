@@ -103,7 +103,7 @@ function RatingsPanel({
         .filter(
           (game) =>
             !timeControl ||
-            getTimeControl(website!, game.time_control) === timeControl,
+            getTimeControl(website, game.time_control) === timeControl,
         )
         .filter((game) => {
           const gameDate = new Date(game.date).getTime();
@@ -128,7 +128,8 @@ function RatingsPanel({
       const map = new Map<number, { date: number; player_elo: number }>();
       for (const game of filteredGames) {
         const date = new Date(game.date).getTime();
-        if (!map.has(date) || map.get(date)!.player_elo < game.player_elo) {
+        const existing = map.get(date);
+        if (!existing || existing.player_elo < game.player_elo) {
           map.set(date, { date, player_elo: game.player_elo });
         }
       }
@@ -144,7 +145,7 @@ function RatingsPanel({
       },
       ratingData,
     ];
-  }, [info.site_stats_data, website, account, timeControl, timeRange]);
+  }, [info.site_stats_data, website, account, timeControl, timeRange, dates]);
 
   const playerEloDomain =
     ratingData.length === 0
@@ -195,8 +196,8 @@ function RatingsPanel({
             <AreaChart data={ratingData}>
               <defs>
                 <linearGradient {...linearGradientProps}>
-                  {gradientStops.map((stopProps, index) => (
-                    <stop key={index} {...stopProps} />
+                  {gradientStops.map((stopProps) => (
+                    <stop key={stopProps.offset} {...stopProps} />
                   ))}
                 </linearGradient>
               </defs>

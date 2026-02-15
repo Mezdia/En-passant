@@ -26,7 +26,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useAtom, useAtomValue, useSetAtom, useStore } from "jotai";
-import { useCallback, useEffect, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
 import CreateRepertoireModal from "./CreateRepertoireModal";
 import ImportModal from "./ImportModal";
 import "./NewTabHome.css";
@@ -210,7 +210,24 @@ export default function NewTabHome({ id }: { id: string }) {
     return <Chess960Custom id={id} onBack={() => setCustom960(false)} />;
   }
 
-  const cards = [
+  type CardWithButtons = {
+    icon: ReactNode;
+    title: string;
+    description: string;
+    buttons: { label: string; onClick: () => void }[];
+  };
+
+  type CardWithAction = {
+    icon: ReactNode;
+    title: string;
+    description: string;
+    label: string;
+    onClick: () => void;
+  };
+
+  type HomeCard = CardWithButtons | CardWithAction;
+
+  const cards: HomeCard[] = [
     {
       icon: <IconChess size={60} />,
       title: t("Home.Card.PlayChess.Title"),

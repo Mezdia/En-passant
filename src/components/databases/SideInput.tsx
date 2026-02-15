@@ -57,7 +57,7 @@ export function SideInput({
     } else {
       setSides("BlackWhite");
     }
-  }, [selected]);
+  }, [label, selected, setSides]);
 
   useEffect(() => {
     const newSelected =
@@ -68,7 +68,7 @@ export function SideInput({
           ? data[2]
           : data[1];
     setSelected(newSelected);
-  }, [sides]);
+  }, [label, sides]);
 
   return (
     <Menu>

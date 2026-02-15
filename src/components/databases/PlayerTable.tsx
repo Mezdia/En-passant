@@ -24,17 +24,26 @@ import * as classes from "./styles.css";
 
 function PlayerTable() {
   const { t } = useTranslation();
-  const store = useContext(DatabaseViewStateContext)!;
+  const store = useContext(DatabaseViewStateContext);
+  if (!store) {
+    throw new Error("DatabaseViewStateContext is missing");
+  }
 
-  const file = useStore(store, (s) => s.database?.file)!;
+  const file = useStore(store, (s) => s.database?.file);
   const query = useStore(store, (s) => s.players.query);
   const setQuery = useStore(store, (s) => s.setPlayersQuery);
 
   const selectedPlayer = useStore(store, (s) => s.players.selectedPlayer);
   const setSelectedPlayer = useStore(store, (s) => s.setPlayersSelectedPlayer);
 
-  const { data, isLoading } = useSWR(["players", query], () =>
-    query_players(file, query),
+  const { data, isLoading } = useSWR(
+    file ? ["players", query, file] : null,
+    () => {
+      if (!file) {
+        return Promise.resolve(null);
+      }
+      return query_players(file, query);
+    },
   );
   const players = data?.data ?? [];
   const count = data?.count;
@@ -60,6 +69,14 @@ function PlayerTable() {
       }
     }
   });
+
+  if (!file) {
+    return (
+      <Center h="100%">
+        <Text>{t("Databases.Player.NoSelection")}</Text>
+      </Center>
+    );
+  }
 
   return (
     <GridLayout
@@ -137,14 +154,14 @@ function PlayerTable() {
             r.id === selectedPlayer ? classes.selected : ""
           }
           noRecordsText={t("Databases.Player.NoPlayersFound")}
-          totalRecords={count!}
+          totalRecords={count ?? 0}
           recordsPerPage={query.options.pageSize ?? 25}
           page={query.options?.page ?? 1}
           onPageChange={(page) =>
             setQuery({
               ...query,
               options: {
-                ...query.options!,
+                ...(query.options ?? {}),
                 page,
               },
             })
@@ -152,7 +169,7 @@ function PlayerTable() {
           onRecordsPerPageChange={(value) =>
             setQuery({
               ...query,
-              options: { ...query.options!, pageSize: value },
+              options: { ...(query.options ?? {}), pageSize: value },
             })
           }
           sortStatus={{
@@ -163,7 +180,7 @@ function PlayerTable() {
             setQuery({
               ...query,
               options: {
-                ...query.options!,
+                ...(query.options ?? {}),
                 sort: value.columnAccessor as PlayerSort,
                 direction: value.direction,
               },

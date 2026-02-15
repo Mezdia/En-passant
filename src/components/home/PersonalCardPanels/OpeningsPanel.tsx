@@ -80,7 +80,7 @@ function OpeningsPanel({
         (g) =>
           !timeControl ||
           timeControl === "any" ||
-          getTimeControl(website!, g.time_control) === timeControl,
+          getTimeControl(website, g.time_control) === timeControl,
       )
       .map((g) => ({
         opening: g.opening,

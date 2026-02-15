@@ -7,6 +7,7 @@ import PersonalPlayerCard from "../home/PersonalCard";
 
 function PlayerCard({ player, file }: { player: Player; file: string }) {
   const { t } = useTranslation();
+  const playerName = player.name ?? t("Common.Unknown");
   const { data: info, isLoading } = useSWRImmutable(
     ["player-game-info", file, player.id],
     async ([key, file, id]) => {
@@ -27,9 +28,7 @@ function PlayerCard({ player, file }: { player: Player; file: string }) {
           </Center>
         </Paper>
       )}
-      {info && (
-        <PersonalPlayerCard name={player.name!} info={info} isDatabase />
-      )}
+      {info && <PersonalPlayerCard name={playerName} info={info} isDatabase />}
     </>
   );
 }

@@ -22,21 +22,23 @@ import {
   IconChessKing,
   IconCrown,
   IconDice,
+  IconHistory,
   IconPlus,
   IconRobot,
   IconTrophy,
-  IconHistory,
 } from "@tabler/icons-react";
-import { BotGamesViewer } from "./BotGamesViewer";
 import cx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import * as Flags from "mantine-flagpack";
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { BotGamesViewer } from "./BotGamesViewer";
 
+import { commands } from "@/bindings";
 import { activeTabAtom, enginesAtom, tabsAtom } from "@/state/atoms";
 import type { LocalEngine } from "@/utils/engines";
 import { createTab } from "@/utils/tabs";
+import { unwrap } from "@/utils/unwrap";
 import * as classes from "./BotsPage.css";
 import {
   BOT_CATEGORIES,
@@ -52,8 +54,6 @@ import {
   getRatingBehavior,
   getRatingDescription,
 } from "./engineRating";
-import { commands } from "@/bindings";
-import { unwrap } from "@/utils/unwrap";
 
 // Helper to get Flag component by country code
 const flagComponents = Object.entries(Flags).map(([key, value]) => ({
@@ -172,9 +172,12 @@ function BotCard({
           <div className={classes.flagBadge}>
             {Array.isArray(flagData) ? (
               flagData.map(
-                (FlagComponent, index) =>
+                (FlagComponent) =>
                   FlagComponent && (
-                    <div key={index} className={classes.individualFlag}>
+                    <div
+                      key={FlagComponent.name || "flag"}
+                      className={classes.individualFlag}
+                    >
                       <FlagComponent w={24} h={16} />
                     </div>
                   ),
@@ -208,10 +211,16 @@ function BotCard({
       {/* Content Section */}
       <div className={classes.cardContent}>
         <h4 className={classes.cardName}>
-          {t(bot.nameKey, { defaultValue: isPersian ? bot.namePersian : bot.nameEnglish })}
+          {t(bot.nameKey, {
+            defaultValue: isPersian ? bot.namePersian : bot.nameEnglish,
+          })}
         </h4>
         <p className={classes.cardDescription}>
-          {t(bot.descriptionKey, { defaultValue: isPersian ? bot.descriptionPersian : bot.descriptionEnglish })}
+          {t(bot.descriptionKey, {
+            defaultValue: isPersian
+              ? bot.descriptionPersian
+              : bot.descriptionEnglish,
+          })}
         </p>
         <div
           className={cx(classes.cardLevel, {
@@ -301,13 +310,15 @@ function ModeButton({
       <div className={classes.modeTitle}>
         <span>{title}</span>
         <Group gap={2}>
-          {Array.from({ length: crowns }).map((_, i) => (
-            <IconCrown
-              key={i}
-              size={12}
-              color="var(--mantine-color-yellow-6)"
-            />
-          ))}
+          {Array.from({ length: crowns }, (_, index) => index + 1).map(
+            (count) => (
+              <IconCrown
+                key={`crown-${count}`}
+                size={12}
+                color="var(--mantine-color-yellow-6)"
+              />
+            ),
+          )}
         </Group>
       </div>
       <div className={classes.modeDesc}>{description}</div>
@@ -344,7 +355,7 @@ function CustomSettingsPanel({
       <Text size="sm" fw={600} c="dimmed" mb="xs">
         {t("Bots.Setup.CustomSettings")}
       </Text>
-      
+
       <SimpleGrid cols={2}>
         <Switch
           label={t("Bots.Custom.BotChat")}
@@ -403,9 +414,9 @@ function CustomSettingsPanel({
           }
         />
       </SimpleGrid>
-      
+
       <Divider my="xs" />
-      
+
       <Group grow>
         <Select
           label={t("Bots.Custom.TimeControl")}
@@ -498,16 +509,18 @@ function BotSettingsPanel({
           <Stack gap={4}>
             <Group gap="xs">
               <Title order={4}>
-                {t(bot.nameKey, { defaultValue: isPersian ? bot.namePersian : bot.nameEnglish })}
+                {t(bot.nameKey, {
+                  defaultValue: isPersian ? bot.namePersian : bot.nameEnglish,
+                })}
               </Title>
               {flagData && (
                 <div className={classes.settingsPanelFlags}>
                   {Array.isArray(flagData) ? (
                     flagData.map(
-                      (FlagComponent, index) =>
+                      (FlagComponent) =>
                         FlagComponent && (
                           <div
-                            key={index}
+                            key={FlagComponent.name || "flag"}
                             className={classes.individualFlagSmall}
                           >
                             <FlagComponent w={24} h={16} />
@@ -516,7 +529,8 @@ function BotSettingsPanel({
                     )
                   ) : (
                     <div className={classes.individualFlagSmall}>
-                      {flagData && React.createElement(flagData, { w: 24, h: 16 })}
+                      {flagData &&
+                        React.createElement(flagData, { w: 24, h: 16 })}
                     </div>
                   )}
                 </div>
@@ -531,7 +545,11 @@ function BotSettingsPanel({
               </Text>
             </Group>
             <Text size="sm" c="dimmed">
-              {t(bot.descriptionKey, { defaultValue: isPersian ? bot.descriptionPersian : bot.descriptionEnglish })}
+              {t(bot.descriptionKey, {
+                defaultValue: isPersian
+                  ? bot.descriptionPersian
+                  : bot.descriptionEnglish,
+              })}
             </Text>
           </Stack>
         </Group>
@@ -698,8 +716,11 @@ export default function BotsPage() {
     let engineOptions: Array<{ name: string; value: string }> = [];
     try {
       const config = unwrap(await commands.getEngineConfig(engine.path));
-      const supportedOptions = config.options.map((o: any) => o.value.name);
-      engineOptions = getCompatibleEngineOptions(selectedBot.rating, supportedOptions);
+      const supportedOptions = config.options.map((o) => o.value.name);
+      engineOptions = getCompatibleEngineOptions(
+        selectedBot.rating,
+        supportedOptions,
+      );
     } catch (e) {
       console.warn("Failed to fetch engine options, using defaults", e);
       // Fallback to optimistic options if we can't check capabilities
@@ -719,7 +740,9 @@ export default function BotsPage() {
     };
 
     // Create a new tab for the bot game
-    const botName = isPersian ? selectedBot.namePersian : selectedBot.nameEnglish;
+    const botName = isPersian
+      ? selectedBot.namePersian
+      : selectedBot.nameEnglish;
     const id = await createTab({
       tab: {
         name: `${t("Bots.Game.VsPrefix")} ${botName}`,
@@ -739,8 +762,8 @@ export default function BotsPage() {
     customSettings,
     engines,
     selectedEngine,
+    isPersian,
     t,
-    i18n,
     setTabs,
     setActiveTab,
   ]);
@@ -835,7 +858,6 @@ export default function BotsPage() {
             />
           </Paper>
         )}
-
       </div>
 
       <BotGamesViewer

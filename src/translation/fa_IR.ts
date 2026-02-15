@@ -84,9 +84,10 @@ export const fa_IR = {
     "Game.GameControls": "کنترل‌های بازی",
     "Game.GameDuration": "مدت بازی",
     "Game.Accuracy": "دقت",
-    "Game.AnalysisDescription": "حالت تحلیل را برای بررسی دقیق‌تر بازی فعال کنید.",
+    "Game.AnalysisDescription":
+      "حالت تحلیل را برای بررسی دقیق‌تر بازی فعال کنید.",
     "Game.MoveHistory": "تاریخچه حرکات",
-    "BookMove": "حرکت از کتاب بازی",
+    BookMove: "حرکت از کتاب بازی",
 
     "GoMode.Time": "زمان",
     "GoMode.Depth": "عمق",
@@ -252,7 +253,7 @@ export const fa_IR = {
     "Bots.Engine.Evaluation": "نوار ارزیابی",
     "Bots.Engine.PV": "بهترین خط",
 
-    "NoMovesYet": "هنوز حرکتی انجام نشده",
+    NoMovesYet: "هنوز حرکتی انجام نشده",
 
     "Bots.Bot.Martin.Name": "مارتین",
     "Bots.Bot.Martin.Desc":
@@ -349,7 +350,8 @@ export const fa_IR = {
     "GameHistory.Summary.Analyzed": "تحلیل‌شده",
 
     "GameHistory.Filters.Title": "فیلترها",
-    "GameHistory.Filters.Desc": "تاریخچه را بر اساس بازیکن، نتیجه و بازه زمانی محدود کنید.",
+    "GameHistory.Filters.Desc":
+      "تاریخچه را بر اساس بازیکن، نتیجه و بازه زمانی محدود کنید.",
     "GameHistory.Filters.Search.Label": "جست‌وجو",
     "GameHistory.Filters.Search.Placeholder": "بازیکن، انجین، ربات یا حالت",
     "GameHistory.Filters.Type.Label": "نوع بازی",

@@ -32,7 +32,10 @@ import { TreeStateContext } from "../common/TreeStateContext";
 function EvalListener() {
   const [engines] = useAtom(enginesAtom);
   const threat = useAtomValue(currentThreatAtom);
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
   const is960 = useStore(store, (s) => s.headers.variant === "Chess960");
   const fen = useStore(store, (s) => s.root.fen);
 
@@ -118,27 +121,31 @@ function EngineListener({
   threat: boolean;
   chess960: boolean;
 }) {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
   const setScore = useStore(store, (s) => s.setScore);
   const activeTab = useAtomValue(activeTabAtom);
+  const tabId = activeTab ?? "unknown";
 
   const [, setProgress] = useAtom(
-    engineProgressFamily({ engine: engine.id, tab: activeTab! }),
+    engineProgressFamily({ engine: engine.id, tab: tabId }),
   );
 
   const [, setEngineVariation] = useAtom(
-    engineMovesFamily({ engine: engine.id, tab: activeTab! }),
+    engineMovesFamily({ engine: engine.id, tab: tabId }),
   );
   const [settings] = useAtom(
     tabEngineSettingsFamily({
       engineId: engine.id,
       defaultSettings: engine.settings ?? undefined,
       defaultGo: engine.go ?? undefined,
-      tab: activeTab!,
+      tab: tabId,
     }),
   );
   useEffect(() => {
-    if (!settings.enabled) return;
+    if (!settings.enabled || !activeTab) return;
     const unlisten = events.bestMovesPayload.listen(({ payload }) => {
       const ev = payload.bestLines;
       if (
@@ -174,13 +181,18 @@ function EngineListener({
     };
   }, [
     activeTab,
-    setScore,
-    settings.enabled,
-    isGameOver,
-    searchingFen,
-    JSON.stringify(searchingMoves),
     engine.id,
+    fen,
+    moves,
+    threat,
+    finalFen,
+    searchingFen,
+    searchingMoves,
+    isGameOver,
+    settings.enabled,
     setEngineVariation,
+    setProgress,
+    setScore,
     firstEngineWithLines,
   ]);
 
@@ -200,10 +212,13 @@ function EngineListener({
 
   useThrottledEffect(
     () => {
+      if (!activeTab) {
+        return;
+      }
       if (settings.enabled) {
         if (isGameOver) {
           if (engine.type === "local") {
-            stopEngine(engine, activeTab!);
+            stopEngine(engine, activeTab);
           }
         } else {
           const options =
@@ -214,7 +229,7 @@ function EngineListener({
           if (chess960 && !options.find((o) => o.name === "UCI_Chess960")) {
             options.push({ name: "UCI_Chess960", value: "true" });
           }
-          getBestMoves(activeTab!, settings.go, {
+          getBestMoves(activeTab, settings.go, {
             moves: searchingMoves,
             fen: searchingFen,
             extraOptions: options,
@@ -235,7 +250,7 @@ function EngineListener({
         }
       } else {
         if (engine.type === "local") {
-          stopEngine(engine, activeTab!);
+          stopEngine(engine, activeTab);
         }
       }
     },

@@ -56,7 +56,10 @@ function BoardControls({
   const { t } = useTranslation();
   const { documentDir } = useLoaderData({ from: "/" });
 
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
   const headers = useStore(store, (s) => s.headers);
   const root = useStore(store, (s) => s.root);
   const setHeaders = useStore(store, (s) => s.setHeaders);

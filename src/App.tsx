@@ -144,7 +144,7 @@ export default function App() {
         detach();
       };
     })();
-  }, []);
+  }, [setActiveTab, setTabs]);
 
   const fontSize = useAtomValue(fontSizeAtom);
   const spellCheck = useAtomValue(spellCheckAtom);

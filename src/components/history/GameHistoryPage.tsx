@@ -1,5 +1,8 @@
-import { deleteBotGame, type BotGameRecord } from "@/components/bots/botGameHistory";
 import { getAllBots } from "@/components/bots/botData";
+import {
+  type BotGameRecord,
+  deleteBotGame,
+} from "@/components/bots/botGameHistory";
 import {
   activeTabAtom,
   botGameHistoryAtom,
@@ -9,9 +12,9 @@ import {
   tabsAtom,
 } from "@/state/atoms";
 import {
+  type GameHistoryRecord,
   addGameHistory,
   deleteGameHistory,
-  type GameHistoryRecord,
 } from "@/utils/gameHistory";
 import { createTab, genID } from "@/utils/tabs";
 import {
@@ -236,7 +239,9 @@ export default function GameHistoryPage() {
 
   const filteredItems = useMemo(() => {
     const search = filters.search.trim().toLowerCase();
-    const from = filters.from ? dayjs(filters.from).startOf("day").valueOf() : 0;
+    const from = filters.from
+      ? dayjs(filters.from).startOf("day").valueOf()
+      : 0;
     const to = filters.to
       ? dayjs(filters.to).endOf("day").valueOf()
       : Number.POSITIVE_INFINITY;
@@ -334,13 +339,18 @@ export default function GameHistoryPage() {
   };
 
   const escapeCsvValue = (value: string) => {
-    if (value.includes('"')) {
-      value = value.replaceAll('"', '""');
+    let escaped = value;
+    if (escaped.includes('"')) {
+      escaped = escaped.replaceAll('"', '""');
     }
-    if (value.includes(",") || value.includes("\n") || value.includes("\r")) {
-      return `"${value}"`;
+    if (
+      escaped.includes(",") ||
+      escaped.includes("\n") ||
+      escaped.includes("\r")
+    ) {
+      return `"${escaped}"`;
     }
-    return value;
+    return escaped;
   };
 
   const buildCsv = (items: HistoryItem[]) => {
@@ -440,21 +450,26 @@ export default function GameHistoryPage() {
   };
 
   const normalizeResult = (value: string): HistoryItem["result"] => {
-    if (value === "1-0" || value === "0-1" || value === "1/2-1/2" || value === "*") {
+    if (
+      value === "1-0" ||
+      value === "0-1" ||
+      value === "1/2-1/2" ||
+      value === "*"
+    ) {
       return value;
     }
     return "*";
   };
 
   const normalizeType = (value: string): HistoryType => {
-    if (value === "bot" || value === "engine" || value === "human") return value;
+    if (value === "bot" || value === "engine" || value === "human")
+      return value;
     return "human";
   };
 
-  const normalizeParticipant = (
-    value: string,
-  ): "human" | "engine" | "bot" => {
-    if (value === "bot" || value === "engine" || value === "human") return value;
+  const normalizeParticipant = (value: string): "human" | "engine" | "bot" => {
+    if (value === "bot" || value === "engine" || value === "human")
+      return value;
     return "human";
   };
 
@@ -495,7 +510,7 @@ export default function GameHistoryPage() {
     for (const row of dataRows) {
       const getValue = (key: string) => {
         const idx = headerMap.get(key);
-        return idx !== undefined ? row[idx] ?? "" : "";
+        return idx !== undefined ? (row[idx] ?? "") : "";
       };
 
       const date = getValue("date") || new Date().toISOString();
@@ -637,7 +652,10 @@ export default function GameHistoryPage() {
               data={[
                 { value: "all", label: t("GameHistory.Filters.Type.All") },
                 { value: "bot", label: t("GameHistory.Filters.Type.Bot") },
-                { value: "engine", label: t("GameHistory.Filters.Type.Engine") },
+                {
+                  value: "engine",
+                  label: t("GameHistory.Filters.Type.Engine"),
+                },
                 { value: "human", label: t("GameHistory.Filters.Type.Human") },
               ]}
             />
@@ -712,9 +730,7 @@ export default function GameHistoryPage() {
                 <ActionIcon
                   variant="light"
                   size="lg"
-                  onClick={() =>
-                    exportCsv(selectedItems, "games_selected.csv")
-                  }
+                  onClick={() => exportCsv(selectedItems, "games_selected.csv")}
                   disabled={selectedItems.length === 0}
                 >
                   <IconFileExport size={18} />
@@ -761,7 +777,11 @@ export default function GameHistoryPage() {
 
                 return (
                   <Paper key={item.id} withBorder p="lg" radius="md">
-                    <Group justify="space-between" align="flex-start" wrap="wrap">
+                    <Group
+                      justify="space-between"
+                      align="flex-start"
+                      wrap="wrap"
+                    >
                       <Group gap="sm" align="flex-start" wrap="wrap">
                         <Checkbox
                           size="sm"
@@ -771,17 +791,28 @@ export default function GameHistoryPage() {
                         <Stack gap={6}>
                           <Group gap="xs">
                             <Text fw={600} size="sm">
-                              {item.white} {t("Bots.Game.VsPrefix")} {item.black}
+                              {item.white} {t("Bots.Game.VsPrefix")}{" "}
+                              {item.black}
                             </Text>
                           </Group>
                           <Group gap="xs">
-                            <Badge size="sm" variant="light" color={getResultColor(item.result)}>
+                            <Badge
+                              size="sm"
+                              variant="light"
+                              color={getResultColor(item.result)}
+                            >
                               {getResultLabel(item.result, t)}
                             </Badge>
                             <Badge
                               size="sm"
                               variant="light"
-                              color={item.type === "bot" ? "blue" : item.type === "engine" ? "indigo" : "cyan"}
+                              color={
+                                item.type === "bot"
+                                  ? "blue"
+                                  : item.type === "engine"
+                                    ? "indigo"
+                                    : "cyan"
+                              }
                               leftSection={typeIcon}
                             >
                               {item.type === "bot"
@@ -814,7 +845,9 @@ export default function GameHistoryPage() {
                                   <IconZoomCheck size={18} />
                                 </ActionIcon>
                               </Tooltip>
-                              <Tooltip label={t("GameHistory.Action.ExportPgn")}>
+                              <Tooltip
+                                label={t("GameHistory.Action.ExportPgn")}
+                              >
                                 <ActionIcon
                                   variant="light"
                                   size="lg"
@@ -865,7 +898,8 @@ export default function GameHistoryPage() {
                           {t("GameHistory.Fields.Engine")}
                         </Text>
                         <Text size="sm">
-                          {item.engineName ?? t("GameHistory.Fields.NotApplicable")}
+                          {item.engineName ??
+                            t("GameHistory.Fields.NotApplicable")}
                         </Text>
                       </Stack>
                       <Stack gap={4}>
@@ -873,16 +907,15 @@ export default function GameHistoryPage() {
                           {t("GameHistory.Fields.Bot")}
                         </Text>
                         <Text size="sm">
-                          {item.botName ?? t("GameHistory.Fields.NotApplicable")}
+                          {item.botName ??
+                            t("GameHistory.Fields.NotApplicable")}
                         </Text>
                       </Stack>
                       <Stack gap={4}>
                         <Text size="xs" c="dimmed">
                           {t("GameHistory.Fields.Variant")}
                         </Text>
-                        <Text size="sm">
-                          {formatVariant(item.variant)}
-                        </Text>
+                        <Text size="sm">{formatVariant(item.variant)}</Text>
                       </Stack>
                       <Stack gap={4}>
                         <Text size="xs" c="dimmed">

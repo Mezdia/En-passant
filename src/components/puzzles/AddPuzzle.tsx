@@ -1,4 +1,4 @@
-import { events, type PuzzleDatabaseInfo, commands } from "@/bindings";
+import { type PuzzleDatabaseInfo, commands } from "@/bindings";
 import { getDefaultPuzzleDatabases } from "@/utils/db";
 import { formatBytes, formatNumber } from "@/utils/format";
 import { getPuzzleDatabases } from "@/utils/puzzles";
@@ -49,7 +49,7 @@ function AddPuzzle({
             <PuzzleDbCard
               puzzleDb={db}
               databaseId={i}
-              key={i}
+              key={db.title}
               setPuzzleDbs={setPuzzleDbs}
               initInstalled={puzzleDbs.some(
                 (e) => e.title.replace(".db3", "") === db.title,
@@ -78,7 +78,7 @@ function PuzzleDbCard({
   initInstalled,
 }: {
   setPuzzleDbs: Dispatch<SetStateAction<PuzzleDatabaseInfo[]>>;
-  puzzleDb: PuzzleDatabaseInfo & { downloadLink: string };
+  puzzleDb: PuzzleDatabaseInfo;
   databaseId: number;
   initInstalled: boolean;
 }) {
@@ -123,7 +123,6 @@ function PuzzleDbCard({
           </Group>
           <ProgressButton
             id={`puzzle_db_${databaseId}`}
-            progressEvent={events.downloadProgress}
             initInstalled={initInstalled}
             labels={{
               completed: t("Common.Installed"),
@@ -132,11 +131,13 @@ function PuzzleDbCard({
               finalizing: t("Common.Extracting"),
             }}
             onClick={() =>
-              downloadDatabase(
-                databaseId,
-                puzzleDb.downloadLink!,
-                puzzleDb.title,
-              )
+              puzzleDb.downloadLink
+                ? downloadDatabase(
+                    databaseId,
+                    puzzleDb.downloadLink,
+                    puzzleDb.title,
+                  )
+                : undefined
             }
             inProgress={inProgress}
             setInProgress={setInProgress}

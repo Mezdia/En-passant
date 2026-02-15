@@ -30,7 +30,7 @@ export function PlayerSearchInput({
         }
       });
     }
-  }, [value]);
+  }, [file, value]);
 
   async function handleChange(val: string) {
     setTempValue(val);
@@ -56,10 +56,14 @@ export function PlayerSearchInput({
     });
     setData(res.data);
   }
+  const playerNames = data.flatMap((player) =>
+    player.name ? [player.name] : [],
+  );
+
   return (
     <Autocomplete
       value={tempValue}
-      data={data.map((player) => player.name!)}
+      data={playerNames}
       onChange={handleChange}
       rightSection={rightSection}
       leftSection={<IconSearch size="1rem" />}

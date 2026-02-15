@@ -33,7 +33,12 @@ const SymbolButton = memo(function SymbolButton({
 }) {
   const { t } = useTranslation();
 
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "SymbolButton must be used within a TreeStateContext provider",
+    );
+  }
   const setAnnotation = useStore(store, (s) => s.setAnnotation);
   const { translationKey, name, color } = ANNOTATION_INFO[annotation];
   const isActive = curAnnotations.includes(annotation);
@@ -73,7 +78,12 @@ const EXTRA = [
 ] as const;
 
 function AnnotationPanel() {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "AnnotationPanel must be used within a TreeStateContext provider",
+    );
+  }
   const root = useStore(store, (s) => s.root);
   const position = useStore(store, (s) => s.position);
   const currentNode = getNodeAtPath(root, position);
@@ -82,7 +92,9 @@ function AnnotationPanel() {
   const focusSignal = useAtomValue(annotationFocusAtom);
 
   useEffect(() => {
-    editorRef.current?.focus();
+    if (focusSignal) {
+      editorRef.current?.focus();
+    }
   }, [focusSignal]);
 
   return (

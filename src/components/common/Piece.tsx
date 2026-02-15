@@ -52,7 +52,10 @@ export default function PieceComponent({
         x = 7 - x;
         y = 7 - y;
       }
-      putPiece(squareFromCoords(x, 7 - y)!, piece);
+      const square = squareFromCoords(x, 7 - y);
+      if (square) {
+        putPiece(square, piece);
+      }
     }
   };
 

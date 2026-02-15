@@ -6,6 +6,7 @@ import { useAtomValue } from "jotai";
 import { match } from "ts-pattern";
 
 type Challenge = {
+  id: number | string;
   completion: Completion;
   label?: string;
 };
@@ -27,7 +28,7 @@ function ChallengeHistory({
         const isCurrent = i === current;
         return match(p.completion)
           .with("correct", () => (
-            <Stack key={i} gap={0}>
+            <Stack key={p.id} gap={0}>
               <ActionIcon
                 onClick={() => {
                   select(i);
@@ -44,11 +45,10 @@ function ChallengeHistory({
             </Stack>
           ))
           .with("incorrect", () => (
-            <Stack key={i} gap={0}>
+            <Stack key={p.id} gap={0}>
               <ActionIcon
                 onClick={() => select(i)}
                 variant="light"
-                key={i}
                 color="red"
                 style={{ border: isCurrent ? "2px solid red" : "none" }}
               >
@@ -60,11 +60,10 @@ function ChallengeHistory({
             </Stack>
           ))
           .with("incomplete", () => (
-            <Stack key={i} gap={0}>
+            <Stack key={p.id} gap={0}>
               <ActionIcon
                 onClick={() => select(i)}
                 variant="light"
-                key={i}
                 color="yellow"
                 style={{ border: isCurrent ? "2px solid yellow" : "none" }}
               >

@@ -1,4 +1,4 @@
-import { events, type DatabaseInfo, commands } from "@/bindings";
+import { type DatabaseInfo, commands } from "@/bindings";
 import {
   type SuccessDatabaseInfo,
   getDatabases,
@@ -102,7 +102,7 @@ function AddDatabase({
                 <DatabaseCard
                   database={db}
                   databaseId={i}
-                  key={i}
+                  key={db.title ?? db.filename}
                   setDatabases={setDatabases}
                   initInstalled={databases.some(
                     (e) =>
@@ -127,7 +127,8 @@ function AddDatabase({
         <Tabs.Panel value="local" pt="xs">
           <form
             onSubmit={form.onSubmit(async (values) => {
-              convertDB(values.file!, values.title!, values.description);
+              if (!values.file || !values.title) return;
+              convertDB(values.file, values.title, values.description);
               setOpened(false);
             })}
           >
@@ -243,7 +244,6 @@ function DatabaseCard({
           </Group>
           <ProgressButton
             id={`db_${databaseId}`}
-            progressEvent={events.downloadProgress}
             initInstalled={initInstalled}
             labels={{
               completed: t("Common.Installed"),
@@ -252,11 +252,13 @@ function DatabaseCard({
               finalizing: t("Common.Extracting"),
             }}
             onClick={() =>
-              downloadDatabase(
-                databaseId,
-                database.downloadLink!,
-                database.title!,
-              )
+              database.downloadLink && database.title
+                ? downloadDatabase(
+                    databaseId,
+                    database.downloadLink,
+                    database.title,
+                  )
+                : undefined
             }
             inProgress={inProgress}
             setInProgress={setInProgress}

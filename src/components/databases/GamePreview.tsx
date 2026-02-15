@@ -80,7 +80,10 @@ function GamePreview({
 }
 
 function PreviewBoard() {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
   const goToNext = useStore(store, (s) => s.goToNext);
   const goToPrevious = useStore(store, (s) => s.goToPrevious);
   const root = useStore(store, (s) => s.root);

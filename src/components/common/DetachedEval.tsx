@@ -75,7 +75,11 @@ const DetachedEvalInner = memo(function DetachedEvalInner({
 }) {
   const activeTab = useAtomValue(activeTabAtom);
   const threat = useAtomValue(currentThreatAtom);
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
+  const tabId = activeTab ?? "unknown";
   const rootFen = useStore(store, (s) => s.root.fen);
   const is960 = useStore(store, (s) => s.headers.variant === "Chess960");
   const moves = useStore(
@@ -89,15 +93,13 @@ const DetachedEvalInner = memo(function DetachedEvalInner({
       engineId,
       defaultSettings,
       defaultGo,
-      tab: activeTab!,
+      tab: tabId,
     }),
   );
 
-  const ev = useAtomValue(
-    engineMovesFamily({ engine: engineId, tab: activeTab! }),
-  );
+  const ev = useAtomValue(engineMovesFamily({ engine: engineId, tab: tabId }));
   const progress = useAtomValue(
-    engineProgressFamily({ engine: engineId, tab: activeTab! }),
+    engineProgressFamily({ engine: engineId, tab: tabId }),
   );
 
   const [pos] = positionFromFen(rootFen);
@@ -131,6 +133,9 @@ const DetachedEvalInner = memo(function DetachedEvalInner({
   const hasData =
     engineVariations && engineVariations.length > 0 && !isGameOver;
   const topLine = hasData ? engineVariations[0] : null;
+  if (!activeTab) {
+    return null;
+  }
 
   return (
     <Paper withBorder px="sm" py={6}>

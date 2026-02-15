@@ -10,7 +10,7 @@ export interface RatingBehavior {
 
   // Skill parameters (for Stockfish-like engines)
   skillLevel: number; // 0-20 for Stockfish
-  uciElo?: number;    // UCI_Elo value for compatible engines
+  uciElo?: number; // UCI_Elo value for compatible engines
 
   // Move selection parameters
   multiPV: number;
@@ -60,11 +60,11 @@ function getSearchDepth(elo: number): number {
 
 /**
  * Calculate base think time in ms based on Elo
- * Simulates human behavior: beginners play fast (impulsive), 
+ * Simulates human behavior: beginners play fast (impulsive),
  * intermediates think longer, masters are efficient but deep.
  */
 function getThinkTime(elo: number): number {
-  if (elo < 600) return 1000;  // Fast, random moves
+  if (elo < 600) return 1000; // Fast, random moves
   if (elo < 1000) return 1500;
   if (elo < 1400) return 3000; // Checking for blunders takes specific time
   if (elo < 1800) return 5000;
@@ -87,7 +87,7 @@ export function getRatingBehavior(targetElo: number): RatingBehavior {
 
     multiPV: elo < 1500 ? 10 : elo < 2200 ? 5 : 3, // Lower rated bots need more bad options to choose from
 
-    // Blunder config is handled by blunderInjection.ts logic mostly, 
+    // Blunder config is handled by blunderInjection.ts logic mostly,
     // but these values drive the engine configuration too.
     blunderRate: 0, // Handled externally now
     blunderThreshold: 0,
@@ -175,12 +175,17 @@ export function getCompatibleEngineOptions(
  * Get optimistic engine options when we can't query the engine capabilities.
  * Assumes a standard Stockfish-like engine.
  */
-export function getEngineOptionsForElo(targetElo: number): Array<{ name: string; value: string }> {
+export function getEngineOptionsForElo(
+  targetElo: number,
+): Array<{ name: string; value: string }> {
   const behavior = getRatingBehavior(targetElo);
   const options: Array<{ name: string; value: string }> = [];
 
   options.push({ name: "MultiPV", value: behavior.multiPV.toString() });
-  options.push({ name: "Skill Level", value: Math.min(20, behavior.skillLevel + 5).toString() });
+  options.push({
+    name: "Skill Level",
+    value: Math.min(20, behavior.skillLevel + 5).toString(),
+  });
 
   return options;
 }

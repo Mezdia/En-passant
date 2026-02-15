@@ -38,8 +38,8 @@ function EngineBox({
           toggleEnabled();
           return;
         }
-        if (engine.loaded && engine.type === "local") {
-          stopEngine(engine, activeTab!);
+        if (engine.loaded && engine.type === "local" && activeTab) {
+          stopEngine(engine, activeTab);
         }
         toggleEnabled();
       }}

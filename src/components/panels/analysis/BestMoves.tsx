@@ -12,6 +12,7 @@ import { chessopsError, positionFromFen, swapMove } from "@/utils/chessops";
 import type { Engine } from "@/utils/engines";
 import { formatNodes } from "@/utils/format";
 import { formatScore } from "@/utils/score";
+import type { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import {
   Accordion,
   ActionIcon,
@@ -68,7 +69,7 @@ interface BestMovesProps {
   fen: string;
   moves: string[];
   halfMoves: number;
-  dragHandleProps: any;
+  dragHandleProps?: DraggableProvidedDragHandleProps | null;
   orientation: "white" | "black";
 }
 
@@ -84,11 +85,10 @@ function BestMovesComponent({
   const { t } = useTranslation();
 
   const activeTab = useAtomValue(activeTabAtom);
-  const ev = useAtomValue(
-    engineMovesFamily({ engine: engine.id, tab: activeTab! }),
-  );
+  const tabId = activeTab ?? "analysis";
+  const ev = useAtomValue(engineMovesFamily({ engine: engine.id, tab: tabId }));
   const progress = useAtomValue(
-    engineProgressFamily({ engine: engine.id, tab: activeTab! }),
+    engineProgressFamily({ engine: engine.id, tab: tabId }),
   );
   const [, setEngines] = useAtom(enginesAtom);
   const [settings, setSettings2] = useAtom(
@@ -96,7 +96,7 @@ function BestMovesComponent({
       engineId: engine.id,
       defaultSettings: engine.settings ?? undefined,
       defaultGo: engine.go ?? undefined,
-      tab: activeTab!,
+      tab: tabId,
     }),
   );
 
@@ -252,7 +252,7 @@ function BestMovesComponent({
             style={{
               cursor: "grab",
             }}
-            {...dragHandleProps}
+            {...(dragHandleProps ?? {})}
           >
             <IconGripVertical size="1rem" />
           </ActionIcon>
@@ -317,7 +317,7 @@ function BestMovesComponent({
                       ?.value ?? 1,
                   ),
                 ].map((_, i) => (
-                  <Table.Tr key={i}>
+                  <Table.Tr key={`${engine.id}-skeleton-${i}`}>
                     <Table.Td>
                       <Skeleton height={35} radius="xl" p={5} />
                     </Table.Td>
@@ -339,7 +339,7 @@ function BestMovesComponent({
               engineVariations.map((engineVariation, index) => {
                 return (
                   <AnalysisRow
-                    key={index}
+                    key={`${engine.id}-${engineVariation.sanMoves.join(" ")}`}
                     engine={engine.name}
                     moves={engineVariation.sanMoves}
                     score={engineVariation.score}
@@ -370,7 +370,7 @@ function EngineTop({
   isGameOver: boolean;
   enabled: boolean;
   progress: number;
-  error: any;
+  error: unknown;
 }) {
   const { t } = useTranslation();
   const isComputed = engineVariations && engineVariations.length > 0;

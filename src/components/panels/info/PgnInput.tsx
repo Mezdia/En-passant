@@ -22,7 +22,10 @@ import { useTranslation } from "react-i18next";
 import { useStore } from "zustand";
 
 function PgnInput() {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("PgnInput must be used within a TreeStateContext provider");
+  }
   const root = useStore(store, (s) => s.root);
   const headers = useStore(store, (s) => s.headers);
   const setState = useStore(store, (s) => s.setState);

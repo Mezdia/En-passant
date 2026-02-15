@@ -22,30 +22,41 @@ const WebsiteAccountSelector = ({
 
   const websites = [];
   if (sessions.some((s) => s.player === playerName && s.chessCom?.username)) {
-    websites.push({ value: "Chess.com", label: t("Accounts.ChessCom", "Chess.com") });
+    websites.push({
+      value: "Chess.com",
+      label: t("Accounts.ChessCom", "Chess.com"),
+    });
   }
   if (
     sessions.some(
       (s) => s.lichess?.username && s.lichess?.username === playerName,
     )
   ) {
-    websites.push({ value: "Lichess", label: t("Accounts.Lichess", "Lichess") });
+    websites.push({
+      value: "Lichess",
+      label: t("Accounts.Lichess", "Lichess"),
+    });
   }
 
   if (allowAll) {
-    websites.unshift({ value: "All websites", label: t("Accounts.Website.All", "All websites") });
+    websites.unshift({
+      value: "All websites",
+      label: t("Accounts.Website.All", "All websites"),
+    });
   }
 
   const [website, setWebsite] = useState<string | null>(websites[0]?.value);
-  const [account, setAccount] = useState<string | null>(t("Accounts.Account.All", "All accounts"));
+  const [account, setAccount] = useState<string | null>(
+    t("Accounts.Account.All", "All accounts"),
+  );
 
   useEffect(() => {
     onWebsiteChange(website);
-  }, [website]);
+  }, [website, onWebsiteChange]);
 
   useEffect(() => {
     onAccountChange(account);
-  }, [account]);
+  }, [account, onAccountChange]);
 
   const accounts = [t("Accounts.Account.All", "All accounts")].concat(
     sessions

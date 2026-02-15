@@ -19,23 +19,28 @@ function DatabaseLoader({
   const [completed, setCompleted] = useState(false);
 
   useEffect(() => {
-    async function getProgress() {
-      const unlisten = await listen<ProgressPayload>(
+    if (!tab) return;
+    let unlisten: (() => void) | undefined;
+    const startListening = async () => {
+      unlisten = await listen<ProgressPayload>(
         "search_progress",
         async ({ payload }) => {
           if (payload.id !== tab) return;
           if (payload.finished) {
             setCompleted(true);
             setProgress(0);
-            unlisten();
+            unlisten?.();
           } else {
             setProgress(payload.progress);
           }
         },
       );
-    }
-    getProgress();
-  }, []);
+    };
+    startListening();
+    return () => {
+      unlisten?.();
+    };
+  }, [tab]);
 
   const isLoadingFromMemory = isLoading && progress === 0;
 

@@ -55,8 +55,8 @@ function DisplayPieces() {
   const pieces = ["rook", "knight", "bishop", "queen", "king", "pawn"] as const;
   return (
     <Flex gap="xs">
-      {pieces.map((role, index) => (
-        <Box key={index} h="2.5rem" w="2.5rem">
+      {pieces.map((role) => (
+        <Box key={role} h="2.5rem" w="2.5rem">
           <PieceComponent piece={{ color: "white", role }} />
         </Box>
       ))}

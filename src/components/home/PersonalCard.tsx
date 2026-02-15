@@ -34,7 +34,12 @@ function PersonalPlayerCard({
   isDatabase?: boolean;
 }) {
   const { t } = useTranslation();
-  const store = useContext(DatabaseViewStateContext)!;
+  const store = useContext(DatabaseViewStateContext);
+  if (!store) {
+    throw new Error(
+      "PersonalPlayerCard must be used within a DatabaseViewStateContext",
+    );
+  }
   const activeTab = useStore(store, (s) => s.players.activeTab);
   const setActiveTab = useStore(store, (s) => s.setPlayersActiveTab);
 

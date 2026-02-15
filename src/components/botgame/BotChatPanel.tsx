@@ -1,56 +1,67 @@
-
-import React, { useEffect, useRef } from "react";
 import { ScrollArea } from "@mantine/core";
+import type React from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import * as classes from "./BotGamePage.css";
 
 export interface ChatMessage {
-    id: string;
-    sender: "bot" | "user" | "system";
-    text: string;
-    timestamp: number;
+  id: string;
+  sender: "bot" | "user" | "system";
+  text: string;
+  timestamp: number;
 }
 
 interface BotChatPanelProps {
-    messages: ChatMessage[];
-    botName: string;
+  messages: ChatMessage[];
+  botName: string;
 }
 
-export const BotChatPanel: React.FC<BotChatPanelProps> = ({ messages, botName }) => {
-    const viewportRef = useRef<HTMLDivElement>(null);
-    const { t } = useTranslation();
+export const BotChatPanel: React.FC<BotChatPanelProps> = ({
+  messages,
+  botName,
+}) => {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
+  const lastMessageId = messages[messages.length - 1]?.id;
 
-    useEffect(() => {
-        // Auto-scroll to bottom
-        if (viewportRef.current) {
-            viewportRef.current.scrollTo({ top: viewportRef.current.scrollHeight, behavior: 'smooth' });
-        }
-    }, [messages]);
+  useEffect(() => {
+    if (!lastMessageId && messages.length === 0) {
+      return;
+    }
+    // Auto-scroll to bottom
+    if (viewportRef.current) {
+      viewportRef.current.scrollTo({
+        top: viewportRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [lastMessageId, messages.length]);
 
-    return (
-        <div className={classes.chatContainer}>
-            <ScrollArea className={classes.chatMessages} viewportRef={viewportRef}>
-                {messages.length === 0 && (
-                    <div className={classes.systemMessage}>
-                        {t("Bots.Chat.Started", { bot: botName })}
-                    </div>
-                )}
+  return (
+    <div className={classes.chatContainer}>
+      <ScrollArea className={classes.chatMessages} viewportRef={viewportRef}>
+        {messages.length === 0 && (
+          <div className={classes.systemMessage}>
+            {t("Bots.Chat.Started", { bot: botName })}
+          </div>
+        )}
 
-                {messages.map((msg) => (
-                    <div
-                        key={msg.id}
-                        className={`${classes.messageBubble} ${msg.sender === "bot"
-                                ? classes.botMessage
-                                : msg.sender === "system"
-                                    ? classes.systemMessage
-                                    : "" // User message style (if we add user chat)
-                            }`}
-                    >
-                        {msg.sender === "bot" && <strong>{botName}: </strong>}
-                        {msg.text}
-                    </div>
-                ))}
-            </ScrollArea>
-        </div>
-    );
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`${classes.messageBubble} ${
+              msg.sender === "bot"
+                ? classes.botMessage
+                : msg.sender === "system"
+                  ? classes.systemMessage
+                  : "" // User message style (if we add user chat)
+            }`}
+          >
+            {msg.sender === "bot" && <strong>{botName}: </strong>}
+            {msg.text}
+          </div>
+        ))}
+      </ScrollArea>
+    </div>
+  );
 };

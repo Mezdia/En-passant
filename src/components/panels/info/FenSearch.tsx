@@ -21,7 +21,12 @@ export default function FenSearch({ currentFen }: { currentFen: string }) {
   });
 
   const [error, setError] = useState<FenError | undefined>(undefined);
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "FenSearch must be used within a TreeStateContext provider",
+    );
+  }
   const headers = useStore(store, (s) => s.headers);
   const setHeaders = useStore(store, (s) => s.setHeaders);
 

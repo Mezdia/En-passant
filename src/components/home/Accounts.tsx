@@ -18,7 +18,7 @@ import {
 import { IconPlus } from "@tabler/icons-react";
 import { listen } from "@tauri-apps/api/event";
 import { useAtom, useAtomValue } from "jotai";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AccountCards from "../common/AccountCards";
 import GenericCard from "../common/GenericCard";
@@ -34,37 +34,43 @@ function Accounts() {
   }, []);
   const [open, setOpen] = useState(false);
 
-  function addChessComSession(alias: string, session: ChessComSession) {
-    setSessions((sessions) => {
-      const newSessions = sessions.filter(
-        (s) => s.chessCom?.username !== session.username,
-      );
-      return [
-        ...newSessions,
-        {
-          chessCom: session,
-          player: alias,
-          updatedAt: Date.now(),
-        },
-      ];
-    });
-  }
+  const addChessComSession = useCallback(
+    (alias: string, session: ChessComSession) => {
+      setSessions((sessions) => {
+        const newSessions = sessions.filter(
+          (s) => s.chessCom?.username !== session.username,
+        );
+        return [
+          ...newSessions,
+          {
+            chessCom: session,
+            player: alias,
+            updatedAt: Date.now(),
+          },
+        ];
+      });
+    },
+    [setSessions],
+  );
 
-  function addLichessSession(alias: string, session: LichessSession) {
-    setSessions((sessions) => {
-      const newSessions = sessions.filter(
-        (s) => s.lichess?.username !== session.username,
-      );
-      return [
-        ...newSessions,
-        {
-          lichess: session,
-          player: alias,
-          updatedAt: Date.now(),
-        },
-      ];
-    });
-  }
+  const addLichessSession = useCallback(
+    (alias: string, session: LichessSession) => {
+      setSessions((sessions) => {
+        const newSessions = sessions.filter(
+          (s) => s.lichess?.username !== session.username,
+        );
+        return [
+          ...newSessions,
+          {
+            lichess: session,
+            player: alias,
+            updatedAt: Date.now(),
+          },
+        ];
+      });
+    },
+    [setSessions],
+  );
 
   async function addChessCom(player: string, username: string) {
     const p = player !== "" ? player : username;
@@ -82,15 +88,18 @@ function Accounts() {
     addLichessSession(p, { username, account });
   }
 
-  async function onLichessAuthentication(token: string) {
-    const player = sessionStorage.getItem("lichess_player_alias") || "";
-    sessionStorage.removeItem("lichess_player_alias");
-    const account = await getLichessAccount({ token });
-    if (!account) return;
-    const username = account.username;
-    const p = player !== "" ? player : username;
-    addLichessSession(p, { accessToken: token, username: username, account });
-  }
+  const onLichessAuthentication = useCallback(
+    async (token: string) => {
+      const player = sessionStorage.getItem("lichess_player_alias") || "";
+      sessionStorage.removeItem("lichess_player_alias");
+      const account = await getLichessAccount({ token });
+      if (!account) return;
+      const username = account.username;
+      const p = player !== "" ? player : username;
+      addLichessSession(p, { accessToken: token, username: username, account });
+    },
+    [addLichessSession],
+  );
 
   async function addLichess(
     player: string,
@@ -115,7 +124,7 @@ function Accounts() {
     }
 
     listen_for_code();
-  }, [setSessions]);
+  }, [onLichessAuthentication]);
 
   return (
     <>

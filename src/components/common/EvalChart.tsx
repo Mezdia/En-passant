@@ -48,7 +48,10 @@ type DataPoint = {
 function EvalChart(props: EvalChartProps) {
   const { t } = useTranslation();
 
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
   const root = useStore(store, (s) => s.root);
   const position = useStore(store, (s) => s.position);
   const goToMove = useStore(store, (s) => s.goToMove);
@@ -169,11 +172,9 @@ function EvalChart(props: EvalChartProps) {
 
   const [chartType, setChartType] = useAtom(reportTypeAtom);
 
-  const isWDLDisabled = useMemo(() => {
-    return !data.some(
-      (point) => point.White !== 0 || point.Black !== 0 || point.Draw !== 0,
-    );
-  }, [data]);
+  const isWDLDisabled = !data.some(
+    (point) => point.White !== 0 || point.Black !== 0 || point.Draw !== 0,
+  );
 
   return (
     <Stack>
@@ -268,13 +269,15 @@ function EvalChart(props: EvalChartProps) {
   );
 }
 
+type TooltipPayload = Array<{ payload?: DataPoint }>;
+
 function CustomTooltip({
   active,
   payload,
   type,
 }: {
   active?: boolean;
-  payload: any;
+  payload?: TooltipPayload;
   type: "cp" | "wdl";
 }) {
   if (active && payload && payload.length && payload[0].payload) {

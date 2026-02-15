@@ -46,7 +46,10 @@ function GameNotation({
   topBar,
   controls,
 }: { topBar?: boolean; controls?: React.ReactNode }) {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
   const currentFen = useStore(store, (s) => s.currentNode().fen);
   const headers = useStore(store, (s) => s.headers);
   const rootComment = useStore(store, (s) => s.root.comment);
@@ -266,7 +269,10 @@ const RenderVariationTree = memo(
     showComments: boolean;
     targetRef: React.RefObject<HTMLSpanElement>;
   }) {
-    const store = useContext(TreeStateContext)!;
+    const store = useContext(TreeStateContext);
+    if (!store) {
+      throw new Error("TreeStateContext is missing");
+    }
     const node = useStore(store, (s) => getNodeAtPath(s.root, nodePath));
     const variations = node.children;
 
@@ -357,7 +363,10 @@ const TableNotation = memo(function TableNotation({
   showVariations: boolean;
   showComments: boolean;
 }) {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
   const root = useStore(store, (s) => s.root);
 
   type RowItem = {
@@ -377,6 +386,7 @@ const TableNotation = memo(function TableNotation({
   type CommentItem = {
     type: "comment";
     comment: string;
+    path: number[];
   };
   type Segment = RowItem | VariationItem | CommentItem;
 
@@ -425,7 +435,11 @@ const TableNotation = memo(function TableNotation({
           splitRow: !!blackNode,
         });
         if (hasWhiteComment) {
-          segments.push({ type: "comment", comment: child.comment });
+          segments.push({
+            type: "comment",
+            comment: child.comment,
+            path: childPath,
+          });
         }
         if (hasWhiteVars) {
           segments.push({
@@ -446,7 +460,11 @@ const TableNotation = memo(function TableNotation({
               blackPath: blackPath,
             });
             if (hasBlackComment) {
-              segments.push({ type: "comment", comment: blackNode.comment });
+              segments.push({
+                type: "comment",
+                comment: blackNode.comment,
+                path: blackPath,
+              });
             }
             if (hasBlackVars) {
               segments.push({
@@ -480,8 +498,12 @@ const TableNotation = memo(function TableNotation({
           black: blackNode,
           blackPath: blackPath,
         });
-        if (hasBlackComment) {
-          segments.push({ type: "comment", comment: blackNode!.comment });
+        if (hasBlackComment && blackNode) {
+          segments.push({
+            type: "comment",
+            comment: blackNode.comment,
+            path: blackPath,
+          });
         }
         if (hasBlackVars) {
           segments.push({
@@ -490,8 +512,8 @@ const TableNotation = memo(function TableNotation({
             parentPath: blackPath.slice(0, -1),
           });
         }
-        current = blackNode!;
-        path = blackPath;
+        current = blackNode ?? child;
+        path = blackNode ? blackPath : childPath;
       } else {
         segments.push({
           type: "row",
@@ -521,7 +543,11 @@ const TableNotation = memo(function TableNotation({
         blackPath: childPath,
       });
       if (hasBlackComment) {
-        segments.push({ type: "comment", comment: child.comment });
+        segments.push({
+          type: "comment",
+          comment: child.comment,
+          path: childPath,
+        });
       }
       if (hasBlackVars) {
         segments.push({
@@ -538,10 +564,10 @@ const TableNotation = memo(function TableNotation({
   return (
     <Table layout="fixed">
       <Table.Tbody>
-        {segments.map((seg, idx) => {
+        {segments.map((seg) => {
           if (seg.type === "comment") {
             return (
-              <tr key={`comment-${idx}`}>
+              <tr key={`comment-${seg.path.join(".")}`}>
                 <td colSpan={3}>
                   <Box pl="sm" pt="xs">
                     <Comment comment={seg.comment} />
@@ -553,7 +579,7 @@ const TableNotation = memo(function TableNotation({
 
           if (seg.type === "variations") {
             return (
-              <tr key={`var-${idx}`}>
+              <tr key={`var-${seg.parentPath.join(".")}`}>
                 <td colSpan={3}>
                   <Box pl="sm" pt="xs">
                     {seg.variations.map((variation, vIdx) => {
@@ -594,8 +620,12 @@ const TableNotation = memo(function TableNotation({
           }
 
           const row = seg;
+          const rowKey =
+            row.whitePath.length > 0
+              ? `w-${row.whitePath.join(".")}`
+              : `b-${row.blackPath.join(".")}`;
           return (
-            <React.Fragment key={`row-${row.moveNumber}-${idx}`}>
+            <React.Fragment key={`row-${row.moveNumber}-${rowKey}`}>
               <Table.Tr>
                 <Table.Td className={styles.moveTableMoveNumber}>
                   {row.moveNumber}
@@ -662,14 +692,18 @@ const TableNotation = memo(function TableNotation({
 function VariationCell({ moveNodes }: { moveNodes: React.ReactNode[] }) {
   const [expanded, setExpanded] = useState(true);
   if (moveNodes.length === 0) return null;
+  const keyedNodes = React.Children.toArray(moveNodes);
   return (
     <Box className={styles.variationBorder}>
       <ActionIcon size="xs" onClick={() => setExpanded((v) => !v)}>
         {expanded ? <IconMinus size="0.5rem" /> : <IconPlus size="0.5rem" />}
       </ActionIcon>
       {expanded &&
-        moveNodes.map((node, i) => (
-          <Box key={i} className={styles.lineBeforeVariation}>
+        keyedNodes.map((node) => (
+          <Box
+            key={(node as React.ReactElement).key ?? "variation-node"}
+            className={styles.lineBeforeVariation}
+          >
             {node}
           </Box>
         ))}

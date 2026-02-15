@@ -35,7 +35,11 @@ export type ListNode = {
 export function* treeIterator(node: TreeNode): Generator<ListNode> {
   const stack: ListNode[] = [{ position: [], node }];
   while (stack.length > 0) {
-    const { position, node } = stack.pop()!;
+    const current = stack.pop();
+    if (!current) {
+      break;
+    }
+    const { position, node } = current;
     yield { position, node };
     for (let i = node.children.length - 1; i >= 0; i--) {
       stack.push({ position: [...position, i], node: node.children[i] });
@@ -186,7 +190,10 @@ export function getTreeStructureHash(node: TreeNode): string {
   const parts: string[] = [];
   const stack: TreeNode[] = [node];
   while (stack.length > 0) {
-    const n = stack.pop()!;
+    const n = stack.pop();
+    if (!n) {
+      break;
+    }
     parts.push(`${n.fen}|${n.san ?? ""}|${n.halfMoves}|${n.children.length}`);
     for (let i = n.children.length - 1; i >= 0; i--) {
       stack.push(n.children[i]);

@@ -20,10 +20,13 @@ import {
   DEFAULT_TIME_CONTROL,
   type OpponentSettings,
 } from "@/components/boards/OpponentForm";
-import { getBotGameHistory, type BotGameRecord } from "@/components/bots/botGameHistory";
+import {
+  type BotGameRecord,
+  getBotGameHistory,
+} from "@/components/bots/botGameHistory";
 import { positionFromFen, swapMove } from "@/utils/chessops";
 import type { SuccessDatabaseInfo } from "@/utils/db";
-import { getGameHistory, type GameHistoryRecord } from "@/utils/gameHistory";
+import { type GameHistoryRecord, getGameHistory } from "@/utils/gameHistory";
 import { getWinChance, normalizeScore } from "@/utils/score";
 import { parseUci } from "chessops";
 import { INITIAL_FEN, makeFen } from "chessops/fen";

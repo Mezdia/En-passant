@@ -32,7 +32,12 @@ import GameSelector from "./GameSelector";
 import PgnInput from "./PgnInput";
 
 function InfoPanel({ addGame }: { addGame?: () => void }) {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "InfoPanel must be used within a TreeStateContext provider",
+    );
+  }
   const root = useStore(store, (s) => s.root);
   const position = useStore(store, (s) => s.position);
   const headers = useStore(store, (s) => s.headers);
@@ -95,7 +100,12 @@ function GameSelectorAccordion({
   setGames: React.Dispatch<React.SetStateAction<Map<number, string>>>;
   addGame?: () => void;
 }) {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "GameSelectorAccordion must be used within a TreeStateContext provider",
+    );
+  }
   const dirty = useStore(store, (s) => s.dirty);
   const setState = useStore(store, (s) => s.setState);
   const [currentTab, setCurrentTab] = useAtom(currentTabAtom);
@@ -111,7 +121,11 @@ function GameSelectorAccordion({
 
   useHotkeys(
     keyMap.NEXT_GAME.keys,
-    () => setPage(Math.min(gameNumber + 1, currentTab?.file?.numGames! - 1)),
+    () => {
+      if (!currentTab?.file) return;
+      const maxIndex = Math.max(0, currentTab.file.numGames - 1);
+      setPage(Math.min(gameNumber + 1, maxIndex));
+    },
     {
       enabled: !!currentTab?.file,
     },
@@ -152,7 +166,8 @@ function GameSelectorAccordion({
   }
 
   async function deleteGame(index: number) {
-    await commands.deleteGame(currentTab?.file?.path!, index);
+    if (!currentTab?.file?.path) return;
+    await commands.deleteGame(currentTab.file.path, index);
     setCurrentTab((prev) => {
       if (!prev.file) return prev;
       prev.file.numGames -= 1;

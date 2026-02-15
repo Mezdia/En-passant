@@ -17,7 +17,10 @@ function MoveControls({
 }: {
   readOnly?: boolean;
 }) {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
   const next = useStore(store, (s) => s.goToNext);
   const previous = useStore(store, (s) => s.goToPrevious);
   const start = useStore(store, (s) => s.goToStart);

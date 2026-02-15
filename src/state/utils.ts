@@ -24,18 +24,24 @@ export const fileStorage: AsyncStringStorage = {
     if (!isTauriEnv) {
       try {
         const v = localStorage.getItem(key);
-        console.debug(`[fileStorage][fallback] getItem ${key} -> ${v?.length ?? 0} chars`);
+        console.debug(
+          `[fileStorage][fallback] getItem ${key} -> ${v?.length ?? 0} chars`,
+        );
         return v;
       } catch (error) {
-        console.debug(`[fileStorage][fallback] getItem ${key} -> error: ${error}`);
+        console.debug(
+          `[fileStorage][fallback] getItem ${key} -> error: ${error}`,
+        );
         return null;
       }
     }
     try {
       const res = await readTextFile(key, options);
       try {
-        console.debug(`[fileStorage] getItem ${key} -> ${res?.length ?? 0} chars`);
-      } catch { }
+        console.debug(
+          `[fileStorage] getItem ${key} -> ${res?.length ?? 0} chars`,
+        );
+      } catch {}
       return res;
     } catch (error) {
       console.debug(`[fileStorage] getItem ${key} -> error: ${error}`);
@@ -46,18 +52,24 @@ export const fileStorage: AsyncStringStorage = {
     if (!isTauriEnv) {
       try {
         localStorage.setItem(key, newValue);
-        console.debug(`[fileStorage][fallback] setItem ${key} -> ${newValue?.length ?? 0} chars`);
+        console.debug(
+          `[fileStorage][fallback] setItem ${key} -> ${newValue?.length ?? 0} chars`,
+        );
         return;
       } catch (error) {
-        console.debug(`[fileStorage][fallback] setItem ${key} -> error: ${error}`);
+        console.debug(
+          `[fileStorage][fallback] setItem ${key} -> error: ${error}`,
+        );
         throw error;
       }
     }
     try {
       await writeTextFile(key, newValue, options);
       try {
-        console.debug(`[fileStorage] setItem ${key} -> ${newValue?.length ?? 0} chars`);
-      } catch { }
+        console.debug(
+          `[fileStorage] setItem ${key} -> ${newValue?.length ?? 0} chars`,
+        );
+      } catch {}
     } catch (error) {
       console.debug(`[fileStorage] setItem ${key} -> error: ${error}`);
       throw error;
@@ -70,7 +82,9 @@ export const fileStorage: AsyncStringStorage = {
         console.debug(`[fileStorage][fallback] removeItem ${key}`);
         return;
       } catch (error) {
-        console.debug(`[fileStorage][fallback] removeItem ${key} -> error: ${error}`);
+        console.debug(
+          `[fileStorage][fallback] removeItem ${key} -> error: ${error}`,
+        );
         throw error;
       }
     }
@@ -136,8 +150,10 @@ export function createAsyncZodStorage<Input, Output>(
           return initialValue;
         }
         try {
-          console.debug(`[createAsyncZodStorage] getItem ${key} -> ${storedValue?.length ?? 0} chars`);
-        } catch { }
+          console.debug(
+            `[createAsyncZodStorage] getItem ${key} -> ${storedValue?.length ?? 0} chars`,
+          );
+        } catch {}
         const res = schema.safeParse(JSON.parse(storedValue));
         if (res.success) {
           return res.data;
@@ -155,8 +171,10 @@ export function createAsyncZodStorage<Input, Output>(
       try {
         await storage.setItem(key, serialized);
         try {
-          console.debug(`[createAsyncZodStorage] setItem ${key} -> ${serialized?.length ?? 0} chars`);
-        } catch { }
+          console.debug(
+            `[createAsyncZodStorage] setItem ${key} -> ${serialized?.length ?? 0} chars`,
+          );
+        } catch {}
       } catch (e) {
         warn(`Failed to write ${key}: ${e}`);
         throw e;

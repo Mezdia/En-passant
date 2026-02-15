@@ -74,8 +74,12 @@ function FilesPage() {
   useHotkeys([["mod+f", () => searchInputRef.current?.focus()]]);
 
   useEffect(() => {
+    if (!selected?.path) {
+      setGames(new Map());
+      return;
+    }
     setGames(new Map());
-  }, [selected]);
+  }, [selected?.path]);
 
   return (
     <Stack h="100%">

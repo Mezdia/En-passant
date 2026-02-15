@@ -42,8 +42,9 @@ function FileCard({
   const [page, setPage] = useState(0);
 
   useEffect(() => {
+    if (!selected.path) return;
     setPage(0);
-  }, [selected]);
+  }, [selected.path]);
 
   useEffect(() => {
     async function loadGames() {
@@ -52,7 +53,7 @@ function FileCard({
       setSelectedGame(data[0]);
     }
     loadGames();
-  }, [selected, page]);
+  }, [selected.path, page]);
 
   async function openGame() {
     await openFile(selected, setTabs, setActiveTab, {

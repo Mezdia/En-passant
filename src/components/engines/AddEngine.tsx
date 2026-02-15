@@ -1,4 +1,4 @@
-import { events, commands } from "@/bindings";
+import { commands } from "@/bindings";
 import { enginesAtom } from "@/state/atoms";
 import {
   type LocalEngine,
@@ -8,6 +8,7 @@ import {
 } from "@/utils/engines";
 import { usePlatform } from "@/utils/files";
 import { formatBytes } from "@/utils/format";
+import { isTauri } from "@/utils/tauri";
 import { unwrap } from "@/utils/unwrap";
 import {
   Alert,
@@ -32,7 +33,6 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ProgressButton from "../common/ProgressButton";
 import EngineForm from "./EngineForm";
-import { isTauri } from "@/utils/tauri";
 
 function AddEngine({
   opened,
@@ -99,7 +99,7 @@ function AddEngine({
                 <EngineCard
                   engine={engine}
                   engineId={i}
-                  key={i}
+                  key={engine.name}
                   initInstalled={engines.some((e) => e.name === engine.name)}
                 />
               ))}
@@ -277,7 +277,6 @@ function EngineCard({
           </Group>
           <ProgressButton
             id={`engine_${engineId}`}
-            progressEvent={events.downloadProgress}
             initInstalled={initInstalled}
             labels={{
               completed: t("Common.Installed"),
@@ -285,7 +284,11 @@ function EngineCard({
               inProgress: t("Common.Downloading"),
               finalizing: t("Common.Extracting"),
             }}
-            onClick={() => downloadEngine(engineId, engine.downloadLink!)}
+            onClick={() =>
+              engine.downloadLink
+                ? downloadEngine(engineId, engine.downloadLink)
+                : undefined
+            }
             inProgress={inProgress}
             setInProgress={setInProgress}
           />

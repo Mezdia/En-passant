@@ -57,9 +57,12 @@ function BoardAnalysis() {
   const [currentTab, setCurrentTab] = useAtom(currentTabAtom);
   const autoSave = useAtomValue(autoSaveAtom);
   const { documentDir } = useLoaderData({ from: "/" });
-  const boardRef = useRef(null);
+  const boardRef = useRef<HTMLDivElement | null>(null);
 
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
 
   const dirty = useStore(store, (s) => s.dirty);
 
@@ -81,7 +84,9 @@ function BoardAnalysis() {
     }
   }, [currentTab?.file, saveFile, autoSave, dirty]);
 
+  const filePath = currentTab?.file?.path;
   const addGame = useCallback(() => {
+    if (!filePath) return;
     setCurrentTab((prev) => {
       if (!prev?.file) return prev;
       prev.gameNumber = prev.file.numGames;
@@ -89,10 +94,10 @@ function BoardAnalysis() {
       return { ...prev };
     });
     reset();
-    writeTextFile(currentTab?.file?.path!, `\n\n${defaultPGN()}\n\n`, {
+    writeTextFile(filePath, `\n\n${defaultPGN()}\n\n`, {
       append: true,
     });
-  }, [setCurrentTab, reset, currentTab?.file?.path]);
+  }, [setCurrentTab, reset, filePath]);
 
   const [, enable] = useAtom(enableAllAtom);
   const allEnabledLoader = useAtomValue(allEnabledAtom);

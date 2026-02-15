@@ -6,7 +6,10 @@ import { useStore } from "zustand";
 import { TreeStateContext } from "../common/TreeStateContext";
 
 export default function MoveInput({ currentNode }: { currentNode: TreeNode }) {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
   const makeMove = useStore(store, (s) => s.makeMove);
   const [move, setMove] = useState("");
   const [error, setError] = useState("");

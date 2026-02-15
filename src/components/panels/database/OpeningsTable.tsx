@@ -16,7 +16,12 @@ function OpeningsTable({
   openings: Opening[];
   loading: boolean;
 }) {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "OpeningsTable must be used within a TreeStateContext provider",
+    );
+  }
   const makeMove = useStore(store, (s) => s.makeMove);
   const [moveNotationType] = useAtom(moveNotationTypeAtom);
 

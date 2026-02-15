@@ -105,14 +105,11 @@ export function AccountCard({
   async function convert(filepath: string, timestamp: number | null) {
     info(`converting ${filepath} ${timestamp}`);
     const filename = title + (type === "lichess" ? " Lichess" : " Chess.com");
-    const dbPath = await resolve(
-      await appDataDir(),
-      "db",
-      `${filepath
-        .split(/(\\|\/)/g)
-        .pop()!
-        .replace(".pgn", ".db3")}`,
-    );
+    const filenamePart = filepath.split(/(\\|\/)/g).pop();
+    const dbFilename = filenamePart
+      ? filenamePart.replace(".pgn", ".db3")
+      : "database.db3";
+    const dbPath = await resolve(await appDataDir(), "db", dbFilename);
     unwrap(
       await commands.convertPgn(
         filepath,
@@ -144,7 +141,7 @@ export function AccountCard({
     return () => {
       unlisten.then((f) => f());
     };
-  }, [setDatabases]);
+  }, [setDatabases, title, type]);
 
   const downloadedGames =
     database?.type === "success" ? database.game_count : 0;
@@ -165,7 +162,8 @@ export function AccountCard({
         skipCount: false,
       },
     });
-    if (games.count! > 0 && games.data[0].date && games.data[0].time) {
+    const gameCount = games.count ?? 0;
+    if (gameCount > 0 && games.data[0].date && games.data[0].time) {
       const [year, month, day] = games.data[0].date.split(".").map(Number);
       const [hour, minute, second] = games.data[0].time.split(":").map(Number);
       const d = Date.UTC(year, month - 1, day, hour, minute, second);

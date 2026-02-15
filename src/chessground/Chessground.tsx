@@ -1,8 +1,8 @@
 import { boardImageAtom, moveMethodAtom } from "@/state/atoms";
-import { Box } from "@mantine/core";
 import { Chessground as NativeChessground } from "@lichess-org/chessground";
 import type { Api } from "@lichess-org/chessground/api";
 import type { Config } from "@lichess-org/chessground/config";
+import { Box } from "@mantine/core";
 import { useAtomValue } from "jotai";
 import {
   forwardRef,
@@ -71,7 +71,7 @@ export const Chessground = forwardRef<
       });
       setApi(chessgroundApi);
     }
-  }, [api, props, boardRef]);
+  }, [api, props, moveMethod]);
 
   useEffect(() => {
     api?.set({

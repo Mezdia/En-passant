@@ -98,10 +98,11 @@ export const en_US = {
     "Game.GameControls": "Game Controls",
     "Game.GameDuration": "Game Duration",
     "Game.Accuracy": "Accuracy",
-    "Game.AnalysisDescription": "Enable analysis mode to review the game in detail.",
+    "Game.AnalysisDescription":
+      "Enable analysis mode to review the game in detail.",
     "Game.MoveHistory": "Move History",
-    "NoMovesYet": "No moves yet",
-    "BookMove": "Opening book move",
+    NoMovesYet: "No moves yet",
+    BookMove: "Opening book move",
     "Bots.Game.BookMove": "Book move",
     "Bots.DefaultGreeting": "Hi! Let's play!",
     "Bots.Game.GoodGame": "Good game!",
@@ -116,7 +117,6 @@ export const en_US = {
     "Bots.Bot.Game.Result.Timeout": "Timeout",
     "Bots.Bot.Game.Result.Abandoned": "Abandoned",
     "Bots.Bot.Game.Result.Unknown": "Unknown",
-    "Common.Date": "Date",
     "Game.Moves": "Moves",
     "Common.Actions": "Actions",
 
@@ -349,7 +349,8 @@ export const en_US = {
     "Home.Card.Chess960.Customize.Black": "Black",
 
     "GameHistory.Title": "Game History",
-    "GameHistory.Desc": "A complete view of your games with advanced filters and analysis details.",
+    "GameHistory.Desc":
+      "A complete view of your games with advanced filters and analysis details.",
     "GameHistory.You": "You",
     "GameHistory.Empty": "No games found in your history.",
     "GameHistory.Badge.Analyzed": "Analyzed",
@@ -362,7 +363,8 @@ export const en_US = {
     "GameHistory.Summary.Analyzed": "Analyzed",
 
     "GameHistory.Filters.Title": "Filters",
-    "GameHistory.Filters.Desc": "Refine your history by player, result, and date range.",
+    "GameHistory.Filters.Desc":
+      "Refine your history by player, result, and date range.",
     "GameHistory.Filters.Search.Label": "Search",
     "GameHistory.Filters.Search.Placeholder": "Player, engine, bot, or variant",
     "GameHistory.Filters.Type.Label": "Game Type",
@@ -538,7 +540,6 @@ export const en_US = {
     "Board.Analysis.ManageEngines": "Manage Engines",
     "Board.Analysis.Advantage": "Advantage",
     "Board.Analysis.Accuracy": "Accuracy",
-    "Board.Analysis.ManageEngines": "Manage Engines",
     "Board.Analysis.EnableWDL":
       "You have to enable UCI_ShowWDL in the engine settings to use this feature.",
     "Board.Analysis.Tablebase": "Tablebase",
@@ -864,7 +865,6 @@ export const en_US = {
     "Settings.Directories.Files.Desc":
       "This is where your games in the Files page are stored",
     "Settings.Keybinds.PressAnyKey": "Press any key",
-    "Settings.Keybinds.Desc": "Customize keyboard shortcuts",
     "Settings.Key": "Key",
     "Settings.Privacy": "Privacy",
     "Settings.Privacy.Desc": "Privacy and data collection settings",

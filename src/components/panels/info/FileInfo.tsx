@@ -36,8 +36,14 @@ function FileInfo({
                 tab.file &&
                 commands.countPgnGames(tab.file.path).then((v) => {
                   setCurrentTab((prev) => {
-                    prev.file!.numGames = unwrap(v);
-                    return { ...prev };
+                    if (!prev.file) return prev;
+                    return {
+                      ...prev,
+                      file: {
+                        ...prev.file,
+                        numGames: unwrap(v),
+                      },
+                    };
                   });
                   setGames(new Map());
                 })

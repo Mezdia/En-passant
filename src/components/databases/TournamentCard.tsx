@@ -42,7 +42,10 @@ function TournamentCard({
   file,
 }: { tournament: Event; file: string }) {
   const { t } = useTranslation();
-  const store = useContext(DatabaseViewStateContext)!;
+  const store = useContext(DatabaseViewStateContext);
+  if (!store) {
+    throw new Error("DatabaseViewStateContext is missing");
+  }
   const tournamentsActiveTab = useStore(store, (s) => s.tournaments.activeTab);
   const setTournamentsActiveTab = useStore(
     store,

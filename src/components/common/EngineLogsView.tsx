@@ -42,6 +42,9 @@ export default function EngineLogsView({
   const [search, setSearch] = useState("");
   const viewportRef = useRef<HTMLDivElement>(null);
   const fontSize = useAtomValue(fontSizeAtom);
+  const lastLogKey = logs.length
+    ? `${logs[logs.length - 1].type}:${logs[logs.length - 1].value}`
+    : null;
 
   const filteredLogs = useMemo(
     () =>
@@ -56,12 +59,15 @@ export default function EngineLogsView({
   );
 
   useEffect(() => {
+    if (!lastLogKey && logs.length === 0) {
+      return;
+    }
     if (viewportRef.current && !search) {
       viewportRef.current.scrollTo({
         top: viewportRef.current.scrollHeight,
       });
     }
-  }, [logs.length, search]);
+  }, [lastLogKey, logs.length, search]);
 
   async function exportLogs() {
     const file = await save({ defaultPath: "logs.csv" });

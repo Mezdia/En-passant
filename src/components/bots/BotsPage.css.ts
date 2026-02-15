@@ -516,7 +516,7 @@ export const cardGoldenSelected = style({
 // Golden rating badge
 export const ratingBadgeGolden = style({
   background: "linear-gradient(135deg, #FFD700, #FFA500) !important",
-  color: vars.colors.dark[8] + " !important",
+  color: `${vars.colors.dark[8]} !important`,
   boxShadow: "0 4px 12px rgba(255, 215, 0, 0.4) !important",
   fontWeight: 900,
   textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
@@ -524,14 +524,14 @@ export const ratingBadgeGolden = style({
 
 // Golden rating icon
 export const ratingIconGolden = style({
-  color: vars.colors.dark[8] + " !important",
+  color: `${vars.colors.dark[8]} !important`,
   filter: "drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2))",
 });
 
 // Golden level badge
 export const cardLevelGolden = style({
   background: "linear-gradient(135deg, #FFD700, #FFA500) !important",
-  color: vars.colors.dark[8] + " !important",
+  color: `${vars.colors.dark[8]} !important`,
   fontWeight: 900,
   textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
   border: "1px solid rgba(255, 215, 0, 0.3)",
@@ -593,20 +593,20 @@ export const cardYoutubeSelected = style({
 // YouTube rating badge
 export const ratingBadgeYoutube = style({
   background: "linear-gradient(135deg, #FF0000, #DC143C) !important",
-  color: vars.colors.white + " !important",
+  color: `${vars.colors.white} !important`,
   fontWeight: 900,
   textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
 });
 
 // YouTube rating icon
 export const ratingIconYoutube = style({
-  color: vars.colors.white + " !important",
+  color: `${vars.colors.white} !important`,
 });
 
 // YouTube level badge
 export const cardLevelYoutube = style({
   background: "linear-gradient(135deg, #FF0000, #DC143C) !important",
-  color: vars.colors.white + " !important",
+  color: `${vars.colors.white} !important`,
   fontWeight: 900,
   textShadow: "0 1px 2px rgba(0, 0, 0, 0.2)",
 });

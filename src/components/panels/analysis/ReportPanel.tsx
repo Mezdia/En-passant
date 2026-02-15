@@ -23,7 +23,12 @@ function ReportPanel() {
 
   const activeTab = useAtomValue(activeTabAtom);
 
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "ReportPanel must be used within a TreeStateContext provider",
+    );
+  }
   const root = useStore(store, (s) => s.root);
   const headers = useStore(store, (s) => s.headers);
 
@@ -35,21 +40,25 @@ function ReportPanel() {
   const stats = useMemo(() => getGameStats(root), [root]);
 
   const handleCancel = useCallback(() => {
-    commands.cancelAnalysis(`report_${activeTab}`);
+    if (activeTab) {
+      commands.cancelAnalysis(`report_${activeTab}`);
+    }
   }, [activeTab]);
 
   return (
     <ScrollArea offsetScrollbars>
       <Suspense>
-        <ReportModal
-          tab={activeTab!}
-          initialFen={root.fen}
-          moves={getMainLine(root, headers.variant === "Chess960")}
-          is960={headers.variant === "Chess960"}
-          reportingMode={reportingMode}
-          toggleReportingMode={toggleReportingMode}
-          setInProgress={setInProgress}
-        />
+        {activeTab && (
+          <ReportModal
+            tab={activeTab}
+            initialFen={root.fen}
+            moves={getMainLine(root, headers.variant === "Chess960")}
+            is960={headers.variant === "Chess960"}
+            reportingMode={reportingMode}
+            toggleReportingMode={toggleReportingMode}
+            setInProgress={setInProgress}
+          />
+        )}
       </Suspense>
       <Stack mb="lg" gap="0.4rem" mr="xs">
         <Group grow style={{ textAlign: "center" }}>
@@ -106,7 +115,12 @@ const GameStats = memo(
   function GameStats({ whiteAnnotations, blackAnnotations }: Stats) {
     const { t } = useTranslation();
 
-    const store = useContext(TreeStateContext)!;
+    const store = useContext(TreeStateContext);
+    if (!store) {
+      throw new Error(
+        "GameStats must be used within a TreeStateContext provider",
+      );
+    }
     const goToAnnotation = useStore(store, (s) => s.goToAnnotation);
 
     return (

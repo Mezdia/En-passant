@@ -112,7 +112,10 @@ function Board({
 }: ChessboardProps) {
   const { t } = useTranslation();
 
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
 
   const root = useStore(store, (s) => s.root);
   const rootFen = useStore(store, (s) => s.root.fen);
@@ -256,11 +259,18 @@ function Board({
           const posClone = pos.clone();
           let prevSquare = null;
           for (const [ii, uci] of pv.entries()) {
-            const m = parseUci(uci)! as NormalMove;
+            const parsedMove = parseUci(uci);
+            if (!parsedMove) {
+              continue;
+            }
+            const m = parsedMove as NormalMove;
 
             posClone.play(m);
-            const from = makeSquare(m.from)!;
-            const to = makeSquare(m.to)!;
+            const from = makeSquare(m.from);
+            const to = makeSquare(m.to);
+            if (!from || !to) {
+              continue;
+            }
             if (prevSquare === null) {
               prevSquare = from;
             }
@@ -367,7 +377,10 @@ function Board({
 
   const lastMove =
     currentNode.move && square !== undefined
-      ? [chessgroundMove(currentNode.move)[0], makeSquare(square)!]
+      ? (() => {
+          const to = makeSquare(square);
+          return to ? [chessgroundMove(currentNode.move)[0], to] : undefined;
+        })()
       : undefined;
 
   const topPlayer = orientation === "white" ? headers.black : headers.white;
@@ -462,7 +475,7 @@ function Board({
               )}
               {evalOpen && (
                 <EvalBar
-                  score={currentNode.score || null}
+                  score={currentNode.score?.value ?? null}
                   orientation={orientation}
                 />
               )}
@@ -528,8 +541,11 @@ function Board({
                   events: {
                     after(orig, dest, metadata) {
                       if (!editingMode) {
-                        const from = parseSquare(orig)!;
-                        const to = parseSquare(dest)!;
+                        const from = parseSquare(orig);
+                        const to = parseSquare(dest);
+                        if (!from || !to) {
+                          return;
+                        }
 
                         if (pos) {
                           if (

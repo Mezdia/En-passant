@@ -8,10 +8,10 @@ import {
   scoreTypeFamily,
 } from "@/state/atoms";
 import { positionFromFen } from "@/utils/chessops";
+import type { Key } from "@lichess-org/chessground/types";
 import { ActionIcon, Box, Flex, Portal, Table } from "@mantine/core";
 import { useForceUpdate } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
-import type { Key } from "@lichess-org/chessground/types";
 import { chessgroundMove } from "chessops/compat";
 import { makeFen } from "chessops/fen";
 import { parseSan } from "chessops/san";
@@ -72,7 +72,7 @@ function AnalysisRow({
     };
   }, [reset]);
 
-  useEffect(() => reset(), [open]);
+  useEffect(() => reset(), [reset]);
 
   const [evalDisplay, setEvalDisplay] = useAtom(scoreTypeFamily(engine));
 
@@ -103,7 +103,7 @@ function AnalysisRow({
                   left: ref.current?.getClientRects()[0]?.left ?? 0,
                   top: ref.current?.getClientRects()[0]?.top ?? 0,
                 }}
-                key={index}
+                key={fen}
                 san={san}
                 index={index}
                 moves={moves}
@@ -160,7 +160,12 @@ function BoardPopover({
   const total_moves = halfMoves + index + 1 + (threat ? 1 : 0);
   const is_white = total_moves % 2 === 1;
   const move_number = Math.ceil(total_moves / 2);
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "BoardPopover must be used within a TreeStateContext provider",
+    );
+  }
   const makeMoves = useStore(store, (s) => s.makeMoves);
   const preview = useAtomValue(previewBoardOnHoverAtom);
   const moveHighlight = useAtomValue(moveHighlightAtom);
@@ -210,7 +215,7 @@ function BoardPopover({
                 enabled: true,
                 visible: true,
                 defaultSnapToValidMove: true,
-                eraseOnClick: true,
+                eraseOnMovablePieceClick: true,
               }}
             />
           </Box>

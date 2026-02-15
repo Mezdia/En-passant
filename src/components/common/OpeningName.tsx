@@ -6,7 +6,10 @@ import { TreeStateContext } from "./TreeStateContext";
 
 function OpeningName() {
   const [openingName, setOpeningName] = useState("");
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
   const root = useStore(store, (s) => s.root);
   const position = useStore(store, (s) => s.position);
 

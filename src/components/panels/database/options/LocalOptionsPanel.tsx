@@ -153,8 +153,12 @@ function LocalOptionsPanel({ boardFen }: { boardFen: string }) {
                 events: {
                   after: (orig, dest) => {
                     const setup = parseFen(options.fen).unwrap();
-                    const p = setup.board.take(parseSquare(orig)!)!;
-                    setup.board.set(parseSquare(dest)!, p);
+                    const from = parseSquare(orig);
+                    const to = parseSquare(dest);
+                    if (from === undefined || to === undefined) return;
+                    const piece = setup.board.take(from);
+                    if (!piece) return;
+                    setup.board.set(to, piece);
                     setOptions((q) => ({ ...q, fen: makeFen(setup) }));
                   },
                 },

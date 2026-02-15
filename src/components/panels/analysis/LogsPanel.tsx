@@ -18,10 +18,10 @@ export default function LogsPanel() {
   );
 
   const activeTab = useAtomValue(activeTabAtom);
-  const { data, mutate } = useSWR(["logs", engine?.id, activeTab], async () => {
-    return engine
-      ? unwrap(await commands.getEngineLogs(engine.id, activeTab!))
-      : undefined;
+  const logsKey =
+    engine && activeTab ? (["logs", engine.id, activeTab] as const) : null;
+  const { data, mutate } = useSWR(logsKey, async ([, id, tab]) => {
+    return unwrap(await commands.getEngineLogs(id, tab));
   });
 
   return (

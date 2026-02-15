@@ -9,9 +9,17 @@ beforeEach(() => {
   store.setState(defaultTree());
 });
 
-const e4 = parseUci("e2e4")!;
-const d5 = parseUci("d7d5")!;
-const e5 = parseUci("e7e5")!;
+const mustParseUci = (uci: string) => {
+  const move = parseUci(uci);
+  if (!move) {
+    throw new Error(`Invalid UCI move: ${uci}`);
+  }
+  return move;
+};
+
+const e4 = mustParseUci("e2e4");
+const d5 = mustParseUci("d7d5");
+const e5 = mustParseUci("e7e5");
 const treeE4D5: () => TreeState = () => ({
   ...defaultTree(),
   position: [0, 0],
@@ -97,7 +105,7 @@ const treeE4D5Nf3: () => TreeState = () => ({
       },
       {
         fen: "rnbqkbnr/pppppppp/8/8/8/5N2/PPPPPPPP/RNBQKB1R b KQkq - 1 1",
-        move: parseUci("g1f3")!,
+        move: mustParseUci("g1f3"),
         san: "Nf3",
         children: [],
         clock: undefined,

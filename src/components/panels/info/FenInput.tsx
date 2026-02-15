@@ -51,7 +51,10 @@ function getCastlingRights(setup: Setup) {
 }
 
 function FenInput({ currentFen }: { currentFen: string }) {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("FenInput must be used within a TreeStateContext provider");
+  }
   const setFen = useStore(store, (s) => s.setFen);
 
   const [setup, error] = useMemo(
@@ -91,41 +94,34 @@ function FenInput({ currentFen }: { currentFen: string }) {
   useEffect(() => {
     let newCastlingRights = SquareSet.empty();
     if (whiteCastling.q) {
-      newCastlingRights = newCastlingRights.set(
-        getCastlingSquare(setup, "w", "q")!,
-        true,
-      );
+      const square = getCastlingSquare(setup, "w", "q");
+      if (square !== undefined) {
+        newCastlingRights = newCastlingRights.set(square, true);
+      }
     }
     if (blackCastling.q) {
-      newCastlingRights = newCastlingRights.set(
-        getCastlingSquare(setup, "b", "q")!,
-        true,
-      );
+      const square = getCastlingSquare(setup, "b", "q");
+      if (square !== undefined) {
+        newCastlingRights = newCastlingRights.set(square, true);
+      }
     }
     if (whiteCastling.k) {
-      newCastlingRights = newCastlingRights.set(
-        getCastlingSquare(setup, "w", "k")!,
-        true,
-      );
+      const square = getCastlingSquare(setup, "w", "k");
+      if (square !== undefined) {
+        newCastlingRights = newCastlingRights.set(square, true);
+      }
     }
     if (blackCastling.k) {
-      newCastlingRights = newCastlingRights.set(
-        getCastlingSquare(setup, "b", "k")!,
-        true,
-      );
+      const square = getCastlingSquare(setup, "b", "k");
+      if (square !== undefined) {
+        newCastlingRights = newCastlingRights.set(square, true);
+      }
     }
     const newFen = makeFen({ ...setup, castlingRights: newCastlingRights });
     if (newFen !== currentFen) {
       setFen(newFen);
     }
-  }, [
-    blackCastling,
-    setCastlingRights,
-    setup,
-    whiteCastling,
-    setFen,
-    currentFen,
-  ]);
+  }, [blackCastling, setup, whiteCastling, setFen, currentFen]);
 
   const { t } = useTranslation();
 

@@ -15,16 +15,25 @@ import * as classes from "./styles.css";
 
 function TournamentTable() {
   const { t } = useTranslation();
-  const store = useContext(DatabaseViewStateContext)!;
+  const store = useContext(DatabaseViewStateContext);
+  if (!store) {
+    throw new Error("DatabaseViewStateContext is missing");
+  }
 
-  const file = useStore(store, (s) => s.database?.file)!;
+  const file = useStore(store, (s) => s.database?.file);
   const query = useStore(store, (s) => s.tournaments.query);
   const selected = useStore(store, (s) => s.tournaments.selectedTournamet);
   const setQuery = useStore(store, (s) => s.setTournamentsQuery);
   const setSelected = useStore(store, (s) => s.setTournamentsSelectedTournamet);
 
-  const { data, isLoading } = useSWR(["tournaments", query], () =>
-    commands.getTournaments(file, query).then(unwrap),
+  const { data, isLoading } = useSWR(
+    file ? ["tournaments", query, file] : null,
+    () => {
+      if (!file) {
+        return Promise.resolve(null);
+      }
+      return commands.getTournaments(file, query).then(unwrap);
+    },
   );
   const tournaments = data?.data ?? [];
   const count = data?.count;
@@ -48,6 +57,14 @@ function TournamentTable() {
       }
     }
   });
+
+  if (!file) {
+    return (
+      <Center h="100%">
+        <Text>{t("Databases.Tournament.NoSelection")}</Text>
+      </Center>
+    );
+  }
 
   return (
     <GridLayout
@@ -79,14 +96,14 @@ function TournamentTable() {
           ]}
           rowClassName={(t) => (t.id === selected ? classes.selected : "")}
           noRecordsText={t("Databases.Tournament.NoneFound")}
-          totalRecords={count!}
+          totalRecords={count ?? 0}
           recordsPerPage={query.options.pageSize ?? 25}
           page={query.options.page ?? 1}
           onPageChange={(page) =>
             setQuery({
               ...query,
               options: {
-                ...query.options!,
+                ...(query.options ?? {}),
                 page,
               },
             })
@@ -94,7 +111,7 @@ function TournamentTable() {
           onRecordsPerPageChange={(value) =>
             setQuery({
               ...query,
-              options: { ...query.options!, pageSize: value },
+              options: { ...(query.options ?? {}), pageSize: value },
             })
           }
           sortStatus={{
@@ -105,7 +122,7 @@ function TournamentTable() {
             setQuery({
               ...query,
               options: {
-                ...query.options!,
+                ...(query.options ?? {}),
                 sort: value.columnAccessor as TournamentSort,
                 direction: value.direction,
               },

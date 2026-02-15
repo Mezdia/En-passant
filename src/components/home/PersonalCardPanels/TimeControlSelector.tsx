@@ -46,13 +46,13 @@ const TimeControlSelector = ({
 
   useEffect(() => {
     onTimeControlChange(timeControl);
-  }, [timeControl]);
+  }, [timeControl, onTimeControlChange]);
 
   useEffect(() => {
     if (!timeControls.some((control) => control.value === timeControl)) {
       setTimeControl(defaultTimeControl);
     }
-  }, [website, timeControls]);
+  }, [timeControls, timeControl, defaultTimeControl]);
 
   return (
     <Select

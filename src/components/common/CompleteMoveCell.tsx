@@ -64,7 +64,10 @@ function CompleteMoveCell({
   tableLayout?: boolean;
   scoreText?: string;
 }) {
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error("TreeStateContext is missing");
+  }
   const isCurrentVariation = useStore(store, (s) =>
     equal(s.position, movePath),
   );

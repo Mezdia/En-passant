@@ -109,7 +109,12 @@ async function fetchOpening(db: DBType, tab: string) {
 function DatabasePanel() {
   const { t } = useTranslation();
 
-  const store = useContext(TreeStateContext)!;
+  const store = useContext(TreeStateContext);
+  if (!store) {
+    throw new Error(
+      "DatabasePanel must be used within a TreeStateContext provider",
+    );
+  }
   const fen = useStore(store, (s) => s.currentNode().fen);
   const referenceDatabase = useAtomValue(referenceDbAtom);
   const [debouncedFen] = useDebouncedValue(fen, 50);
@@ -122,7 +127,7 @@ function DatabasePanel() {
     if (db === "local") {
       setLocalOptions((q) => ({ ...q, fen: debouncedFen }));
     }
-  }, [debouncedFen, setLocalOptions, setMasterOptions, setLichessOptions, db]);
+  }, [debouncedFen, setLocalOptions, db]);
 
   useEffect(() => {
     if (db === "local") {
@@ -196,7 +201,9 @@ function DatabasePanel() {
         orientation="vertical"
         placement="right"
         value={tabType}
-        onChange={(v) => setTabType(v!)}
+        onChange={(v) => {
+          if (v) setTabType(v);
+        }}
         display="flex"
         flex={1}
         style={{ overflow: "hidden" }}

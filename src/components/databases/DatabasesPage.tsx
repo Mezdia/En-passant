@@ -86,10 +86,13 @@ export default function DatabasesPage() {
         opened={deleteModal}
         onClose={toggleDeleteModal}
         onConfirm={() => {
-          commands.deleteDatabase(selectedDatabase?.file!).then(() => {
-            mutate();
-            setSelected(null);
-          });
+          const file = selectedDatabase?.file;
+          if (file) {
+            commands.deleteDatabase(file).then(() => {
+              mutate();
+              setSelected(null);
+            });
+          }
           toggleDeleteModal();
         }}
       />
@@ -386,7 +389,7 @@ function GeneralSettings({
         debouncedDescription ?? null,
       )
       .then(() => mutate());
-  }, [debouncedTitle, debouncedDescription]);
+  }, [debouncedTitle, debouncedDescription, mutate, selectedDatabase.file]);
 
   return (
     <>

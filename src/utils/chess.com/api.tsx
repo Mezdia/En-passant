@@ -174,6 +174,89 @@ export async function downloadChessCom(
   });
 }
 
+export type ChessComGameData = {
+  id: string;
+  url: string;
+  pgn: string;
+  endTime: number;
+  timeControl: string;
+  rated: boolean;
+  white: {
+    username: string;
+    rating: number;
+    result: string;
+  };
+  black: {
+    username: string;
+    rating: number;
+    result: string;
+  };
+  opening?: string;
+};
+
+export async function fetchChessComGames(
+  player: string,
+  maxGames = 50,
+): Promise<ChessComGameData[]> {
+  const archives = await getGameArchives(player);
+  const archiveList = [...archives.archives].reverse();
+  const games: ChessComGameData[] = [];
+
+  for (const archive of archiveList) {
+    if (games.length >= maxGames) break;
+
+    const response = await fetch(archive, {
+      headers: apiHeaders(),
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      error(
+        `Failed to fetch Chess.com games: ${response.status} ${response.url}`,
+      );
+      continue;
+    }
+
+    const parsed = ChessComGames.safeParse(await response.json());
+    if (!parsed.success) {
+      error(
+        `Invalid Chess.com games response: ${response.status} ${response.url}\n${parsed.error}`,
+      );
+      continue;
+    }
+
+    for (const game of parsed.data.games) {
+      if (games.length >= maxGames) break;
+      const pgn = game.pgn ?? "";
+      const openingMatch = pgn.match(/\[Opening \"([^\"]+)\"\]/);
+      const opening = openingMatch?.[1];
+      const id = game.url.split("/").pop() ?? game.url;
+
+      games.push({
+        id,
+        url: game.url,
+        pgn,
+        endTime: game.end_time,
+        timeControl: game.time_control,
+        rated: game.rated,
+        white: {
+          username: game.white.username,
+          rating: game.white.rating,
+          result: game.white.result,
+        },
+        black: {
+          username: game.black.username,
+          rating: game.black.rating,
+          result: game.black.result,
+        },
+        opening,
+      });
+    }
+  }
+
+  return games;
+}
+
 const chessComGameSchema = z.object({
   game: z.object({
     moveList: z.string(),

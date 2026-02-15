@@ -77,8 +77,9 @@ export function playSound(capture: boolean, check: boolean) {
   } else {
     const path = `sound/${collection}/${type}.mp3`;
 
-    if (soundUrlCache.has(cacheKey)) {
-      playWithUrl(soundUrlCache.get(cacheKey)!);
+    const cachedUrl = soundUrlCache.get(cacheKey);
+    if (cachedUrl) {
+      playWithUrl(cachedUrl);
       return;
     }
     resolveResource(path)

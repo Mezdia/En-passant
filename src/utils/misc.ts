@@ -85,8 +85,7 @@ export const useThrottledEffect = (
     const handler = setTimeout(() => callback(), delay);
 
     return () => clearTimeout(handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [...(deps || []), delay]);
+  }, [...(deps || []), delay, callback]);
 };
 
 export function mean(arr: number[]): number {
