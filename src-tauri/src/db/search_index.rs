@@ -40,7 +40,6 @@ fn verify_header(header: &[u8]) -> io::Result<()> {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Archive, Serialize, Deserialize)]
-#[rkyv(compare(PartialEq), derive(Debug))]
 #[repr(u8)]
 pub enum GameResult {
     None = 0,
@@ -73,7 +72,6 @@ impl GameResult {
 }
 
 #[derive(Debug, Clone, Archive, Serialize, Deserialize)]
-#[rkyv(compare(PartialEq), derive(Debug))]
 pub struct SearchGameEntry {
     pub id: i32,
     pub white_id: i32,
@@ -121,7 +119,7 @@ impl SearchIndex {
         writer.write_all(MAGIC)?;
         writer.write_all(&VERSION.to_le_bytes())?;
 
-        let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(self).map_err(|e| {
+        let bytes = rkyv::to_bytes::<_, 1024>(self).map_err(|e| {
             io::Error::new(io::ErrorKind::Other, format!("Serialization error: {}", e))
         })?;
 
@@ -220,7 +218,7 @@ impl MmapSearchIndex {
         let mmap = Arc::new(mmap);
 
         let archived_bytes = &mmap[HEADER_SIZE..];
-        let archived = unsafe { rkyv::access_unchecked::<ArchivedSearchIndex>(archived_bytes) };
+        let archived = unsafe { rkyv::archived_root::<SearchIndex>(archived_bytes) };
 
         let archived: &'static ArchivedSearchIndex = unsafe { std::mem::transmute(archived) };
 

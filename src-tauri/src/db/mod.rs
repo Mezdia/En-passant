@@ -3,6 +3,7 @@ mod models;
 mod ops;
 mod schema;
 mod search;
+mod search_index;
 
 use crate::{
     db::{
@@ -49,12 +50,14 @@ use log::info;
 use tauri_specta::Event as _;
 
 use self::encoding::encode_move;
+use self::search_index::{get_index_path, SearchGameEntry, SearchIndex};
 
 pub use self::models::NormalizedGame;
 pub use self::models::Puzzle;
 pub use self::schema::puzzle_themes;
 pub use self::schema::puzzles;
 pub use self::schema::themes;
+pub use self::search_index::MmapSearchIndex;
 pub use self::search::{
     is_position_in_db, search_position, PositionQuery, PositionQueryJs, PositionStats,
 };
@@ -602,6 +605,82 @@ pub async fn delete_indexes(file: PathBuf, state: tauri::State<'_, AppState>) ->
     let db = &mut get_db_or_create(&state, file.to_str().unwrap(), ConnectionOptions::default())?;
 
     db.batch_execute(DELETE_INDEXES_SQL)?;
+
+    Ok(())
+}
+
+fn generate_search_index(file: &PathBuf, state: &tauri::State<'_, AppState>) -> Result<(), Error> {
+    let db = &mut get_db_or_create(&state, file.to_str().unwrap(), ConnectionOptions::default())?;
+    let index_path = get_index_path(file);
+
+    let game_count: i64 = games::table.count().get_result(db)?;
+    let mut index = SearchIndex::with_capacity(game_count as usize);
+
+    let rows: Vec<(
+        i32,
+        i32,
+        i32,
+        Option<String>,
+        Option<String>,
+        Vec<u8>,
+        Option<String>,
+        i32,
+        i32,
+        i32,
+    )> = games::table
+        .select((
+            games::id,
+            games::white_id,
+            games::black_id,
+            games::date,
+            games::result,
+            games::moves,
+            games::fen,
+            games::pawn_home,
+            games::white_material,
+            games::black_material,
+        ))
+        .load(db)?;
+
+    for (id, white_id, black_id, date, result, moves, fen, pawn_home, white_material, black_material)
+        in rows
+    {
+        index.push(SearchGameEntry::from_game_data(
+            id,
+            white_id,
+            black_id,
+            date,
+            result,
+            moves,
+            fen,
+            pawn_home,
+            white_material,
+            black_material,
+        ));
+    }
+
+    index.write_to(&index_path)?;
+
+    let mut cache = state.db_cache.lock().unwrap();
+    *cache = None;
+
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn preload_reference_db(
+    file: PathBuf,
+    state: tauri::State<'_, AppState>,
+) -> Result<(), Error> {
+    let index_path = get_index_path(&file);
+    if !MmapSearchIndex::is_valid(&index_path) {
+        generate_search_index(&file, &state)?;
+    }
+
+    let index = MmapSearchIndex::open(&index_path)?;
+    let mut cache = state.db_cache.lock().unwrap();
+    *cache = Some(index);
 
     Ok(())
 }
@@ -1606,7 +1685,7 @@ pub async fn merge_players(
 #[specta::specta]
 pub fn clear_games(state: tauri::State<'_, AppState>) {
     let mut state = state.db_cache.lock().unwrap();
-    state.clear();
+    *state = None;
 }
 
 #[cfg(test)]
