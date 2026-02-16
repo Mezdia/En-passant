@@ -35,7 +35,7 @@
     },
     "resources": [],
     "targets": "all",
-    "createUpdaterArtifacts": "v1Compatible"
+    "createUpdaterArtifacts": false
   },
   "build": {
     "beforeDevCommand": "npm run start-vite",

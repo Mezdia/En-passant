@@ -67,7 +67,7 @@ export interface FileRoutesByFullPath {
   '/files': typeof FilesRoute
   '/settings': typeof SettingsRoute
   '/databases/$databaseId': typeof DatabasesDatabaseIdRoute
-  '/databases': typeof DatabasesIndexRoute
+  '/databases/': typeof DatabasesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -100,7 +100,7 @@ export interface FileRouteTypes {
     | '/files'
     | '/settings'
     | '/databases/$databaseId'
-    | '/databases'
+    | '/databases/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -181,7 +181,7 @@ declare module '@tanstack/react-router' {
     '/databases/': {
       id: '/databases/'
       path: '/databases'
-      fullPath: '/databases'
+      fullPath: '/databases/'
       preLoaderRoute: typeof DatabasesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
