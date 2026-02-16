@@ -1,7 +1,14 @@
-import { Box, Button, Center, Group, Image, Menu, Text } from "@mantine/core";
+import {
+  Box,
+  Center,
+  Image,
+  Menu,
+  Text,
+  UnstyledButton,
+} from "@mantine/core";
 import * as classes from "./TopBar.css";
 
-import { useColorScheme } from "@mantine/hooks";
+import { isTauri } from "@tauri-apps/api/core";
 import type { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useEffect, useState } from "react";
 
@@ -65,114 +72,92 @@ type MenuGroup = {
 };
 
 function TopBar({ menuActions }: { menuActions: MenuGroup[] }) {
-  const colorScheme = useColorScheme();
   const [appWindow, setAppWindow] = useState<WebviewWindow | null>(null);
 
   useEffect(() => {
-    // Only try to get Tauri window in production or Tauri environment
-    if (import.meta.env.PROD || import.meta.env.VITE_PLATFORM === "tauri") {
-      try {
-        import("@tauri-apps/api/webviewWindow")
-          .then((module) => {
-            setAppWindow(module.getCurrentWebviewWindow());
-          })
-          .catch(() => {
-            // Silently fail if Tauri is not available
-          });
-      } catch (error) {
-        // Silently fail if Tauri is not available
-      }
+    if (!isTauri()) return;
+    try {
+      import("@tauri-apps/api/webviewWindow")
+        .then((module) => {
+          setAppWindow(module.getCurrentWebviewWindow());
+        })
+        .catch(() => {
+          // Silently fail if Tauri is not available
+        });
+    } catch (error) {
+      // Silently fail if Tauri is not available
     }
   }, []);
 
   return (
-    <>
-      <Group>
-        <Box style={{ flexGrow: 1 }}>
-          <Group data-tauri-drag-region gap="xs" px="sm">
-            <Box h="1.5rem" w="1.5rem">
-              <Image src="/logo.png" fit="fill" />
-            </Box>
-            <Group gap={0}>
-              {menuActions.map((action) => (
-                <Menu
-                  key={action.label}
-                  shadow="md"
-                  width={200}
-                  position="bottom-start"
-                  transitionProps={{ duration: 0 }}
-                >
-                  <Menu.Target>
-                    <Button
-                      style={{
-                        ":active": {
-                          transform: "none",
-                        },
-                      }}
-                      fz="sm"
-                      variant="subtle"
-                      color={colorScheme === "dark" ? "gray" : "dark"}
-                      size="compact-md"
+    <Box className={classes.root}>
+      <Box className={classes.left} data-tauri-drag-region>
+        <Box className={classes.brand} data-tauri-drag-region>
+          <Box className={classes.logo}>
+            <Image src="/logo.png" fit="contain" />
+          </Box>
+          <Text className={classes.title}>En-passant</Text>
+        </Box>
+        <Box className={classes.menu}>
+          {menuActions.map((action) => (
+            <Menu
+              key={action.label}
+              shadow="md"
+              width={200}
+              position="bottom-start"
+              transitionProps={{ duration: 0 }}
+            >
+              <Menu.Target>
+                <UnstyledButton className={classes.menuButton}>
+                  {action.label}
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown>
+                {action.options.map((option, i) =>
+                  option.label === "divider" ? (
+                    <Menu.Divider key={i} />
+                  ) : (
+                    <Menu.Item
+                      key={option.label}
+                      rightSection={
+                        option.shortcut && (
+                          <Text size="xs" c="dimmed">
+                            {option.shortcut}
+                          </Text>
+                        )
+                      }
+                      onClick={option.action}
                     >
-                      {action.label}
-                    </Button>
-                  </Menu.Target>
-                  <Menu.Dropdown>
-                    {action.options.map((option, i) =>
-                      option.label === "divider" ? (
-                        <Menu.Divider key={i} />
-                      ) : (
-                        <Menu.Item
-                          key={option.label}
-                          rightSection={
-                            option.shortcut && (
-                              <Text size="xs" c="dimmed">
-                                {option.shortcut}
-                              </Text>
-                            )
-                          }
-                          onClick={option.action}
-                        >
-                          {option.label}
-                        </Menu.Item>
-                      ),
-                    )}
-                  </Menu.Dropdown>
-                </Menu>
-              ))}
-            </Group>
-          </Group>
+                      {option.label}
+                    </Menu.Item>
+                  ),
+                )}
+              </Menu.Dropdown>
+            </Menu>
+          ))}
         </Box>
-        <Box h={35}>
-          <Group gap={0} data-tauri-drag-region>
-            <Center
-              h={35}
-              w={45}
-              onClick={() => appWindow?.minimize()}
-              className={classes.icon}
-            >
-              <IconMinimize />
-            </Center>
-            <Center
-              h={35}
-              w={45}
-              onClick={() => appWindow?.toggleMaximize()}
-              className={classes.icon}
-            >
-              <IconMaximize />
-            </Center>
-            <Center
-              h={35}
-              w={45}
-              onClick={() => appWindow?.close()}
-              className={classes.close}
-            >
-              <IconX />
-            </Center>
-          </Group>
-        </Box>
-      </Group>
-    </>
+      </Box>
+      <Box className={classes.windowControls} data-tauri-drag-region>
+        <Center
+          onClick={() => appWindow?.minimize()}
+          className={classes.windowButton}
+        >
+          <IconMinimize />
+        </Center>
+        <Center
+          onClick={() => appWindow?.toggleMaximize()}
+          className={classes.windowButton}
+        >
+          <IconMaximize />
+        </Center>
+        <Center
+          onClick={() => appWindow?.close()}
+          className={classes.closeButton}
+        >
+          <IconX />
+        </Center>
+      </Box>
+    </Box>
   );
 }
 

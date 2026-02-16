@@ -139,6 +139,29 @@ function RootLayout() {
   const [opened, setOpened] = useState(false);
   const [languageModalOpened, setLanguageModalOpened] = useState(false);
   const [onboardingOpened, setOnboardingOpened] = useState(false);
+  const [isWindows, setIsWindows] = useState(false);
+
+  useEffect(() => {
+    if (!isTauri()) return;
+    let active = true;
+    import("@tauri-apps/plugin-os")
+      .then(({ platform }) => {
+        if (!active) return;
+        try {
+          setIsWindows(platform() === "windows");
+        } catch (error) {
+          setIsWindows(false);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setIsWindows(false);
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     const lang = localStorage.getItem("lang");
@@ -267,7 +290,7 @@ function RootLayout() {
     if (!menu) return;
 
     if (isTauri()) {
-      if (isNative || import.meta.env.VITE_PLATFORM !== "win32") {
+      if (isNative || !isWindows) {
         menu.setAsAppMenu();
         getCurrentWindow().setDecorations(true);
       } else {
@@ -276,7 +299,9 @@ function RootLayout() {
       }
     }
     // In development mode, we don't set up the native menu
-  }, [menu, isNative]);
+  }, [menu, isNative, isWindows]);
+
+  const useCustomTitleBar = isWindows && !isNative;
 
   return (
     <AppShell
@@ -285,13 +310,18 @@ function RootLayout() {
         breakpoint: 0,
       }}
       header={
-        isNative || import.meta.env.VITE_PLATFORM !== "win32"
-          ? undefined
-          : {
+        useCustomTitleBar
+          ? {
               height: "2.5rem",
             }
+          : undefined
       }
       styles={{
+        header: {
+          padding: 0,
+          borderBottom: "none",
+          backgroundColor: "transparent",
+        },
         main: {
           height: "100vh",
           userSelect: "none",
@@ -308,7 +338,7 @@ function RootLayout() {
         onClose={() => setOnboardingOpened(false)}
       />
       <AboutModal opened={opened} setOpened={setOpened} />
-      {!isNative && import.meta.env.VITE_PLATFORM === "win32" && (
+      {useCustomTitleBar && (
         <AppShell.Header>
           <TopBar menuActions={menuActions} />
         </AppShell.Header>

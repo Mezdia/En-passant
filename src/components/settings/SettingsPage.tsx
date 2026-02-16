@@ -45,9 +45,11 @@ import {
   IconVolume,
 } from "@tabler/icons-react";
 import { useLoaderData } from "@tanstack/react-router";
+import { isTauri } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import { useAtom } from "jotai";
 import { RESET } from "jotai/utils";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FileInput from "../common/FileInput";
 import BoardSelect from "./BoardSelect";
@@ -68,6 +70,7 @@ export default function Page() {
   // const version = useLoaderData() as string;
   const [keyMap, setKeyMap] = useAtom(keyMapAtom);
   const [isNative, setIsNative] = useAtom(nativeBarAtom);
+  const [isWindows, setIsWindows] = useState(false);
   const {
     dirs: { documentDir },
     version,
@@ -77,6 +80,28 @@ export default function Page() {
 
   const [moveMethod, setMoveMethod] = useAtom(moveMethodAtom);
   const [moveNotationType, setMoveNotationType] = useAtom(moveNotationTypeAtom);
+
+  useEffect(() => {
+    if (!isTauri()) return;
+    let active = true;
+    import("@tauri-apps/plugin-os")
+      .then(({ platform }) => {
+        if (!active) return;
+        try {
+          setIsWindows(platform() === "windows");
+        } catch (error) {
+          setIsWindows(false);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setIsWindows(false);
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <Tabs defaultValue="board" orientation="vertical" h="100%">
@@ -538,7 +563,7 @@ export default function Page() {
                   }}
                 />
               </Group>
-              {import.meta.env.VITE_PLATFORM === "win32" && (
+              {isWindows && (
                 <Group
                   justify="space-between"
                   wrap="nowrap"
