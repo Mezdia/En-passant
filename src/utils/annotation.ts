@@ -221,6 +221,34 @@ export const ANNOTATION_INFO: Record<Annotation, AnnotationInfo> = {
   "⊗": { name: "Miss", color: "red", nag: 9 },
 };
 
+export const ANNOTATION_ICON_MAP: Partial<Record<Annotation, string>> = {
+  "!!": "/movefeedbackico/Brilliantmove.svg",
+  "!": "/movefeedbackico/Greatmove.svg",
+  "!?": "/movefeedbackico/Bookmove.svg",
+  "?!": "/movefeedbackico/Inaccuracymove.svg",
+  "?": "/movefeedbackico/Mistakemove.svg",
+  "??": "/movefeedbackico/Blundermove.svg",
+  "⭐": "/movefeedbackico/Bestmove.svg",
+  "✓": "/movefeedbackico/Goodmove.svg",
+  "○": "/movefeedbackico/Goodmove.svg",
+  "✖": "/movefeedbackico/Missedopportunitymove.svg",
+  "⊗": "/movefeedbackico/Missedopportunitymove.svg",
+};
+
+export const ANNOTATION_COLOR_MAP: Partial<Record<Annotation, string>> = {
+  "!!": "#26C2A3",
+  "!": "#749BBF",
+  "!?": "#D5A47D",
+  "?!": "#F7C631",
+  "?": "#FFA459",
+  "??": "#FA412D",
+  "⭐": "#81B64C",
+  "✓": "#81B64C",
+  "○": "#81B64C",
+  "✖": "#FF7769",
+  "⊗": "#FF7769",
+};
+
 export function isBasicAnnotation(
   annotation: string,
 ): annotation is "!" | "!!" | "?" | "??" | "!?" | "?!" {

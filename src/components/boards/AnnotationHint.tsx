@@ -1,4 +1,8 @@
-import { ANNOTATION_INFO, type Annotation } from "@/utils/annotation";
+import {
+  ANNOTATION_ICON_MAP,
+  ANNOTATION_INFO,
+  type Annotation,
+} from "@/utils/annotation";
 import { squareToCoordinates } from "@/utils/chessops";
 import { Box } from "@mantine/core";
 import type { Color, Square } from "chessops";
@@ -14,6 +18,7 @@ export default function AnnotationHint({
 }) {
   const { file, rank } = squareToCoordinates(square, orientation);
   const color = ANNOTATION_INFO[annotation]?.color || "gray";
+  const icon = ANNOTATION_ICON_MAP[annotation];
 
   return (
     <Box
@@ -26,7 +31,25 @@ export default function AnnotationHint({
       }}
     >
       <Box pl="90%">
-        {
+        {icon ? (
+          <Box
+            style={{
+              transform: "translateY(-40%) translateX(-50%)",
+              zIndex: 100,
+              filter: "drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35))",
+              overflow: "initial",
+            }}
+            w="45%"
+            h="45%"
+            pos="absolute"
+          >
+            <img
+              src={icon}
+              alt={annotation}
+              style={{ width: "100%", height: "100%", display: "block" }}
+            />
+          </Box>
+        ) : (
           <Box
             style={{
               transform: "translateY(-40%) translateX(-50%)",
@@ -56,7 +79,7 @@ export default function AnnotationHint({
               <g>{glyphToSvg[annotation]}</g>
             </svg>
           </Box>
-        }
+        )}
       </Box>
     </Box>
   );

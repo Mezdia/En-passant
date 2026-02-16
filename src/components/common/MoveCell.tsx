@@ -1,6 +1,8 @@
 import { moveNotationTypeAtom } from "@/state/atoms";
 import {
   ANNOTATION_INFO,
+  ANNOTATION_COLOR_MAP,
+  ANNOTATION_ICON_MAP,
   type Annotation,
   addPieceSymbol,
 } from "@/utils/annotation";
@@ -25,7 +27,9 @@ const MoveCell = forwardRef(function MoveCell(
 ) {
   const [moveNotationType] = useAtom(moveNotationTypeAtom);
 
-  const color = ANNOTATION_INFO[props.annotations[0]]?.color || "gray";
+  const primaryAnnotation = props.annotations[0];
+  const color = ANNOTATION_INFO[primaryAnnotation]?.color || "gray";
+  const annotationColor = ANNOTATION_COLOR_MAP[primaryAnnotation];
   const theme = useMantineTheme();
   const hoverOpacity = props.isCurrentVariation ? 0.25 : 0.1;
   let baseLight = theme.colors.gray[8];
@@ -35,7 +39,12 @@ const MoveCell = forwardRef(function MoveCell(
   let darkBg = "transparent";
   let lightBg = "transparent";
 
-  if (color !== "gray") {
+  if (annotationColor) {
+    baseLight = annotationColor;
+    baseDark = annotationColor;
+    hoverLight = rgba(annotationColor, hoverOpacity);
+    hoverDark = rgba(annotationColor, hoverOpacity);
+  } else if (color !== "gray") {
     baseLight = theme.colors[color][6];
     hoverLight = rgba(baseLight, hoverOpacity);
     baseDark = theme.colors[color][6];
@@ -43,11 +52,34 @@ const MoveCell = forwardRef(function MoveCell(
   }
 
   if (props.isCurrentVariation) {
-    darkBg = rgba(theme.colors[color][6], 0.2);
-    lightBg = rgba(theme.colors[color][6], 0.2);
+    const activeColor = annotationColor ?? theme.colors[color][6];
+    darkBg = rgba(activeColor, 0.2);
+    lightBg = rgba(activeColor, 0.2);
     hoverLight = rgba(lightBg, 0.25);
     hoverDark = rgba(darkBg, 0.25);
   }
+
+  const annotationIcons = props.annotations
+    .filter((annotation) => annotation !== "")
+    .map((annotation, index) => {
+      const icon = ANNOTATION_ICON_MAP[annotation];
+      if (icon) {
+        return (
+          <img
+            key={`${annotation}-${index}`}
+            className={classes.annotationIcon}
+            src={icon}
+            alt={annotation}
+            title={annotation}
+          />
+        );
+      }
+      return (
+        <span key={`${annotation}-${index}`} className={classes.annotationText}>
+          {annotation}
+        </span>
+      );
+    });
 
   return (
     <Box
@@ -67,7 +99,9 @@ const MoveCell = forwardRef(function MoveCell(
     >
       {props.isStart && <IconFlag style={{ marginRight: 5 }} size="0.875rem" />}
       {moveNotationType === "symbols" ? addPieceSymbol(props.move) : props.move}
-      {props.annotations.join("")}
+      {annotationIcons.length > 0 && (
+        <span className={classes.annotationList}>{annotationIcons}</span>
+      )}
     </Box>
   );
 });

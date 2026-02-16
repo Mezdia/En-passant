@@ -5,6 +5,7 @@ import { TreeStateContext } from "@/components/common/TreeStateContext";
 import { activeTabAtom } from "@/state/atoms";
 import {
   ANNOTATION_INFO,
+  ANNOTATION_ICON_MAP,
   type Annotation,
   isBasicAnnotation,
 } from "@/utils/annotation";
@@ -19,7 +20,7 @@ import React, { Suspense, useState } from "react";
 import { memo, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useStore } from "zustand";
-import { label } from "./AnalysisPanel.css";
+import { annotationIcon, label } from "./AnalysisPanel.css";
 import ReportModal from "./ReportModal";
 
 function ReportPanel() {
@@ -118,6 +119,10 @@ const GameStats = memo(
             .map((annotation) => {
               const s = annotation;
               const { name, color, translationKey } = ANNOTATION_INFO[s];
+              const labelText = translationKey
+                ? t(`Annotate.${translationKey}`)
+                : name;
+              const icon = ANNOTATION_ICON_MAP[s];
               // @ts-ignore
               const w = whiteAnnotations[s];
               // @ts-ignore
@@ -138,10 +143,19 @@ const GameStats = memo(
                     {w}
                   </Grid.Col>
                   <Grid.Col span={1} c={w + b > 0 ? color : undefined}>
-                    {annotation}
+                    {icon ? (
+                      <img
+                        className={annotationIcon}
+                        src={icon}
+                        alt={labelText}
+                        title={labelText}
+                      />
+                    ) : (
+                      annotation
+                    )}
                   </Grid.Col>
                   <Grid.Col span={4} c={w + b > 0 ? color : undefined}>
-                    {translationKey ? t(`Annotate.${translationKey}`) : name}
+                    {labelText}
                   </Grid.Col>
                   <Grid.Col
                     className={cx(b > 0 && label)}

@@ -335,6 +335,29 @@ export const pageContainer = style({
   flexDirection: "column",
   padding: "0 20px 20px",
   gap: "16px",
+  transition: "opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease",
+  willChange: "opacity, transform, filter",
+
+  "@media": {
+    "(prefers-reduced-motion: reduce)": {
+      transition: "none",
+    },
+  },
+});
+
+export const pageContainerLaunching = style({
+  opacity: 0,
+  transform: "translateY(-6px) scale(0.985)",
+  filter: "blur(2px)",
+  pointerEvents: "none",
+
+  "@media": {
+    "(prefers-reduced-motion: reduce)": {
+      opacity: 1,
+      transform: "none",
+      filter: "none",
+    },
+  },
 });
 
 export const pageHeader = style({

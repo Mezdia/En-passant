@@ -6,3 +6,11 @@ export const label = style({
     textDecoration: "underline",
   },
 });
+
+export const annotationIcon = style({
+  width: "18px",
+  height: "18px",
+  display: "block",
+  margin: "0 auto",
+  objectFit: "contain",
+});

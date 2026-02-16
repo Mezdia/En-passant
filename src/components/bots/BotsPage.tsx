@@ -33,6 +33,7 @@ import { useAtom, useAtomValue } from "jotai";
 import * as Flags from "mantine-flagpack";
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "@tanstack/react-router";
 
 import { activeTabAtom, enginesAtom, tabsAtom } from "@/state/atoms";
 import type { LocalEngine } from "@/utils/engines";
@@ -436,6 +437,7 @@ function BotSettingsPanel({
   selectedEngine,
   setSelectedEngine,
   onStartGame,
+  isLaunching,
 }: {
   bot: Bot | null;
   playSide: PlaySide;
@@ -447,6 +449,7 @@ function BotSettingsPanel({
   selectedEngine: string;
   setSelectedEngine: (path: string) => void;
   onStartGame: () => void | Promise<void>;
+  isLaunching: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const isPersian = i18n.language.startsWith("fa");
@@ -600,7 +603,8 @@ function BotSettingsPanel({
           size="md"
           mt="md"
           onClick={onStartGame}
-          disabled={engines.length === 0}
+          disabled={engines.length === 0 || isLaunching}
+          loading={isLaunching}
         >
           {t("Bots.Setup.StartGame")}
         </Button>
@@ -619,6 +623,7 @@ function BotSettingsPanel({
 export default function BotsPage() {
   const { t, i18n } = useTranslation();
   const isPersian = i18n.language.startsWith("fa");
+  const navigate = useNavigate();
   const [tabs, setTabs] = useAtom(tabsAtom);
   const [, setActiveTab] = useAtom(activeTabAtom);
   const engines = useAtomValue(enginesAtom).filter(
@@ -636,6 +641,7 @@ export default function BotsPage() {
   const [showPanel, setShowPanel] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const prevSelectedBot = useRef<Bot | null>(null);
+  const [isLaunching, setIsLaunching] = useState(false);
 
   // Handle panel animation when bot selection changes
   useEffect(() => {
@@ -677,6 +683,10 @@ export default function BotsPage() {
   const startGame = useCallback(async () => {
     console.log("[BotsPage] Start Game clicked");
 
+    if (isLaunching) {
+      return;
+    }
+
     if (!selectedBot) {
       console.error("[BotsPage] No bot selected");
       return;
@@ -693,6 +703,7 @@ export default function BotsPage() {
     }
 
     console.log("[BotsPage] Using engine:", engine);
+    setIsLaunching(true);
 
     // Get supported options from engine
     let engineOptions: Array<{ name: string; value: string }> = [];
@@ -718,21 +729,49 @@ export default function BotsPage() {
       goMode: getGoModeForElo(selectedBot.rating),
     };
 
-    // Create a new tab for the bot game
-    const botName = isPersian ? selectedBot.namePersian : selectedBot.nameEnglish;
-    const id = await createTab({
-      tab: {
-        name: `${t("Bots.Game.VsPrefix")} ${botName}`,
-        type: "bot-game",
-      },
-      setTabs,
-      setActiveTab,
-      pgn: "",
-    });
+    try {
+      // Create a new tab for the bot game
+      const botName = isPersian
+        ? selectedBot.namePersian
+        : selectedBot.nameEnglish;
+      const id = await createTab({
+        tab: {
+          name: `${t("Bots.Game.VsPrefix")} ${botName}`,
+          type: "bot-game",
+        },
+        setTabs,
+        setActiveTab,
+        pgn: "",
+      });
 
-    // Store bot info for the game page using the new tab ID
-    sessionStorage.setItem(`gameSettings_${id}`, JSON.stringify(botGameInfo));
+      // Store bot info for the game page using the new tab ID
+      sessionStorage.setItem(`gameSettings_${id}`, JSON.stringify(botGameInfo));
+
+      const doNavigate = () => navigate({ to: "/" });
+      const doc = document as Document & {
+        startViewTransition?: (cb: () => void | Promise<void>) => void;
+      };
+
+      if (doc.startViewTransition) {
+        doc.startViewTransition(() => {
+          doNavigate();
+        });
+      } else {
+        const prefersReducedMotion =
+          typeof window !== "undefined" &&
+          window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+        if (prefersReducedMotion) {
+          doNavigate();
+        } else {
+          setTimeout(doNavigate, 320);
+        }
+      }
+    } catch (error) {
+      console.error("[BotsPage] Failed to start bot game", error);
+      setIsLaunching(false);
+    }
   }, [
+    isLaunching,
     selectedBot,
     playSide,
     gameMode,
@@ -740,13 +779,18 @@ export default function BotsPage() {
     engines,
     selectedEngine,
     t,
-    i18n,
+    isPersian,
     setTabs,
     setActiveTab,
+    navigate,
   ]);
 
   return (
-    <div className={classes.pageContainer}>
+    <div
+      className={cx(classes.pageContainer, {
+        [classes.pageContainerLaunching]: isLaunching,
+      })}
+    >
       <div className={classes.pageHeader}>
         <Title order={2}>{t("Bots.Title")}</Title>
         <Button
@@ -832,6 +876,7 @@ export default function BotsPage() {
               selectedEngine={selectedEngine}
               setSelectedEngine={setSelectedEngine}
               onStartGame={startGame}
+              isLaunching={isLaunching}
             />
           </Paper>
         )}

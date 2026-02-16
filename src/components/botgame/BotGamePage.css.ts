@@ -561,7 +561,10 @@ export const qualityStat = style({
 });
 
 export const qualityIcon = style({
-    fontSize: vars.fontSizes.lg,
+    width: "24px",
+    height: "24px",
+    display: "block",
+    objectFit: "contain",
 });
 
 export const qualityCount = style({

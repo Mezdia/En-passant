@@ -1,6 +1,7 @@
 import { TreeStateContext } from "@/components/common/TreeStateContext";
 import {
   ANNOTATION_INFO,
+  ANNOTATION_ICON_MAP,
   type Annotation,
   isBasicAnnotation,
 } from "@/utils/annotation";
@@ -35,19 +36,26 @@ const SymbolButton = memo(function SymbolButton({
   const store = useContext(TreeStateContext)!;
   const setAnnotation = useStore(store, (s) => s.setAnnotation);
   const { translationKey, name, color } = ANNOTATION_INFO[annotation];
+  const label = translationKey ? t(`Annotate.${translationKey}`) : name;
+  const icon = ANNOTATION_ICON_MAP[annotation];
   const isActive = curAnnotations.includes(annotation);
   const theme = useMantineTheme();
   return (
-    <Tooltip
-      label={translationKey ? t(`Annotate.${translationKey}`) : name}
-      position="bottom"
-    >
+    <Tooltip label={label} position="bottom">
       <ActionIcon
         onClick={() => setAnnotation(annotation)}
         variant={isActive ? "filled" : "default"}
         color={isBasicAnnotation(annotation) ? color : theme.primaryColor}
       >
-        <Text>{annotation}</Text>
+        {icon ? (
+          <img
+            src={icon}
+            alt={label}
+            style={{ width: 18, height: 18, display: "block" }}
+          />
+        ) : (
+          <Text>{annotation}</Text>
+        )}
       </ActionIcon>
     </Tooltip>
   );

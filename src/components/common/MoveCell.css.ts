@@ -5,7 +5,9 @@ export const cell = style({
   all: "unset",
   fontSize: "0.9rem",
   fontWeight: 600,
-  display: "inline-block",
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 4,
   padding: 6,
   borderRadius: 4,
   whiteSpace: "nowrap",
@@ -26,4 +28,22 @@ export const cell = style({
       backgroundColor: "var(--dark-hover-color)",
     },
   },
+});
+
+export const annotationList = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 2,
+  marginLeft: 4,
+});
+
+export const annotationIcon = style({
+  width: 16,
+  height: 16,
+  display: "block",
+  objectFit: "contain",
+});
+
+export const annotationText = style({
+  fontSize: "0.85em",
 });

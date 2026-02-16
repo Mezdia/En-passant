@@ -139,6 +139,14 @@ interface EngineEvalState {
 // Move quality types
 type MoveQuality = 'brilliant' | 'good' | 'ok' | 'mistake' | 'blunder';
 
+const MOVE_FEEDBACK_ICONS: Record<MoveQuality, string> = {
+    brilliant: "/movefeedbackico/Brilliantmove.svg",
+    good: "/movefeedbackico/Goodmove.svg",
+    ok: "/movefeedbackico/Bookmove.svg",
+    mistake: "/movefeedbackico/Mistakemove.svg",
+    blunder: "/movefeedbackico/Blundermove.svg",
+};
+
 const MODE_DEFAULTS: Record<
     Exclude<GameMode, "custom">,
     CustomSettings
@@ -1394,11 +1402,11 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
         if (!customSettings.moveFeedback || !moveFeedback.type) return null;
     
         const feedbackConfig: Record<MoveQuality, { color: string; icon: string; text: string }> = {
-            'brilliant': { color: 'cyan', icon: '/movefeedbackico/Brilliantmove.svg', text: t("Annotate.Brilliant") },
-            'good': { color: 'green', icon: '/movefeedbackico/Goodmove.svg', text: t("Annotate.Good") },
-            'ok': { color: 'yellow', icon: '/movefeedbackico/Bookmove.svg', text: t("Common.Ok") },
-            'mistake': { color: 'orange', icon: '/movefeedbackico/Mistakemove.svg', text: t("Annotate.Mistake") },
-            'blunder': { color: 'red', icon: '/movefeedbackico/Blundermove.svg', text: t("Annotate.Blunder") }
+            brilliant: { color: 'cyan', icon: MOVE_FEEDBACK_ICONS.brilliant, text: t("Annotate.Brilliant") },
+            good: { color: 'green', icon: MOVE_FEEDBACK_ICONS.good, text: t("Annotate.Good") },
+            ok: { color: 'yellow', icon: MOVE_FEEDBACK_ICONS.ok, text: t("Common.Ok") },
+            mistake: { color: 'orange', icon: MOVE_FEEDBACK_ICONS.mistake, text: t("Annotate.Mistake") },
+            blunder: { color: 'red', icon: MOVE_FEEDBACK_ICONS.blunder, text: t("Annotate.Blunder") }
         };
     
         const config = feedbackConfig[moveFeedback.type];
@@ -2025,19 +2033,39 @@ export const BotGamePage: React.FC<{ bot: Bot; onExit: () => void }> = ({ bot, o
                             {/* Quality Stats */}
                             <Paper withBorder p="md" className={classes.qualityStats}>
                                 <div className={classes.qualityStat}>
-                                    <span className={classes.qualityIcon}>💎</span>
+                                    <img
+                                        className={classes.qualityIcon}
+                                        src={MOVE_FEEDBACK_ICONS.brilliant}
+                                        alt={t("Annotate.Brilliant")}
+                                        title={t("Annotate.Brilliant")}
+                                    />
                                     <span className={classes.qualityCount}>{gameStats.brilliantMoves}</span>
                                 </div>
                                 <div className={classes.qualityStat}>
-                                    <span className={classes.qualityIcon}>✅</span>
+                                    <img
+                                        className={classes.qualityIcon}
+                                        src={MOVE_FEEDBACK_ICONS.good}
+                                        alt={t("Annotate.Good")}
+                                        title={t("Annotate.Good")}
+                                    />
                                     <span className={classes.qualityCount}>{gameStats.goodMoves}</span>
                                 </div>
                                 <div className={classes.qualityStat}>
-                                    <span className={classes.qualityIcon}>⚠️</span>
+                                    <img
+                                        className={classes.qualityIcon}
+                                        src={MOVE_FEEDBACK_ICONS.mistake}
+                                        alt={t("Annotate.Mistake")}
+                                        title={t("Annotate.Mistake")}
+                                    />
                                     <span className={classes.qualityCount}>{gameStats.mistakes}</span>
                                 </div>
                                 <div className={classes.qualityStat}>
-                                    <span className={classes.qualityIcon}>💥</span>
+                                    <img
+                                        className={classes.qualityIcon}
+                                        src={MOVE_FEEDBACK_ICONS.blunder}
+                                        alt={t("Annotate.Blunder")}
+                                        title={t("Annotate.Blunder")}
+                                    />
                                     <span className={classes.qualityCount}>{gameStats.blunders}</span>
                                 </div>
                             </Paper>
