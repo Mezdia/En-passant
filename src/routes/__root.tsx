@@ -322,6 +322,11 @@ function RootLayout() {
           borderBottom: "none",
           backgroundColor: "transparent",
         },
+        navbar: {
+          padding: 0,
+          borderInlineEnd: "none",
+          backgroundColor: "transparent",
+        },
         main: {
           height: "100vh",
           userSelect: "none",

@@ -61,14 +61,14 @@ export function SideBar() {
   ));
 
   return (
-    <>
-      <AppShellSection grow>
-        <Stack justify="center" gap={0}>
+    <div className={classes.root}>
+      <AppShellSection grow className={classes.section}>
+        <Stack justify="center" gap="xs" align="center">
           {links}
         </Stack>
       </AppShellSection>
-      <AppShellSection>
-        <Stack justify="center" gap={0}>
+      <AppShellSection className={classes.section}>
+        <Stack justify="center" gap="xs" align="center">
           <NavbarLink
             icon={IconSettings}
             label={t("SideBar.Settings")}
@@ -77,6 +77,6 @@ export function SideBar() {
           />
         </Stack>
       </AppShellSection>
-    </>
+    </div>
   );
 }
