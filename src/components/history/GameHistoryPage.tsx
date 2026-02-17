@@ -18,7 +18,6 @@ import {
   ActionIcon,
   Badge,
   Button,
-  Card,
   Center,
   Checkbox,
   Divider,
@@ -26,6 +25,7 @@ import {
   Paper,
   ScrollArea,
   Select,
+  SegmentedControl,
   SimpleGrid,
   Stack,
   Text,
@@ -34,6 +34,7 @@ import {
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import {
+  IconArrowBackUp,
   IconCpu,
   IconFileExport,
   IconFileImport,
@@ -49,8 +50,9 @@ import { open, save } from "@tauri-apps/plugin-dialog";
 import { readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import dayjs from "dayjs";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, type CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
+import * as classes from "./GameHistoryPage.css";
 
 type HistoryType = "bot" | "engine" | "human";
 
@@ -122,6 +124,11 @@ function getResultColor(result: HistoryItem["result"]) {
   }
 }
 
+function getResultTone(result: HistoryItem["result"]) {
+  const base = getResultColor(result);
+  return `var(--mantine-color-${base}-6)`;
+}
+
 export default function GameHistoryPage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -135,6 +142,7 @@ export default function GameHistoryPage() {
   const setGameHistoryTrigger = useSetAtom(gameHistoryTriggerAtom);
   const [, setTabs] = useAtom(tabsAtom);
   const setActiveTab = useSetAtom(activeTabAtom);
+  const activeTab = useAtomValue(activeTabAtom);
 
   const botsById = useMemo(() => {
     const map = new Map<string, ReturnType<typeof getAllBots>[number]>();
@@ -270,6 +278,18 @@ export default function GameHistoryPage() {
   }, [allItems, filters]);
 
   const resetFilters = () => setFilters(emptyFilters);
+
+  const handleBack = useCallback(() => {
+    if (!activeTab) return;
+    setTabs((prev) => {
+      const tab = prev.find((item) => item.value === activeTab);
+      if (!tab) return prev;
+      tab.name = t("Tab.NewTab");
+      tab.type = "new";
+      return [...prev];
+    });
+    navigate({ to: "/" });
+  }, [activeTab, navigate, setTabs, t]);
 
   const selectedItems = useMemo(
     () => filteredItems.filter((item) => selected.has(item.id)),
@@ -567,43 +587,100 @@ export default function GameHistoryPage() {
     return value;
   };
 
+  const resolveLocale = (locale: string) => {
+    const normalized = locale.replace("_", "-");
+    try {
+      // Ensure the locale is supported and well-formed
+      return Intl.DateTimeFormat(normalized).resolvedOptions().locale;
+    } catch {
+      const short = normalized.split("-")[0];
+      try {
+        return Intl.DateTimeFormat(short).resolvedOptions().locale;
+      } catch {
+        return undefined;
+      }
+    }
+  };
+
+  const formatDateParts = (value: string) => {
+    const date = new Date(value);
+    const locale = resolveLocale(i18n.language);
+    return {
+      dateLabel: date.toLocaleDateString(locale),
+      timeLabel: date.toLocaleTimeString(locale, {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+  };
+
   return (
     <ScrollArea h="100%" px="md" pt="md" pb="xl" offsetScrollbars>
-      <Stack gap="md">
-        <Card withBorder p="lg">
+      <Stack gap="md" className={classes.page}>
+        <Paper className={classes.headerBar} radius="lg">
           <Group justify="space-between" align="center" wrap="wrap">
-            <Stack gap={4}>
-              <Group gap="xs">
-                <IconHistory size={22} />
-                <Text fw={600} size="lg">
-                  {t("GameHistory.Title")}
+            <Group className={classes.headerLeft} gap="sm" align="center" wrap="wrap">
+              <Button
+                size="sm"
+                variant="light"
+                leftSection={<IconArrowBackUp size={16} />}
+                onClick={handleBack}
+              >
+                {t("Common.Back")}
+              </Button>
+              <Stack gap={2} className={classes.headerInfo}>
+                <Group gap="xs">
+                  <IconHistory size={20} />
+                  <Text className={classes.headerTitle}>
+                    {t("GameHistory.Title")}
+                  </Text>
+                </Group>
+                <Text className={classes.headerSubtitle}>
+                  {t("GameHistory.Desc")}
                 </Text>
-              </Group>
-              <Text size="sm" c="dimmed">
-                {t("GameHistory.Desc")}
-              </Text>
-            </Stack>
-            <Group gap="sm" wrap="wrap">
-              <Badge variant="light" color="blue">
-                {t("GameHistory.Summary.Total")}: {summary.total}
-              </Badge>
-              <Badge variant="light" color="cyan">
-                {t("GameHistory.Summary.Bots")}: {summary.bots}
-              </Badge>
-              <Badge variant="light" color="indigo">
-                {t("GameHistory.Summary.Engine")}: {summary.engines}
-              </Badge>
-              <Badge variant="light" color="blue">
-                {t("GameHistory.Summary.Human")}: {summary.humans}
-              </Badge>
-              <Badge variant="light" color="blue">
-                {t("GameHistory.Summary.Analyzed")}: {summary.analyzed}
-              </Badge>
+              </Stack>
             </Group>
+            <Stack gap="xs" className={classes.headerRight}>
+              <SegmentedControl
+                className={classes.typeSegment}
+                size="sm"
+                radius="md"
+                value={filters.type}
+                onChange={(value) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    type: (value as Filters["type"]) ?? "all",
+                  }))
+                }
+                data={[
+                  { value: "all", label: t("GameHistory.Filters.Type.All") },
+                  { value: "bot", label: t("GameHistory.Filters.Type.Bot") },
+                  { value: "engine", label: t("GameHistory.Filters.Type.Engine") },
+                  { value: "human", label: t("GameHistory.Filters.Type.Human") },
+                ]}
+              />
+              <Group gap="xs" className={classes.summaryChips}>
+                <Badge variant="light" color="blue">
+                  {t("GameHistory.Summary.Total")}: {summary.total}
+                </Badge>
+                <Badge variant="light" color="cyan">
+                  {t("GameHistory.Summary.Bots")}: {summary.bots}
+                </Badge>
+                <Badge variant="light" color="indigo">
+                  {t("GameHistory.Summary.Engine")}: {summary.engines}
+                </Badge>
+                <Badge variant="light" color="blue">
+                  {t("GameHistory.Summary.Human")}: {summary.humans}
+                </Badge>
+                <Badge variant="light" color="blue">
+                  {t("GameHistory.Summary.Analyzed")}: {summary.analyzed}
+                </Badge>
+              </Group>
+            </Stack>
           </Group>
-        </Card>
+        </Paper>
 
-        <Card withBorder p="lg">
+        <Paper className={classes.sectionCard} radius="lg">
           <Stack gap="xs">
             <Text fw={600}>{t("GameHistory.Filters.Title")}</Text>
             <Text size="sm" c="dimmed">
@@ -626,23 +703,6 @@ export default function GameHistoryPage() {
             />
             <Select
               size="sm"
-              label={t("GameHistory.Filters.Type.Label")}
-              value={filters.type}
-              onChange={(value) =>
-                setFilters((prev) => ({
-                  ...prev,
-                  type: (value as Filters["type"]) ?? "all",
-                }))
-              }
-              data={[
-                { value: "all", label: t("GameHistory.Filters.Type.All") },
-                { value: "bot", label: t("GameHistory.Filters.Type.Bot") },
-                { value: "engine", label: t("GameHistory.Filters.Type.Engine") },
-                { value: "human", label: t("GameHistory.Filters.Type.Human") },
-              ]}
-            />
-            <Select
-              size="sm"
               label={t("GameHistory.Filters.Result.Label")}
               value={filters.result}
               onChange={(value) =>
@@ -659,7 +719,7 @@ export default function GameHistoryPage() {
               ]}
             />
             <DateInput
-              size="xs"
+              size="sm"
               valueFormat="YYYY-MM-DD"
               label={t("GameHistory.Filters.DateFrom")}
               placeholder={t("GameHistory.Filters.DatePlaceholder")}
@@ -670,7 +730,7 @@ export default function GameHistoryPage() {
               clearable
             />
             <DateInput
-              size="xs"
+              size="sm"
               valueFormat="YYYY-MM-DD"
               label={t("GameHistory.Filters.DateTo")}
               placeholder={t("GameHistory.Filters.DatePlaceholder")}
@@ -686,219 +746,257 @@ export default function GameHistoryPage() {
               {t("GameHistory.Filters.Reset")}
             </Button>
           </Group>
-        </Card>
+        </Paper>
 
-        <Card withBorder p="lg">
-          <Group justify="space-between" align="center" mb="md" wrap="wrap">
-            <Stack gap={2}>
-              <Text fw={600}>{t("GameHistory.List.Title")}</Text>
-              <Text size="sm" c="dimmed">
-                {t("GameHistory.List.Count", { count: filteredItems.length })}
-              </Text>
-            </Stack>
-            <Group gap="xs" wrap="wrap">
-              <Checkbox
-                size="sm"
-                checked={allSelected}
-                onChange={toggleSelectAll}
-                label={t("GameHistory.SelectAll")}
-              />
-              <Text size="sm" c="dimmed">
-                {t("GameHistory.SelectedCount", {
-                  count: selectedItems.length,
-                })}
-              </Text>
-              <Tooltip label={t("GameHistory.Export.Selected")}>
-                <ActionIcon
-                  variant="light"
-                  size="lg"
-                  onClick={() =>
-                    exportCsv(selectedItems, "games_selected.csv")
-                  }
-                  disabled={selectedItems.length === 0}
-                >
-                  <IconFileExport size={18} />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip label={t("GameHistory.Export.All")}>
-                <ActionIcon
-                  variant="light"
-                  size="lg"
-                  onClick={() => exportCsv(allItems, "games_all.csv")}
-                  disabled={allItems.length === 0}
-                >
-                  <IconFileExport size={18} />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip label={t("GameHistory.Import.Csv")}>
-                <ActionIcon variant="light" size="lg" onClick={importCsv}>
-                  <IconFileImport size={18} />
-                </ActionIcon>
-              </Tooltip>
+        <Paper className={classes.sectionCard} radius="lg">
+          <Stack gap="md">
+            <Group justify="space-between" align="center" wrap="wrap">
+              <Stack gap={2}>
+                <Text fw={600}>{t("GameHistory.List.Title")}</Text>
+                <Text size="sm" c="dimmed">
+                  {t("GameHistory.List.Count", {
+                    count: filteredItems.length,
+                  })}
+                </Text>
+              </Stack>
             </Group>
-          </Group>
 
-          {filteredItems.length === 0 ? (
-            <Center py="xl">
-              <Text c="dimmed">{t("GameHistory.Empty")}</Text>
-            </Center>
-          ) : (
-            <Stack gap="md">
-              {filteredItems.map((item) => {
-                const hasAccuracy =
-                  item.accuracy !== undefined ||
-                  item.whiteAccuracy !== undefined ||
-                  item.blackAccuracy !== undefined;
+            <div className={classes.listToolbar}>
+              <Group gap="sm" wrap="wrap">
+                <Checkbox
+                  size="sm"
+                  checked={allSelected}
+                  onChange={toggleSelectAll}
+                  label={t("GameHistory.SelectAll")}
+                />
+                <Text size="sm" c="dimmed">
+                  {t("GameHistory.SelectedCount", {
+                    count: selectedItems.length,
+                  })}
+                </Text>
+              </Group>
+              <Group gap="xs" wrap="wrap">
+                <Tooltip label={t("GameHistory.Export.Selected")}>
+                  <ActionIcon
+                    variant="light"
+                    size="lg"
+                    onClick={() =>
+                      exportCsv(selectedItems, "games_selected.csv")
+                    }
+                    disabled={selectedItems.length === 0}
+                  >
+                    <IconFileExport size={18} />
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip label={t("GameHistory.Export.All")}>
+                  <ActionIcon
+                    variant="light"
+                    size="lg"
+                    onClick={() => exportCsv(allItems, "games_all.csv")}
+                    disabled={allItems.length === 0}
+                  >
+                    <IconFileExport size={18} />
+                  </ActionIcon>
+                </Tooltip>
+                <Tooltip label={t("GameHistory.Import.Csv")}>
+                  <ActionIcon variant="light" size="lg" onClick={importCsv}>
+                    <IconFileImport size={18} />
+                  </ActionIcon>
+                </Tooltip>
+              </Group>
+            </div>
 
-                const typeIcon =
-                  item.type === "bot" ? (
-                    <IconRobot size={16} />
-                  ) : item.type === "engine" ? (
-                    <IconCpu size={16} />
-                  ) : (
-                    <IconUser size={16} />
-                  );
+            {filteredItems.length === 0 ? (
+              <Center py="xl">
+                <Text c="dimmed">{t("GameHistory.Empty")}</Text>
+              </Center>
+            ) : (
+              <Stack gap="md">
+                {filteredItems.map((item) => {
+                  const hasAccuracy =
+                    item.accuracy !== undefined ||
+                    item.whiteAccuracy !== undefined ||
+                    item.blackAccuracy !== undefined;
 
-                return (
-                  <Paper key={item.id} withBorder p="lg" radius="md">
-                    <Group justify="space-between" align="flex-start" wrap="wrap">
-                      <Group gap="sm" align="flex-start" wrap="wrap">
-                        <Checkbox
-                          size="sm"
-                          checked={selected.has(item.id)}
-                          onChange={() => toggleSelected(item.id)}
-                        />
-                        <Stack gap={6}>
-                          <Group gap="xs">
-                            <Text fw={600} size="sm">
-                              {item.white} {t("Bots.Game.VsPrefix")} {item.black}
-                            </Text>
-                          </Group>
-                          <Group gap="xs">
-                            <Badge size="sm" variant="light" color={getResultColor(item.result)}>
-                              {getResultLabel(item.result, t)}
-                            </Badge>
-                            <Badge
+                  const typeIcon =
+                    item.type === "bot" ? (
+                      <IconRobot size={16} />
+                    ) : item.type === "engine" ? (
+                      <IconCpu size={16} />
+                    ) : (
+                      <IconUser size={16} />
+                    );
+
+                  const { dateLabel, timeLabel } = formatDateParts(item.date);
+
+                  const detailItems = [
+                    {
+                      label: t("GameHistory.Fields.Moves"),
+                      value: item.movesCount,
+                    },
+                    {
+                      label: t("GameHistory.Fields.Accuracy"),
+                      value: renderAccuracy(item),
+                    },
+                    {
+                      label: t("GameHistory.Fields.Variant"),
+                      value: formatVariant(item.variant),
+                    },
+                    {
+                      label: t("GameHistory.Fields.TimeControl"),
+                      value: formatTimeControl(item.timeControl),
+                    },
+                    {
+                      label: t("GameHistory.Fields.Engine"),
+                      value:
+                        item.engineName ??
+                        t("GameHistory.Fields.NotApplicable"),
+                    },
+                    {
+                      label: t("GameHistory.Fields.Bot"),
+                      value:
+                        item.botName ?? t("GameHistory.Fields.NotApplicable"),
+                    },
+                  ];
+
+                  return (
+                    <Paper
+                      key={item.id}
+                      className={classes.historyCard}
+                      style={
+                        {
+                          "--result-color": getResultTone(item.result),
+                        } as CSSProperties
+                      }
+                      radius="lg"
+                    >
+                      <div className={classes.accent} />
+                      <div className={classes.historyCardContent}>
+                        <Group
+                          justify="space-between"
+                          align="flex-start"
+                          wrap="wrap"
+                        >
+                          <Group gap="sm" align="flex-start" wrap="wrap">
+                            <Checkbox
                               size="sm"
-                              variant="light"
-                              color={item.type === "bot" ? "blue" : item.type === "engine" ? "indigo" : "cyan"}
-                              leftSection={typeIcon}
-                            >
-                              {item.type === "bot"
-                                ? t("GameHistory.Filters.Type.Bot")
-                                : item.type === "engine"
-                                  ? t("GameHistory.Filters.Type.Engine")
-                                  : t("GameHistory.Filters.Type.Human")}
-                            </Badge>
-                            {hasAccuracy && (
-                              <Badge size="sm" variant="light" color="blue">
-                                {t("GameHistory.Badge.Analyzed")}
-                              </Badge>
-                            )}
+                              checked={selected.has(item.id)}
+                              onChange={() => toggleSelected(item.id)}
+                            />
+                            <Stack gap={6}>
+                              <Group gap="xs" className={classes.playerRow}>
+                                <Text size="sm" className={classes.playerName}>
+                                  {item.white}
+                                </Text>
+                                <Text size="xs" c="dimmed">
+                                  {t("Bots.Game.VsPrefix")}
+                                </Text>
+                                <Text size="sm" className={classes.playerName}>
+                                  {item.black}
+                                </Text>
+                              </Group>
+                              <Group gap="xs" className={classes.badgesRow}>
+                                <Badge
+                                  size="sm"
+                                  variant="filled"
+                                  color={getResultColor(item.result)}
+                                >
+                                  {getResultLabel(item.result, t)}
+                                </Badge>
+                                <Badge
+                                  size="sm"
+                                  variant="light"
+                                  color={
+                                    item.type === "bot"
+                                      ? "blue"
+                                      : item.type === "engine"
+                                        ? "indigo"
+                                        : "cyan"
+                                  }
+                                  leftSection={typeIcon}
+                                >
+                                  {item.type === "bot"
+                                    ? t("GameHistory.Filters.Type.Bot")
+                                    : item.type === "engine"
+                                      ? t("GameHistory.Filters.Type.Engine")
+                                      : t("GameHistory.Filters.Type.Human")}
+                                </Badge>
+                                {hasAccuracy && (
+                                  <Badge size="sm" variant="light" color="blue">
+                                    {t("GameHistory.Badge.Analyzed")}
+                                  </Badge>
+                                )}
+                              </Group>
+                            </Stack>
                           </Group>
-                        </Stack>
-                      </Group>
-                      <Stack gap={6} align="flex-end">
-                        <Text size="xs" c="dimmed">
-                          {new Date(item.date).toLocaleString()}
-                        </Text>
-                        <Group gap="xs">
-                          {item.pgn && (
-                            <>
-                              <Tooltip label={t("GameHistory.Action.Analyze")}>
+                          <Stack gap={4} align="flex-end" className={classes.metaStack}>
+                            <Text size="xs" c="dimmed" className={classes.metaTime}>
+                              {dateLabel}
+                            </Text>
+                            <Text size="xs" c="dimmed" className={classes.metaTime}>
+                              {timeLabel}
+                            </Text>
+                            <Group gap="xs">
+                              {item.pgn && (
+                                <>
+                                  <Tooltip label={t("GameHistory.Action.Analyze")}>
+                                    <ActionIcon
+                                      variant="light"
+                                      size="lg"
+                                      onClick={() => handleAnalyze(item)}
+                                    >
+                                      <IconZoomCheck size={18} />
+                                    </ActionIcon>
+                                  </Tooltip>
+                                  <Tooltip
+                                    label={t("GameHistory.Action.ExportPgn")}
+                                  >
+                                    <ActionIcon
+                                      variant="light"
+                                      size="lg"
+                                      onClick={() => exportPgn(item)}
+                                    >
+                                      <IconFileExport size={18} />
+                                    </ActionIcon>
+                                  </Tooltip>
+                                </>
+                              )}
+                              <Tooltip label={t("GameHistory.Action.Delete")}>
                                 <ActionIcon
+                                  color="red"
                                   variant="light"
                                   size="lg"
-                                  onClick={() => handleAnalyze(item)}
+                                  onClick={() => handleDelete(item)}
                                 >
-                                  <IconZoomCheck size={18} />
+                                  <IconTrash size={18} />
                                 </ActionIcon>
                               </Tooltip>
-                              <Tooltip label={t("GameHistory.Action.ExportPgn")}>
-                                <ActionIcon
-                                  variant="light"
-                                  size="lg"
-                                  onClick={() => exportPgn(item)}
-                                >
-                                  <IconFileExport size={18} />
-                                </ActionIcon>
-                              </Tooltip>
-                            </>
-                          )}
-                          <Tooltip label={t("GameHistory.Action.Delete")}>
-                            <ActionIcon
-                              color="indigo"
-                              variant="subtle"
-                              size="lg"
-                              onClick={() => handleDelete(item)}
-                            >
-                              <IconTrash size={18} />
-                            </ActionIcon>
-                          </Tooltip>
+                            </Group>
+                          </Stack>
                         </Group>
-                      </Stack>
-                    </Group>
 
-                    <Divider my="sm" />
+                        <Divider my="sm" />
 
-                    <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="sm">
-                      <Stack gap={4}>
-                        <Text size="xs" c="dimmed">
-                          {t("GameHistory.Fields.Result")}
-                        </Text>
-                        <Text size="sm">{getResultLabel(item.result, t)}</Text>
-                      </Stack>
-                      <Stack gap={4}>
-                        <Text size="xs" c="dimmed">
-                          {t("GameHistory.Fields.Moves")}
-                        </Text>
-                        <Text size="sm">{item.movesCount}</Text>
-                      </Stack>
-                      <Stack gap={4}>
-                        <Text size="xs" c="dimmed">
-                          {t("GameHistory.Fields.Accuracy")}
-                        </Text>
-                        <Text size="sm">{renderAccuracy(item)}</Text>
-                      </Stack>
-                      <Stack gap={4}>
-                        <Text size="xs" c="dimmed">
-                          {t("GameHistory.Fields.Engine")}
-                        </Text>
-                        <Text size="sm">
-                          {item.engineName ?? t("GameHistory.Fields.NotApplicable")}
-                        </Text>
-                      </Stack>
-                      <Stack gap={4}>
-                        <Text size="xs" c="dimmed">
-                          {t("GameHistory.Fields.Bot")}
-                        </Text>
-                        <Text size="sm">
-                          {item.botName ?? t("GameHistory.Fields.NotApplicable")}
-                        </Text>
-                      </Stack>
-                      <Stack gap={4}>
-                        <Text size="xs" c="dimmed">
-                          {t("GameHistory.Fields.Variant")}
-                        </Text>
-                        <Text size="sm">
-                          {formatVariant(item.variant)}
-                        </Text>
-                      </Stack>
-                      <Stack gap={4}>
-                        <Text size="xs" c="dimmed">
-                          {t("GameHistory.Fields.TimeControl")}
-                        </Text>
-                        <Text size="sm">
-                          {formatTimeControl(item.timeControl)}
-                        </Text>
-                      </Stack>
-                    </SimpleGrid>
-                  </Paper>
-                );
-              })}
-            </Stack>
-          )}
-        </Card>
+                        <div className={classes.statsGrid}>
+                          {detailItems.map((detail) => (
+                            <div key={detail.label} className={classes.statCard}>
+                              <Text className={classes.statLabel}>
+                                {detail.label}
+                              </Text>
+                              <Text className={classes.statValue}>
+                                {detail.value}
+                              </Text>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </Paper>
+                  );
+                })}
+              </Stack>
+            )}
+          </Stack>
+        </Paper>
       </Stack>
     </ScrollArea>
   );
