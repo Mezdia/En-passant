@@ -7,6 +7,7 @@ import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { ActionIcon, ScrollArea, Tabs } from "@mantine/core";
 import { useHotkeys, useToggle } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
+import { platform } from "@tauri-apps/plugin-os";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { useCallback, useEffect, useTransition } from "react";
 import { useTranslation } from "react-i18next";
@@ -130,6 +131,32 @@ export default function BoardsPage() {
     },
     [tabs, setTabs, setActiveTab],
   );
+
+  useEffect(() => {
+    let isMacOS = false;
+    try {
+      isMacOS = platform() === "macos";
+    } catch {
+      isMacOS = false;
+    }
+
+    if (!isMacOS) {
+      return;
+    }
+
+    const handler = (e: KeyboardEvent) => {
+      if (e.metaKey && e.key.toLowerCase() === "w") {
+        e.preventDefault();
+        e.stopPropagation();
+        closeTab(activeTab);
+      }
+    };
+
+    window.addEventListener("keydown", handler, { capture: true });
+
+    return () =>
+      window.removeEventListener("keydown", handler, { capture: true });
+  }, [activeTab, closeTab]);
 
   const keyMap = useAtomValue(keyMapAtom);
   useHotkeys([

@@ -1,14 +1,30 @@
+import { platform } from "@tauri-apps/plugin-os";
 import { atomWithStorage } from "jotai/utils";
 import type {
   SyncStorage,
   SyncStringStorage,
 } from "jotai/vanilla/utils/atomWithStorage";
 
-const keys = {
-  NEW_TAB: { name: "Keybind.NewTab", keys: "ctrl+t" },
-  CLOSE_TAB: { name: "Keybind.CloseTab", keys: "ctrl+w" },
-  OPEN_FILE: { name: "Keybind.OpenFile", keys: "ctrl+o" },
-  SAVE_FILE: { name: "Keybind.SaveFile", keys: "ctrl+s" },
+const meta = (() => {
+  try {
+    return platform() === "macos" ? "cmd" : "ctrl";
+  } catch {
+    return "ctrl";
+  }
+})();
+
+type Keybind = {
+  name: string;
+  keys: string;
+};
+
+type KeyMap = Record<string, Keybind>;
+
+const keys: KeyMap = {
+  NEW_TAB: { name: "Keybind.NewTab", keys: `${meta}+t` },
+  CLOSE_TAB: { name: "Keybind.CloseTab", keys: `${meta}+w` },
+  OPEN_FILE: { name: "Keybind.OpenFile", keys: `${meta}+o` },
+  SAVE_FILE: { name: "Keybind.SaveFile", keys: `${meta}+s` },
   SWAP_ORIENTATION: { name: "Keybind.SwapOrientation", keys: "f" },
   CLEAR_SHAPES: { name: "Keybind.ClearShapes", keys: "ctrl+l" },
   NEXT_MOVE: { name: "Keybind.NextMove", keys: "arrowright" },
@@ -57,10 +73,10 @@ export const keyMapAtom = atomWithStorage(
   defaultStorage(keys, localStorage),
 );
 
-function defaultStorage<T>(
-  keys: T,
+function defaultStorage(
+  defaults: KeyMap,
   storage: SyncStringStorage,
-): SyncStorage<T> {
+): SyncStorage<KeyMap> {
   return {
     getItem(key, initialValue) {
       const storedValue = storage.getItem(key);
@@ -68,15 +84,21 @@ function defaultStorage<T>(
         return initialValue;
       }
       const parsed = JSON.parse(storedValue);
-      for (const key in keys) {
+      for (const key in defaults) {
         if (!(key in parsed)) {
-          parsed[key] = keys[key];
+          parsed[key] = defaults[key];
         }
       }
       return parsed;
     },
     setItem(key, value) {
-      storage.setItem(key, JSON.stringify(value));
+      const normalized: KeyMap = Object.fromEntries(
+        Object.entries(value).map(([subkey, keybind]) => [
+          subkey,
+          { ...keybind, keys: keybind.keys.replace("meta", meta) },
+        ]),
+      );
+      storage.setItem(key, JSON.stringify(normalized));
     },
     removeItem(key) {
       storage.removeItem(key);

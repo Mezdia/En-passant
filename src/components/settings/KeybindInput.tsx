@@ -1,7 +1,7 @@
 import { keyMapAtom } from "@/state/keybinds";
 import { ActionIcon, Box, Group, Kbd } from "@mantine/core";
-import { useColorScheme } from "@mantine/hooks";
 import { IconCheck, IconX } from "@tabler/icons-react";
+import { platform } from "@tauri-apps/plugin-os";
 import cx from "clsx";
 import { useAtom } from "jotai";
 import { useState } from "react";
@@ -39,6 +39,34 @@ function KeybindInput({
   );
 }
 
+const mapToOs = (key: string): string => {
+  let isMacos = false;
+  try {
+    isMacos = platform() === "macos";
+  } catch {
+    isMacos = false;
+  }
+
+  if (!isMacos) {
+    return key === "meta" ? "ctrl" : key;
+  }
+
+  if (key === "meta" || key === "cmd") {
+    return "⌘";
+  }
+  if (key === "ctrl") {
+    return "⌃";
+  }
+  if (key === "shift") {
+    return "⇧";
+  }
+  if (key === "alt") {
+    return "⌥";
+  }
+
+  return key;
+};
+
 function KbdDisplay({
   keys,
   hovering,
@@ -49,7 +77,7 @@ function KbdDisplay({
   const splitted = keys.split("+");
   return (
     <Group>
-      {splitted.map((key, i) => (
+      {splitted.map(mapToOs).map((key, i) => (
         <Group key={key}>
           <Kbd className={cx({ [classes.kbd]: hovering })}>{key}</Kbd>
           {i !== splitted.length - 1 && "+"}

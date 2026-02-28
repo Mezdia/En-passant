@@ -46,6 +46,15 @@ type MenuAction = {
   label: string;
   shortcut?: string;
   action?: () => void;
+  item?:
+    | "Hide"
+    | "Copy"
+    | "Cut"
+    | "Paste"
+    | "SelectAll"
+    | "Undo"
+    | "Redo"
+    | "Quit";
 };
 
 async function createMenu(menuActions: MenuGroup[]) {
@@ -60,6 +69,13 @@ async function createMenu(menuActions: MenuGroup[]) {
               }),
             )
             .otherwise(() => {
+              if (option.item) {
+                return PredefinedMenuItem.new({
+                  text: option.label,
+                  item: option.item,
+                });
+              }
+
               return MenuItem.new({
                 id: option.id,
                 text: option.label,
@@ -132,6 +148,10 @@ function RootLayout() {
     }
   }, []);
 
+  const openSettings = useCallback(() => {
+    navigate({ to: "/settings" });
+  }, [navigate]);
+
   const [keyMap] = useAtom(keyMapAtom);
 
   useHotkeys(keyMap.NEW_TAB.keys, createNewTab);
@@ -140,6 +160,7 @@ function RootLayout() {
   const [languageModalOpened, setLanguageModalOpened] = useState(false);
   const [onboardingOpened, setOnboardingOpened] = useState(false);
   const [isWindows, setIsWindows] = useState(false);
+  const [isMacOS, setIsMacOS] = useState(false);
 
   useEffect(() => {
     if (!isTauri()) return;
@@ -148,14 +169,18 @@ function RootLayout() {
       .then(({ platform }) => {
         if (!active) return;
         try {
-          setIsWindows(platform() === "windows");
+          const currentPlatform = platform();
+          setIsWindows(currentPlatform === "windows");
+          setIsMacOS(currentPlatform === "macos");
         } catch (error) {
           setIsWindows(false);
+          setIsMacOS(false);
         }
       })
       .catch(() => {
         if (active) {
           setIsWindows(false);
+          setIsMacOS(false);
         }
       });
     return () => {
@@ -176,110 +201,189 @@ function RootLayout() {
   }, []);
 
   const menuActions: MenuGroup[] = useMemo(
-    () => [
-      {
-        label: t("Menu.File"),
+    () => {
+      const aboutOption: MenuAction = {
+        label: t("Menu.Help.About"),
+        id: "about",
+        action: () => setOpened(true),
+      };
+
+      const checkForUpdatesOption: MenuAction = {
+        label: t("Menu.Help.CheckUpdate"),
+        id: "check_for_updates",
+        action: checkForUpdates,
+      };
+
+      const appMenu: MenuGroup = {
+        label: t("Menu.Application", { defaultValue: "Application" }),
         options: [
           {
-            label: t("Menu.File.NewTab"),
-            id: "new_tab",
-            shortcut: keyMap.NEW_TAB.keys,
-            action: createNewTab,
+            label: t("Menu.Application.About", {
+              defaultValue: t("Menu.Help.About"),
+            }),
+            id: aboutOption.id,
+            action: aboutOption.action,
+          },
+          checkForUpdatesOption,
+          { label: "divider" },
+          {
+            label: `${t("SideBar.Settings")}...`,
+            id: "settings",
+            shortcut: "cmd+,",
+            action: openSettings,
           },
           {
-            label: t("Menu.File.OpenFile"),
-            id: "open_file",
-            shortcut: keyMap.OPEN_FILE.keys,
-            action: openNewFile,
-          },
-          {
-            label: t("Menu.File.Exit"),
-            id: "exit",
-            action: () => exit(0),
-          },
-        ],
-      },
-      {
-        label: t("Menu.View"),
-        options: [
-          {
-            label: t("Menu.View.Reload"),
-            id: "reload",
-            shortcut: "Ctrl+R",
-            action: () => location.reload(),
-          },
-        ],
-      },
-      {
-        label: t("Menu.Help"),
-        options: [
-          {
-            label: t("Menu.Help.Documentation"),
-            id: "documentation",
-            action: () => shellOpen("https://enpassant.ir/docs/"),
-          },
-          {
-            label: t("Menu.Help.ClearSavedData"),
-            id: "clear_saved_data",
-            action: () => {
-              ask("Are you sure you want to clear all saved data?", {
-                title: "Clear data",
-              }).then((res) => {
-                if (res) {
-                  localStorage.clear();
-                  sessionStorage.clear();
-                  location.reload();
-                }
-              });
-            },
-          },
-          {
-            label: t("Menu.Help.OpenLogs"),
-            id: "logs",
-            action: async () => {
-              let path = "en-passant.log"; // Default path for development
-
-              if (isTauri()) {
-                try {
-                  const { appLogDir } = await import("@tauri-apps/api/path");
-                  path = await resolve(await appLogDir(), "en-passant.log");
-                } catch (e) {
-                  console.warn("Failed to get app log dir:", e);
-                }
-              }
-
-              notifications.show({
-                title: "Logs",
-                message: `Logs would be at: ${path}`,
-              });
-
-              if (isTauri()) {
-                try {
-                  const { open: shellOpen } = await import(
-                    "@tauri-apps/plugin-shell"
-                  );
-                  await shellOpen(path);
-                } catch (e) {
-                  console.warn("Failed to open logs:", e);
-                }
-              }
-            },
+            label: t("Menu.Application.Hide", {
+              defaultValue: "Hide En-passant",
+            }),
+            item: "Hide",
           },
           { label: "divider" },
           {
-            label: t("Menu.Help.CheckUpdate"),
-            id: "check_for_updates",
-            action: checkForUpdates,
-          },
-          {
-            label: t("Menu.Help.About"),
-            id: "about",
-            action: () => setOpened(true),
+            label: t("Menu.Application.Quit", {
+              defaultValue: t("Menu.File.Exit"),
+            }),
+            item: "Quit",
           },
         ],
-      },
-    ],
-    [t, checkForUpdates, createNewTab, keyMap, openNewFile],
+      };
+
+      const macOSEditMenu: MenuGroup = {
+        label: t("Menu.Edit", {
+          defaultValue: t("Common.Edit", { defaultValue: "Edit" }),
+        }),
+        options: [
+          {
+            label: t("Menu.Edit.Undo", { defaultValue: "Undo" }),
+            item: "Undo",
+          },
+          {
+            label: t("Menu.Edit.Redo", { defaultValue: "Redo" }),
+            item: "Redo",
+          },
+          { label: "divider" },
+          {
+            label: t("Menu.Edit.Copy", { defaultValue: "Copy" }),
+            item: "Copy",
+          },
+          {
+            label: t("Menu.Edit.Cut", { defaultValue: "Cut" }),
+            item: "Cut",
+          },
+          {
+            label: t("Menu.Edit.Paste", { defaultValue: "Paste" }),
+            item: "Paste",
+          },
+          { label: "divider" },
+          {
+            label: t("Menu.Edit.SelectAll", { defaultValue: "Select All" }),
+            item: "SelectAll",
+          },
+        ],
+      };
+
+      return [
+        ...(isMacOS ? [appMenu] : []),
+        {
+          label: t("Menu.File"),
+          options: [
+            {
+              label: t("Menu.File.NewTab"),
+              id: "new_tab",
+              shortcut: keyMap.NEW_TAB.keys,
+              action: createNewTab,
+            },
+            {
+              label: t("Menu.File.OpenFile"),
+              id: "open_file",
+              shortcut: keyMap.OPEN_FILE.keys,
+              action: openNewFile,
+            },
+            ...(!isMacOS
+              ? [
+                  {
+                    label: t("Menu.File.Exit"),
+                    id: "exit",
+                    action: () => exit(0),
+                  } satisfies MenuAction,
+                ]
+              : []),
+          ],
+        },
+        ...(isMacOS ? [macOSEditMenu] : []),
+        {
+          label: t("Menu.View"),
+          options: [
+            {
+              label: t("Menu.View.Reload"),
+              id: "reload",
+              shortcut: "Ctrl+R",
+              action: () => location.reload(),
+            },
+          ],
+        },
+        {
+          label: t("Menu.Help"),
+          options: [
+            {
+              label: t("Menu.Help.Documentation"),
+              id: "documentation",
+              action: () => shellOpen("https://enpassant.ir/docs/"),
+            },
+            {
+              label: t("Menu.Help.ClearSavedData"),
+              id: "clear_saved_data",
+              action: () => {
+                ask("Are you sure you want to clear all saved data?", {
+                  title: "Clear data",
+                }).then((res) => {
+                  if (res) {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    location.reload();
+                  }
+                });
+              },
+            },
+            {
+              label: t("Menu.Help.OpenLogs"),
+              id: "logs",
+              action: async () => {
+                let path = "en-passant.log"; // Default path for development
+
+                if (isTauri()) {
+                  try {
+                    const { appLogDir } = await import("@tauri-apps/api/path");
+                    path = await resolve(await appLogDir(), "en-passant.log");
+                  } catch (e) {
+                    console.warn("Failed to get app log dir:", e);
+                  }
+                }
+
+                notifications.show({
+                  title: "Logs",
+                  message: `Logs would be at: ${path}`,
+                });
+
+                if (isTauri()) {
+                  try {
+                    const { open: shellOpen } = await import(
+                      "@tauri-apps/plugin-shell"
+                    );
+                    await shellOpen(path);
+                  } catch (e) {
+                    console.warn("Failed to open logs:", e);
+                  }
+                }
+              },
+            },
+            { label: "divider" },
+            ...(!isMacOS ? [checkForUpdatesOption, aboutOption] : []),
+          ],
+        },
+      ];
+    },
+    [t, checkForUpdates, createNewTab, isMacOS, keyMap, openNewFile, openSettings],
   );
 
   const { data: menu } = useSWRImmutable(["menu", menuActions], () =>
