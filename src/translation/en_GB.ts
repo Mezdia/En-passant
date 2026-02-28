@@ -104,6 +104,7 @@ export const en_GB = {
     "Menu.File.NewTab": "New Tab",
     "Menu.File.OpenFile": "Open File",
     "Menu.File.Exit": "Exit",
+    "Menu.Edit.SelectAll": "Select All",
     "Menu.View": "View",
     "Menu.View.Reload": "Reload",
     "Menu.Help": "Help",
