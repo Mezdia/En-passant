@@ -150,6 +150,7 @@ export const fa_IR = {
     "Menu.File.NewTab": "تب جدید",
     "Menu.File.OpenFile": "بازکردن فایل",
     "Menu.File.Exit": "خروج",
+    "Menu.Edit.SelectAll": "انتخاب همه",
     "Menu.View": "نمایش",
     "Menu.View.Reload": "بارگذاری مجدد",
     "Menu.Help": "راهنما",
