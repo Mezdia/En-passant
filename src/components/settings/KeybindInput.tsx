@@ -124,7 +124,6 @@ function ShortcutInput({
           setKeymap((prev) => ({
             ...prev,
             [action]: {
-              /// @ts-expect-error action is key of keymap
               name: prev[action].name,
               keys: stringed,
             },
