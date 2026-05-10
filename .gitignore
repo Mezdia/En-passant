@@ -30,3 +30,4 @@ tsconfig.tsbuildinfo
 *.sw?
 
 src-tauri/gen/
+en-croissant-commits-after-b0a6c80f.txt
