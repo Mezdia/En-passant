@@ -64,7 +64,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install app dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build the app
         uses: tauri-apps/tauri-action@v0
