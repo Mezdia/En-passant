@@ -31,3 +31,4 @@ tsconfig.tsbuildinfo
 
 src-tauri/gen/
 en-croissant-commits-after-b0a6c80f.txt
+bun.lock
